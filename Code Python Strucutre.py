@@ -78,7 +78,7 @@ nodeList = [[0, 0, 0],         # node 1
             ]
 
 
-beamList = [[1, 5], [2, 6], [3, 7], [4, 8],
+elemList = [[1, 5], [2, 6], [3, 7], [4, 8],
             [5, 9], [6, 10], [7, 11], [8, 12],
             [9, 13], [10, 14], [11, 15], [12, 16],
             [13, 17], [14, 18], [15, 19], [16, 20],
@@ -92,10 +92,10 @@ beamList = [[1, 5], [2, 6], [3, 7], [4, 8],
             ]
 
 numberElem = 3
-numberBeam = len(beamList)
+numberBeam = len(elemList)
 for x in range(numberBeam):
-    i = beamList[x][0]
-    j = beamList[x][1]
+    i = elemList[x][0]
+    j = elemList[x][1]
 
     current = i
     len_x = abs(nodeList[i-1][0] - nodeList[j-1][0])/numberElem
@@ -111,12 +111,26 @@ for x in range(numberBeam):
     for m in range(numberElem):
         new = len(nodeList) + 1
         if (m != numberElem-2):
-            beamList.append([current, new])
+            elemList.append([current, new])
             nodeList.append([nodeList[current-1][0] + len_x, nodeList[current-1][1] + len_y, nodeList[current-1][2] + len_z])
 
             current = new
         else:
-            beamList.append([new, j])
+            elemList.append([new, j])
 
 print(nodeList)
-print(beamList)
+print(elemList)
+
+dofList = []
+
+dof = 1
+for i in range(len(nodeList)):
+    tmp = []
+    for j in range(6):
+        tmp.append(dof)
+        dof += 1
+    dofList.append(tmp)
+
+print(dofList)
+
+locel = []
