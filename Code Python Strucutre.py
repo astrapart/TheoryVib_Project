@@ -107,16 +107,38 @@ for x in range(numberBeam):
 
 dofList = []
 dof = 1
-for i in range(len(nodeList)):
+##dolist doit contenir tous les degrés de liberté de chaque noeud, mais il faut aussi ajouter les noeuds intermédiaire nécessaire à la simulation
+#il faut donc que le nombre de ligne soit égal au nombre de noeud principaux * nombre de noeud intérmédiaire
+
+for i in range(len(nodeList*number_elem)):
     tmp = []
     for j in range(6):
         tmp.append(dof)
         dof += 1
     dofList.append(tmp)
 
+#il faut créer les liens entre les noeuds cad toutes les bumes principales + les bumes horizontales (secondaire) en comptant les neouds intermédiaires
+
+locel = []
+
 #print(nodeList)
 #print(elemList)
 #print(dofList)
-#plot()
+plot()
 
-locel = []
+#Define parameter [densité, poisson, young, air section] en SI
+mainBeam_d = 1 #m
+othbeam_d = 0.6 #m
+thickn = 0.02 #m
+## Main Beam
+main_beam_prop = [7800, 0.3, 210*10**6, np.pi * (mainBeam_d /2)**2]
+
+## Other Beam
+other_beam_prop = [7800, 0.3, 210*10**6, np.pi * (othbeam_d /2)**2]
+
+## Rigid Link  
+rigid_link_prop = [main_beam_prop[0] * 10**4, 0.3, main_beam_prop[2] * 10**4, main_beam_prop[3] * 10**-2]
+
+# q = [u,v,w,phi1,phi2,phi3, ... (*nbre de point) ]*nombre d'elem
+q = np.matrix(number_elem * 3, len(node_list))
+
