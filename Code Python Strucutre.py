@@ -2,26 +2,6 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
-
-"""
-## Structure
-# Affichez les points sur le graphique 3D
-ax.plot([0,0], [0,0], [0,1], c='r'), ax.plot([5,5], [0,0], [0,1], c='r'), ax.plot([0,0], [5,5], [0,1], c='r'), ax.plot([5,5], [5,5], [0,1], c='r')
-ax.plot([0, 0.27], [0, 0.27], [1, 9], c='r'), ax.plot([0, 0.27], [5, 4.73], [1, 9], c='r'), ax.plot([5, 4.73], [0, 0.27], [1, 9], c='r'), ax.plot([5, 4.73], [5, 4.73], [1, 9], c='r')
-ax.plot([0.27, 0.51], [0.27, 0.51], [9, 17], c='r'), ax.plot([0.27, 0.51], [4.73, 4.49], [9, 17], c='r'), ax.plot([4.73, 4.49], [0.27, 0.51], [9, 17], c='r'), ax.plot([4.73, 4.49], [4.73, 4.49], [9, 17], c='r')
-ax.plot([0.51, 0.75], [0.51, 0.75], [17, 25], c='r'), ax.plot([0.51, 0.75], [4.49, 4.25], [17, 25], c='r'), ax.plot([4.49, 4.25], [0.51, 0.75], [17, 25], c='r'), ax.plot([4.49, 4.25], [4.49, 4.25], [17, 25], c='r')
-ax.plot([0, 0], [0, 5], [1, 1], c="b"), ax.plot([0, 5], [0, 0], [1, 1], c="b"), ax.plot([5, 5], [5, 0], [1, 1], c="b"), ax.plot([5, 0], [5, 5], [1, 1], c="b")
-ax.plot([0.27, 0.27], [0.27, 4.73], [9, 9], c="b"), ax.plot([0.27, 4.73], [0.27, 0.27], [9, 9], c="b"), ax.plot([4.73, 4.73], [4.73, 0.27], [9, 9], c="b"), ax.plot([4.73, 0.27], [4.73, 4.73], [9, 9], c="b")
-ax.plot([0.51, 0.51], [0.51, 4.49], [17, 17], c="b"), ax.plot([0.51, 4.49], [0.51, 0.51], [17, 17], c="b"), ax.plot([4.49, 4.49], [4.49, 0.51], [17, 17], c="b"), ax.plot([4.49, 0.51], [4.49, 4.49], [17, 17], c="b")
-ax.plot([0.75, 0.75], [0.75, 4.25], [25, 25], c="b"), ax.plot([0.75, 4.25], [0.75, 0.75], [25, 25], c="b"), ax.plot([4.25, 4.25], [4.25, 0.75], [25, 25], c="b"), ax.plot([4.25, 0.75], [4.25, 4.25], [25, 25], c="b")
-ax.plot([0, 0.27], [5, 0.27], [1, 9], c="b"), ax.plot([5, 0.27], [0, 0.27], [1, 9], c="b"), ax.plot([0, 4.73], [5, 4.73], [1, 9], c="b"), ax.plot([5, 4.73], [0, 4.73], [1, 9], c="b")
-ax.plot([0.27, 0.51], [0.27, 4.49], [9, 17], c="b"), ax.plot([0.51, 4.73], [4.49, 4.73], [17, 9], c="b"), ax.plot([4.73, 4.49], [4.73, 0.51], [9, 17], c="b"), ax.plot([4.49, 0.27], [0.51, 0.27], [17, 9], c="b")
-ax.plot([0.51, 0.75], [0.51, 4.25], [17, 25], c="b"), ax.plot([0.75, 4.49], [4.25, 4.49], [25, 17], c="b"), ax.plot([4.49, 4.25], [4.49, 0.75], [17, 25], c="b"), ax.plot([4.25, 0.51], [0.75, 0.51], [25, 17], c="b")
-ax.plot([0.75,4.25], [0.75, 4.25], [25, 25], c='g'), ax.plot([0.75,4.25], [4.25, 0.75], [25, 25], c='g'), ax.plot([2.5, 2.5], [2.5, 2.5], [25, 80], c='g')
-"""
-
-
-
 tan_3 = np.tan(np.radians(3))
 nodeList = [[0, 0, 0],        				# node 1
             [5, 0, 0],       				# node 2
@@ -118,9 +98,7 @@ for i in range(len(nodeList*numberElem)):
         tmp.append(dof)
         dof += 1
     dofList.append(tmp)
-
-#il faut créer les liens entre les noeuds cad toutes les bumes principales + les bumes horizontales (secondaire) en comptant les neouds intermédiaires
-
+    
 locel = []
 for i in range(len(elemList)):
     dofNode1 = dofList[elemList[i][0]-1]
@@ -148,8 +126,6 @@ rigid_link_prop = [main_beam_prop[0] * 10**4, 0.3, main_beam_prop[2] * 10**4, ma
 
 proprieties = [main_beam_prop, other_beam_prop, rigid_link_prop]
 
-# q = [u,v,w,phi1,phi2,phi3, ... (*nbre de point) ]*nombre d'elem
-#q = np.matrix(numberElem * 3, len(nodeList))
 
 M = np.zeros((len(nodeList)*6, len(nodeList)*6))
 K = np.zeros((len(nodeList)*6, len(nodeList)*6))
@@ -165,3 +141,49 @@ for elem in elemList:
     l = np.sqrt((coord1[0] - coord2[0])*(coord1[0] - coord2[0]) + (coord1[1] - coord2[1])*(coord1[1] - coord2[1]) + (coord1[2] - coord2[2])*(coord1[2] - coord2[2]))
     prop = proprieties[propriety]
     m = prop[0]*prop[3]*l
+    
+    
+
+A = 0
+E = 0
+Jx = 0
+Iz = 0
+Iy = 0
+l = 1
+G = 0
+r = 0
+rho = 0
+
+# Elementary stiffness matrix
+Kel = np.array([
+    [E*A/l, 0, 0, 0, 0, 0, -E*A/l, 0, 0, 0, 0, 0],
+    [0,12*E*Iz/l**3, 0, 0, 0, 6*E*Iz/l**2, 0, -12*E*Iz/l**3, 0, 0, 0, 6*E*Iz/l**2],
+    [0, 0, 12*E*Iy/l**3, 0, -6*E*Iy/l**2, 0, 0, 0, -12*E*Iy/l**3, 0, -6*E*Iy/l**2, 0],
+    [0, 0, 0, G*Jx/l, 0, 0, 0, 0, 0, -G*Jx/l, 0, 0],
+    [0, 0, -6*E*Iy/l**2, 0, 4*E*Iy/l, 0, 0, 0, 6*E*Iy/l**2, 0, 2*E*Iy/l, 0],
+    [0, 6*E*Iz/l**2, 0, 0, 0, 4*E*Iz/l, 0, -6*E*Iz/l**2, 0, 0, 0, 2*E*Iy/l],
+    [-E*A/l, 0, 0, 0, 0, 0, E*A/l, 0, 0, 0, 0, 0],
+    [0, -12*E*Iz/l**3, 0, 0, 0, -6*E*Iz/l**2, 0, 12*E*Iz/l**3, 0, 0, 0, -6*E*Iz/l**2],
+    [0, 0, -12*E*Iy/l**3, 0, 6*E*Iy/l**2, 0, 0, 0, 12*E*Iy/l**3, 0, 6*E*Iy/l**2, 0],
+    [0, 0, 0, -G*Jx/l, 0, 0, 0, 0, 0, G*Jx/l, 0, 0],
+    [0, 0, -6*E*Iy, 0, 2*E*Iy/l, 0, 0, 0, 6*E*Iy/l**2, 0, 4*E*Iy/l, 0],
+    [0, 6*E*Iz/l**2, 0, 0, 0, 2*E*Iz/l, 0, -6*E*Iz/l**2, 0, 0, 0, 4*E*Iz/l]
+    ])
+
+# Elementary mass matrix
+Mel = rho * A * l * np.array([
+    [1/3, 0, 0, 0, 0, 0, 1/6, 0, 0, 0, 0, 0],
+    [0, 13/35, 0, 0, 0, 11*l/210, 0, 9/70, 0, 0, 0, -13*l/420],
+    [0, 0, 13/35, 0, -11*l/210, 0, 0, 0, 9/70, 0, 13*l/420, 0],
+    [0, 0, 0, r**2/3, 0, 0, 0, 0, 0, r**2/6, 0, 0],
+    [0, 0, -11*l/210, 0, l**2/105, 0, 0, 0, -13*l/420, 0, -l**2/140, 0],
+    [0, 11*l/210, 0, 0, 0, l**2/105, 0, 13*l/420, 0, 0, 0, -l**2/140],
+    [1/6, 0, 0, 0, 0, 0, 1/3, 0, 0, 0, 0, 0],
+    [0, 9/70, 0, 0, 0, 13*l/420, 0, 13/35, 0, 0, 0, -11*l/210],
+    [0, 0, 9/70, 0, -13*l/420, 0, 0, 0, 13/35, 0, 11*l/210, 0],
+    [0, 0, 0, r**2/6, 0, 0, 0, 0, 0, r**2/3, 0, 0],
+    [0, 0, 13*l/420, 0, -l**2/140, 0, 0, 0, 11*l/210, 0, l**2/105, 0],
+    [0, -13*l/420, 0, 0, 0, -l**2/140, 0, -11*l/210, 0, 0, 0, l**2/105]
+    ])
+
+    
