@@ -151,8 +151,8 @@ proprieties = [main_beam_prop, other_beam_prop, rigid_link_prop]
 # q = [u,v,w,phi1,phi2,phi3, ... (*nbre de point) ]*nombre d'elem
 #q = np.matrix(numberElem * 3, len(nodeList))
 
-M = np.zeros((len(nodeList), len(nodeList)))
-K = np.zeros((len(nodeList), len(nodeList)))
+M = np.zeros((len(nodeList)*6, len(nodeList)*6))
+K = np.zeros((len(nodeList)*6, len(nodeList)*6))
 
 for elem in elemList:
     node1 = elem[0]-1
