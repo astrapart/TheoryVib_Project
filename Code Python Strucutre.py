@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 
+
 """
 ## Structure
 # Affichez les points sur le graphique 3D
@@ -44,17 +45,17 @@ nodeList = [[0, 0, 0],        				# node 1
             [5-25*tan_3, 5-25*tan_3, 25],  	# node 20
             ]
 
-elemList = [[1, 5], [2, 6], [3, 7], [4, 8],
-            [5, 9], [6, 10], [7, 11], [8, 12],
-            [9, 13], [10, 14], [11, 15], [12, 16],
-            [13, 17], [14, 18], [15, 19], [16, 20],
-            [5, 6], [5, 7], [6, 8], [8, 7],
-            [9, 10], [9, 11], [11, 12], [12, 10],
-            [13, 14], [13, 15], [15, 16], [16, 14],
-            [17, 18], [17, 19], [19, 20], [20, 18],
-            [9, 6], [6, 12], [12, 7], [7, 9],
-            [14, 9], [9, 15], [15, 12], [12, 14],
-            [17, 15], [15, 20], [20, 14], [14, 17]
+elemList = [[1, 5, 0], [2, 6, 0], [3, 7, 0], [4, 8, 0],
+            [5, 9, 0], [6, 10, 0], [7, 11, 0], [8, 12, 0],
+            [9, 13, 0], [10, 14, 0], [11, 15, 0], [12, 16, 0],
+            [13, 17, 0], [14, 18, 0], [15, 19, 0], [16, 20, 0],
+            [5, 6, 1], [5, 7, 1], [6, 8, 1], [8, 7, 1],
+            [9, 10, 1], [9, 11, 1], [11, 12, 1], [12, 10, 1],
+            [13, 14, 1], [13, 15, 1], [15, 16, 1], [16, 14, 1],
+            [17, 18, 1], [17, 19, 1], [19, 20, 1], [20, 18, 1],
+            [9, 6, 1], [6, 12, 1], [12, 7, 1], [7, 9, 1],
+            [14, 9, 1], [9, 15, 1], [15, 12, 1], [12, 14, 1],
+            [17, 15, 1], [15, 20, 1], [20, 14, 1], [14, 17, 1]
             ]
 def plot ():
     # Créez une figure 3D
@@ -75,7 +76,7 @@ def plot ():
     ax.set_zlabel('Axe Z')
 
     # Affichez le graphique
-    plt.show()
+    #plt.show()
 
 
 numberElem = 3
@@ -83,6 +84,7 @@ numberBeam = len(elemList)
 for x in range(numberBeam):
     i = elemList[x][0]
     j = elemList[x][1]
+    propriety = elemList[x][2]
 
     current = i
     len_x = abs(nodeList[i-1][0] - nodeList[j-1][0])/numberElem
@@ -98,19 +100,19 @@ for x in range(numberBeam):
     for m in range(numberElem):
         new = len(nodeList) + 1
         if (m != numberElem-2):
-            elemList.append([current, new])
-            nodeList.append([nodeList[current-1][0] + len_x, nodeList[current-1][1] + len_y, nodeList[current-1][2] + len_z])
+            elemList.append([current, new, propriety])
+            nodeList.append([nodeList[current-1][0] + len_x, nodeList[current-1][1] + len_y, nodeList[current-1][2] + len_z, propriety])
 
             current = new
         else:
-            elemList.append([new, j])
+            elemList.append([new, j, propriety])
 
 dofList = []
 dof = 1
-##dolist doit contenir tous les degrés de liberté de chaque noeud, mais il faut aussi ajouter les noeuds intermédiaire nécessaire à la simulation
+##TODO doit contenir tous les degrés de liberté de chaque noeud, mais il faut aussi ajouter les noeuds intermédiaire nécessaire à la simulation
 #il faut donc que le nombre de ligne soit égal au nombre de noeud principaux * nombre de noeud intérmédiaire
 
-for i in range(len(nodeList*number_elem)):
+for i in range(len(nodeList*numberElem)):
     tmp = []
     for j in range(6):
         tmp.append(dof)
@@ -120,25 +122,46 @@ for i in range(len(nodeList*number_elem)):
 #il faut créer les liens entre les noeuds cad toutes les bumes principales + les bumes horizontales (secondaire) en comptant les neouds intermédiaires
 
 locel = []
+for i in range(len(elemList)):
+    dofNode1 = dofList[elemList[i][0]-1]
+    dofNode2 = dofList[elemList[i][1]-1]
+    locel.append(dofNode1 + dofNode2)
 
 #print(nodeList)
 #print(elemList)
 #print(dofList)
+#print(locel)
 plot()
 
-#Define parameter [densité, poisson, young, air section] en SI
+#Define parameter [densité [kg/m3], poisson [-], young [GPa], air section [m2]] en SI
 mainBeam_d = 1 #m
 othbeam_d = 0.6 #m
 thickn = 0.02 #m
 ## Main Beam
-main_beam_prop = [7800, 0.3, 210*10**6, np.pi * (mainBeam_d /2)**2]
+main_beam_prop = [7800, 0.3, 210*10**6, np.pi * ((mainBeam_d /2)**2-(mainBeam_d/2 - thickn)**2)]
 
 ## Other Beam
-other_beam_prop = [7800, 0.3, 210*10**6, np.pi * (othbeam_d /2)**2]
+other_beam_prop = [7800, 0.3, 210*10**6, np.pi * ((othbeam_d /2)**2 - (othbeam_d/2 - thickn)**2)]
 
 ## Rigid Link  
 rigid_link_prop = [main_beam_prop[0] * 10**4, 0.3, main_beam_prop[2] * 10**4, main_beam_prop[3] * 10**-2]
 
-# q = [u,v,w,phi1,phi2,phi3, ... (*nbre de point) ]*nombre d'elem
-q = np.matrix(number_elem * 3, len(node_list))
+proprieties = [main_beam_prop, other_beam_prop, rigid_link_prop]
 
+# q = [u,v,w,phi1,phi2,phi3, ... (*nbre de point) ]*nombre d'elem
+#q = np.matrix(numberElem * 3, len(nodeList))
+
+M = np.zeros((len(nodeList), len(nodeList)))
+K = np.zeros((len(nodeList), len(nodeList)))
+
+for elem in elemList:
+    node1 = elem[0]-1
+    node2 = elem[1]-1
+    propriety = elem[2]
+
+    coord1 = nodeList[node1]
+    coord2 = nodeList[node2]
+
+    l = np.sqrt((coord1[0] - coord2[0])*(coord1[0] - coord2[0]) + (coord1[1] - coord2[1])*(coord1[1] - coord2[1]) + (coord1[2] - coord2[2])*(coord1[2] - coord2[2]))
+    prop = proprieties[propriety]
+    m = prop[0]*prop[3]*l
