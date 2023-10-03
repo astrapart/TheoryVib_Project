@@ -56,7 +56,7 @@ def plot ():
     ax.set_zlabel('Axe Z')
 
     # Affichez le graphique
-    #plt.show()
+    plt.show()
 
 
 numberElem = 3
@@ -109,7 +109,7 @@ for i in range(len(elemList)):
 #print(elemList)
 #print(dofList)
 #print(locel)
-plot()
+#plot()
 
 #Define parameter [densité [kg/m3], poisson [-], young [GPa], air section [m2]] en SI
 mainBeam_d = 1 #m
