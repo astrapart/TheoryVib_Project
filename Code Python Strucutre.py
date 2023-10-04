@@ -141,6 +141,7 @@ for elem in elemList:
     l = np.sqrt((coord1[0] - coord2[0])*(coord1[0] - coord2[0]) + (coord1[1] - coord2[1])*(coord1[1] - coord2[1]) + (coord1[2] - coord2[2])*(coord1[2] - coord2[2]))
     prop = proprieties[propriety]
     m = prop[0]*prop[3]*l
+<<<<<<< Updated upstream
     
     
 
@@ -187,3 +188,33 @@ Mel = rho * A * l * np.array([
     ])
 
     
+=======
+    E = prop[2]
+    A = prop[3]
+    Ix = 0.0
+    Iy = 0.0 #TODO trouver les inerties des éléments
+    Iz = 0.0
+    G = 0.0
+    Jx = 0.0
+
+
+    Ke = [[E*A/l, 0, 0, 0, 0, 0, -E*A/l, 0, 0, 0, 0, 0],
+          [0, 12*E*Iz/l**3, 0, 0, 0, 6*E*Iz/l**2, 0, -12*E*Iz/l**3, 0, 0, 0, 6*E*Iz/l**2],
+          [0, 0, 12*E*Iy/l**3, 0, -6*E*Iy/l**2, 0, 0, 0, -12*E*Iy/l**3, 0, -6*E*Iy/l**2, 0],
+          [0, 0, 0, G*Jx/l, 0, 0, 0, 0, 0, -G*Jx/l, 0, 0],
+          [0, 0, -6*E*Iy/l**2, 0, 4*E*Iy/l, 0, 0, 0, 6*E*Iy/l**2, 0, 2*E*Iy/l, 0],
+          [0, 6*E*Iz/l**2, 0, 0, 0, E*A/l, 0, 0, 0, 0, 0],
+          [-E*A/l, 0, 0, 0, 0, 0, 12*E*Iz/l**3, 0, 0, 0, -6*E*Iz/l**2],
+          [0, -12*E*Iz/l**3, 0, 0, 0, 0, 0],
+          [0, 0, -12*E*Iy/l**3, 0, 6*E*Iy/l**2, 0, 0],
+          [0, 0, 0, -G*Jx/l, 0, 0, 0],
+          [0, 0, -6*E*Iy/l**2, 0, 2*E*Iy/l, 0],
+          [0, 6*E*Iz/l**2, 0, 0, 0, 0]]
+
+    Me = []
+
+    for loc in locel:
+        for dof1 in loc:
+            for dof2 in loc:
+                K[dof1][dof2] = K[dof1][dof2] + 
+>>>>>>> Stashed changes
