@@ -144,17 +144,19 @@ for i in range(len(elemList)):
     
     prop = proprieties[propriety]
     rho = prop[0]
-    A = prop[3]
+    A = prop[3] # [m2]
     E = prop[2]
+    v = prop[1] # [-]
     Ri = prop[4]
     Re = prop[5]
     
     m = prop[0] * prop[3] * l
-    Jx = m *( (Re**2 + Ri**2)/4 + l**2/12)
-    Iy = m *( (Re**2 + Ri**2)/4 + l**2/12)
-    Iz = m *(Re**2 + Ri**2)/2
-    G = 0
-    r = 0
+    Ix = m * ((Re**2 + Ri**2)/4 + l**2/12)
+    Iy = m * ((Re**2 + Ri**2)/4 + l**2/12)
+    Iz = m * (Re**2 + Ri**2)/2
+    Jx = Ix/2
+    G = E/2*(1+v)
+    r = Re - Ri
 
     # Elementary stiffness matrix
     Kel = np.array([
@@ -187,6 +189,31 @@ for i in range(len(elemList)):
         [0, 0, 13 * l / 420, 0, -l ** 2 / 140, 0, 0, 0, 11 * l / 210, 0, l ** 2 / 105, 0],
         [0, -13 * l / 420, 0, 0, 0, -l ** 2 / 140, 0, -11 * l / 210, 0, 0, 0, l ** 2 / 105]
     ])
+
+    P1 = coord1
+    P2 = coord2
+    P3 = [2.5, 2.5, 0]
+
+    d2 = [P2[0] - P1[0], P2[1] - P1[1], P2[2] - P1[2]]
+    d3 = [P3[0] - P1[0], P3[1] - P1[1], P3[2] - P1[2]]
+
+    ex = [(P2[0]-P1[0])/l, (P2[1]-P1[1])/l, (P2[2]-P1[2])/l]
+    ey = np.cross(d2, d3)/np.linalg.norm(np.cross(d2, d3))
+    ez = np.cross(ex, ey)
+    localAxe = [ex, ey, ez]
+
+    eX = [1,0,0]
+    eY = [0,1,0]
+    eZ = [0,0,1]
+    globalAxe = [eX, eY, eZ]
+
+    R = [[],[],[]]
+
+    for i in range(3):
+        for j in range(3):
+            R[i].append(np.dot(globalAxe[j], localAxe[i]))
+
+    
 
     #Assemblage Matrice globale
     for j in range(len(locel[i])):
