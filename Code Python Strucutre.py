@@ -26,7 +26,7 @@ nodeList = [[0, 0, 0],  # node 1
             [5 - 25 * tan_3, 5 - 25 * tan_3, 25],  # node 20
             ]
 
-elemList = [[1, 5, 0], [2, 6, 0], [3, 7, 0], [4, 8, 0],
+elemList0 = [[1, 5, 0], [2, 6, 0], [3, 7, 0], [4, 8, 0],
             [5, 9, 0], [6, 10, 0], [7, 11, 0], [8, 12, 0],
             [9, 13, 0], [10, 14, 0], [11, 15, 0], [12, 16, 0],
             [13, 17, 0], [14, 18, 0], [15, 19, 0], [16, 20, 0],
@@ -36,9 +36,7 @@ elemList = [[1, 5, 0], [2, 6, 0], [3, 7, 0], [4, 8, 0],
             [17, 18, 1], [17, 19, 1], [19, 20, 1], [20, 18, 1],
             [9, 6, 1], [6, 12, 1], [12, 7, 1], [7, 9, 1],
             [14, 9, 1], [9, 15, 1], [15, 12, 1], [12, 14, 1],
-            [17, 15, 1], [15, 20, 1], [20, 14, 1], [14, 17, 1]
-            ]
-
+            [17, 15, 1], [15, 20, 1], [20, 14, 1], [14, 17, 1]]
 
 def plot():
     # Créez une figure 3D
@@ -63,11 +61,13 @@ def plot():
 
 
 numberElem = 3
-numberBeam = len(elemList)
+numberBeam = len(elemList0)
+elemList = []
+
 for x in range(numberBeam):
-    i = elemList[x][0]
-    j = elemList[x][1]
-    propriety = elemList[x][2]
+    i = elemList0[x][0]
+    j = elemList0[x][1]
+    propriety = elemList0[x][2]
 
     current = i
     len_x = abs(nodeList[i - 1][0] - nodeList[j - 1][0]) / numberElem
@@ -82,15 +82,14 @@ for x in range(numberBeam):
 
     for m in range(numberElem):
         new = len(nodeList) + 1
-        if (m != numberElem - 2):
+        if m != (numberElem - 2):
             elemList.append([current, new, propriety])
-            nodeList.append(
-                [nodeList[current - 1][0] + len_x, nodeList[current - 1][1] + len_y, nodeList[current - 1][2] + len_z,
-                 propriety])
+            nodeList.append([nodeList[current - 1][0] + len_x, nodeList[current - 1][1] + len_y, nodeList[current - 1][2] + len_z,propriety])
 
             current = new
         else:
             elemList.append([new, j, propriety])
+
 
 dofList = []
 dof = 1
@@ -112,6 +111,7 @@ for i in range(len(elemList)):
 # print(dofList)
 # print(locel)
 # plot()
+
 
 # Define parameter [densité [kg/m3], poisson [-], young [GPa], air section [m2], Rayon interne [m], Rayon externe[] en SI
 mainBeam_d = 1  # m
@@ -145,11 +145,11 @@ for i in range(len(elemList)):
     
     prop = proprieties[propriety]
     rho = prop[0]
-    A = prop[3] # [m2]
-    E = prop[2]
     v = prop[1] # [-]
-    Ri = prop[4]
-    Re = prop[5]
+    E = prop[2] # [GPa]
+    A = prop[3] # [m2]
+    Ri = prop[4] # [m]
+    Re = prop[5] # [m
     
     m = prop[0] * prop[3] * l
     Ix = m * ((Re**2 + Ri**2)/4 + l**2/12)
@@ -203,39 +203,51 @@ for i in range(len(elemList)):
     ez = np.cross(ex, ey)
     localAxe = [ex, ey, ez]
 
-    eX = [1,0,0]
-    eY = [0,1,0]
-    eZ = [0,0,1]
+    eX = [1, 0, 0]
+    eY = [0, 1, 0]
+    eZ = [0, 0, 1]
     globalAxe = [eX, eY, eZ]
 
-    R = [[],[],[]]
+    R = [[], [], []]
 
-    for i in range(3):
-        for j in range(3):
-            R[i].append(np.dot(globalAxe[j], localAxe[i]))
-            
-            
-    import numpy as np
+    for j in range(3):
+        for k in range(3):
+            R[j].append(np.dot(globalAxe[k], localAxe[j]))
+
 
     T = np.zeros((12, 12))
-    for i in range(3):
-        for j in range(3):
+    for j in range(3):
+        for k in range(3):
         # Remplissage de la diagonale supérieure gauche de T avec les valeurs de R
-            T[i][j] = R[i][j]
-            T[i + 3][j + 3] = R[i][j]
-            T[i + 6][j + 6] = R[i][j]
-            T[i + 9][j + 9] = R[i][j]
+            T[j][k] = R[j][k]
+            T[j + 3][k + 3] = R[j][k]
+            T[j + 6][k + 6] = R[j][k]
+            T[j + 9][k + 9] = R[j][k]
             
-    Kes = np.dot(np.dot(np.transpose(T),Kel),T)
-    Mes = np.dot(np.dot(np.transpose(T),Mel),T)
+    Kes = np.dot(np.dot(np.transpose(T), Kel), T)
+    Mes = np.dot(np.dot(np.transpose(T), Mel), T)
+
 
     #Assemblage Matrice globale
     for j in range(len(locel[i])):
         for k in range(len(locel[i])):
-            M[locel[i][j]-1][locel[i][k]-1] += Mes[j][k]
-            K[locel[i][j]-1][locel[i][k]-1] += Kes[j][k]
 
-eigenvals, eigenvects = scipy.linalg.eigh(K,M)
-print(sort(eigenvals)[0:8])
+            M[locel[i][j]-1][locel[i][k]-1] = M[locel[i][j]-1][locel[i][k]-1] + Mes[j][k]
+            K[locel[i][j]-1][locel[i][k]-1] = K[locel[i][j]-1][locel[i][k]-1] + Kes[j][k]
+
+
+nodeConstraint = [1, 2, 3, 4]
+
+for node in nodeConstraint:
+    for dof in dofList[node-1]:
+        for i in range(M.shape[0]):
+            M[dof-1][i] = 0
+            M[i][dof-1] = 0
+
+            K[dof - 1][i] = 0
+            K[i][dof - 1] = 0
+
+eigenvals, eigenvects = scipy.linalg.eigh(K, M)
+print(sorted(eigenvals)[0:8])
 
     
