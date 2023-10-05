@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+import scipy
 
 tan_3 = np.tan(np.radians(3))
 nodeList = [[0, 0, 0],  # node 1
@@ -212,14 +213,29 @@ for i in range(len(elemList)):
     for i in range(3):
         for j in range(3):
             R[i].append(np.dot(globalAxe[j], localAxe[i]))
+            
+            
+    import numpy as np
 
-    
+    T = np.zeros((12, 12))
+    for i in range(3):
+        for j in range(3):
+        # Remplissage de la diagonale supérieure gauche de T avec les valeurs de R
+            T[i][j] = R[i][j]
+            T[i + 3][j + 3] = R[i][j]
+            T[i + 6][j + 6] = R[i][j]
+            T[i + 9][j + 9] = R[i][j]
+            
+    Kes = np.dot(np.dot(np.transpose(T),Kel),T)
+    Mes = np.dot(np.dot(np.transpose(T),Mel),T)
 
     #Assemblage Matrice globale
     for j in range(len(locel[i])):
         for k in range(len(locel[i])):
+            M[locel[i][j]-1][locel[i][k]-1] += Mes[j][k]
+            K[locel[i][j]-1][locel[i][k]-1] += Kes[j][k]
 
-            M[locel[i][j]-1][locel[i][k]-1] += Mel[j][k]
+eigenvals, eigenvects = scipy.linalg.eigh(K,M)
+print(sort(eigenvals)[0:8])
 
-            K[locel[i][j]-1][locel[i][k]-1] += Kel[j][k]
-
+    
