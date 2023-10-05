@@ -93,9 +93,6 @@ for x in range(numberBeam):
 
 dofList = []
 dof = 1
-##TODO doit contenir tous les degrés de liberté de chaque noeud, mais il faut aussi ajouter les noeuds intermédiaire nécessaire à la simulation
-# il faut donc que le nombre de ligne soit égal au nombre de noeud principaux * nombre de noeud intérmédiaire
-
 for i in range(len(nodeList * numberElem)):
     tmp = []
     for j in range(6):
@@ -115,18 +112,18 @@ for i in range(len(elemList)):
 # print(locel)
 # plot()
 
-# Define parameter [densité [kg/m3], poisson [-], young [GPa], air section [m2]] en SI
+# Define parameter [densité [kg/m3], poisson [-], young [GPa], air section [m2], Rayon interne [m], Rayon externe[] en SI
 mainBeam_d = 1  # m
 othbeam_d = 0.6  # m
 thickn = 0.02  # m
 ## Main Beam
-main_beam_prop = [7800, 0.3, 210 * 10 ** 6, np.pi * ((mainBeam_d / 2) ** 2 - (mainBeam_d / 2 - thickn) ** 2)]
+main_beam_prop = [7800, 0.3, 210 * 10 ** 6, np.pi * ((mainBeam_d / 2) ** 2 - (mainBeam_d / 2 - thickn) ** 2), mainBeam_d/2, (mainBeam_d - 2*thickn)/2]
 
 ## Other Beam
-other_beam_prop = [7800, 0.3, 210 * 10 ** 6, np.pi * ((othbeam_d / 2) ** 2 - (othbeam_d / 2 - thickn) ** 2)]
+other_beam_prop = [7800, 0.3, 210 * 10 ** 6, np.pi * ((othbeam_d / 2) ** 2 - (othbeam_d / 2 - thickn) ** 2), othbeam_d/2, (othbeam_d - 2*thickn)/2]
 
 ## Rigid Link  
-rigid_link_prop = [main_beam_prop[0] * 10 ** 4, 0.3, main_beam_prop[2] * 10 ** 4, main_beam_prop[3] * 10 ** -2]
+rigid_link_prop = [main_beam_prop[0] * 10 ** 4, 0.3, main_beam_prop[2] * 10 ** 4, main_beam_prop[3] * 10 ** -2, mainBeam_d/2, (mainBeam_d - 2*thickn)/2]
 
 proprieties = [main_beam_prop, other_beam_prop, rigid_link_prop]
 
@@ -144,17 +141,20 @@ for i in range(len(elemList)):
     l = np.sqrt(
         (coord1[0] - coord2[0]) * (coord1[0] - coord2[0]) + (coord1[1] - coord2[1]) * (coord1[1] - coord2[1]) + (
                 coord1[2] - coord2[2]) * (coord1[2] - coord2[2]))
+    
     prop = proprieties[propriety]
-    m = prop[0] * prop[3] * l
-
+    rho = prop[0]
     A = prop[3]
     E = prop[2]
-    Jx = 0
-    Iz = 0
-    Iy = 0
+    Ri = prop[4]
+    Re = prop[5]
+    
+    m = prop[0] * prop[3] * l
+    Jx = m *( (Re**2 + Ri**2)/4 + l**2/12)
+    Iy = m *( (Re**2 + Ri**2)/4 + l**2/12)
+    Iz = m *(Re**2 + Ri**2)/2
     G = 0
     r = 0
-    rho = 0
 
     # Elementary stiffness matrix
     Kel = np.array([
@@ -173,7 +173,7 @@ for i in range(len(elemList)):
     ])
 
     # Elementary mass matrix
-    Mel = rho * A * l * np.array([
+    Mel = m * np.array([
         [1 / 3, 0, 0, 0, 0, 0, 1 / 6, 0, 0, 0, 0, 0],
         [0, 13 / 35, 0, 0, 0, 11 * l / 210, 0, 9 / 70, 0, 0, 0, -13 * l / 420],
         [0, 0, 13 / 35, 0, -11 * l / 210, 0, 0, 0, 9 / 70, 0, 13 * l / 420, 0],
