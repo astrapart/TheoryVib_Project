@@ -179,9 +179,15 @@ def create_properties(mainBeam_d, othbeam_d, thickn):
 def Add_const_emboit(nodeConstraint,dofList, M, K):
     for node in nodeConstraint:
         for dof in dofList[node - 1]:
-            for i in range(M.shape[0]):
+            for i in range(len(M)):
                 M[dof - 1][i] = 0
                 M[i][dof - 1] = 0
 
                 K[dof - 1][i] = 0
                 K[i][dof - 1] = 0
+
+def Add_lumped_mass(nodeLumped_mass, dofList, M):
+    for node, mass in nodeLumped_mass:
+        for i in dofList[node - 1]:
+            for j in dofList[node - 1]:
+                M[i-1][j-1] += mass

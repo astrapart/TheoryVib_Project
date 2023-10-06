@@ -46,6 +46,9 @@ elemList = fct.create_elemList(elemList0, nodeList, numberElem)
 dofList = fct.create_dofList(dof, nodeList, numberElem)
 locel = fct.create_locel(elemList,dofList)
 
+nodeConstraint = np.array([1, 2, 3, 4])
+nodeLumped = np.array([[22, 200000]])
+
 #fct.plot(elemList, nodeList)
 
 # Define properties
@@ -68,8 +71,7 @@ for i in range(len(elemList)):
     coord2 = nodeList[node2]
 
     l = np.sqrt((coord1[0] - coord2[0])**2 + (coord1[1] - coord2[1])**2 + (coord1[2] - coord2[2])**2)
-    
-    
+
     prop = proprieties[propriety]
     rho = prop[0]
     v = prop[1]  # [-]
@@ -85,21 +87,33 @@ for i in range(len(elemList)):
     Jx = Ix * 2  # [kg*m2]
     G = E / (2 * (1 + v))  # [GPa]
     r = np.sqrt(Iy/A)  # [kg]
-    
+
     """
     if prop == 2:
         Jx *= 10**4
         Iy *= 10**4
         Iz *= 10**4
     """
-    
+
     Kel = fct.create_Kel(E,A,Jx,Iy,Iz,G,l)
     Mel = fct.create_Mel(m,r,l)
     T = fct.create_T(coord1,coord2,l)
-    
-    
+
+
     Kes = np.dot(np.dot(np.transpose(T), Kel), T)
     Mes = np.dot(np.dot(np.transpose(T), Mel), T)
+
+    if nodeConstraint.__contains__(node1+1):
+        for j in range(6):
+            for k in range(6):
+                Kes[j][k] = 0
+                Mes[j][k] = 0
+
+    elif nodeConstraint.__contains__(node2+1):
+        for j in range(6):
+            for k in range(6):
+                Kes[j+6][k+6] = 0
+                Mes[j+6][k+6] = 0
 
     # Assemblage Matrice globale
     for j in range(len(locel[i])):
@@ -107,18 +121,11 @@ for i in range(len(elemList)):
             M[locel[i][j] - 1][locel[i][k] - 1] = M[locel[i][j] - 1][locel[i][k] - 1] + Mes[j][k]
             K[locel[i][j] - 1][locel[i][k] - 1] = K[locel[i][j] - 1][locel[i][k] - 1] + Kes[j][k]
 
-"""
-nodeLumped = [22]
 
-def Add_lumped_mass(nodeLumped, mass):
-    for node in nodeLumped:
-        for dof in dofList[node - 1]:
-            M[dof][dof] += mass
+fct.Add_lumped_mass(nodeLumped, dofList, M)
 
-Add_lumped_mass(nodeLumped, 200000)
-"""
-nodeConstraint = [1, 2, 3, 4]
-#fct.Add_const_emboit(nodeConstraint,dofList, M, K)
+
+#fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
 
 eigenvals, eigenvects = scipy.linalg.eigh(K, M)
