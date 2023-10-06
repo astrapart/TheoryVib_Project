@@ -118,10 +118,10 @@ mainBeam_d = 1  # m
 othbeam_d = 0.6  # m
 thickn = 0.02  # m
 ## Main Beam
-main_beam_prop = [7800, 0.3, 210 * 10 ** 6, np.pi * ((mainBeam_d / 2) ** 2 - (mainBeam_d / 2 - thickn) ** 2), mainBeam_d/2, (mainBeam_d - 2*thickn)/2]
+main_beam_prop = [7800, 0.3, 210 * (10 ** 6), np.pi * ((mainBeam_d / 2) ** 2 - (mainBeam_d / 2 - thickn) ** 2), mainBeam_d/2, (mainBeam_d - 2*thickn)/2]
 
 ## Other Beam
-other_beam_prop = [7800, 0.3, 210 * 10 ** 6, np.pi * ((othbeam_d / 2) ** 2 - (othbeam_d / 2 - thickn) ** 2), othbeam_d/2, (othbeam_d - 2*thickn)/2]
+other_beam_prop = [7800, 0.3, 210 * (10 ** 6), np.pi * ((othbeam_d / 2) ** 2 - (othbeam_d / 2 - thickn) ** 2), othbeam_d/2, (othbeam_d - 2*thickn)/2]
 
 ## Rigid Link  
 rigid_link_prop = [main_beam_prop[0] * 10 ** 4, 0.3, main_beam_prop[2] * 10 ** 4, main_beam_prop[3] * 10 ** -2, mainBeam_d/2, (mainBeam_d - 2*thickn)/2]
@@ -156,7 +156,7 @@ for i in range(len(elemList)):
     Iy = m * ((Re**2 + Ri**2)/4 + l**2/12)
     Iz = m * (Re**2 + Ri**2)/2
     Jx = Ix/2
-    G = E/2*(1+v)
+    G = E/(2*(1+v))
     r = Re - Ri
 
     # Elementary stiffness matrix
@@ -193,10 +193,11 @@ for i in range(len(elemList)):
 
     P1 = coord1
     P2 = coord2
-    P3 = [2.5, 2.5, 0]
+    P3 = [0.5, 0.5, 0]
 
     d2 = [P2[0] - P1[0], P2[1] - P1[1], P2[2] - P1[2]]
     d3 = [P3[0] - P1[0], P3[1] - P1[1], P3[2] - P1[2]]
+
 
     ex = [(P2[0]-P1[0])/l, (P2[1]-P1[1])/l, (P2[2]-P1[2])/l]
     ey = np.cross(d2, d3)/np.linalg.norm(np.cross(d2, d3))
@@ -212,13 +213,13 @@ for i in range(len(elemList)):
 
     for j in range(3):
         for k in range(3):
+            # Je crois qu'il faut inverser k et j => a vérifier
             R[j].append(np.dot(globalAxe[k], localAxe[j]))
 
 
     T = np.zeros((12, 12))
     for j in range(3):
         for k in range(3):
-        # Remplissage de la diagonale supérieure gauche de T avec les valeurs de R
             T[j][k] = R[j][k]
             T[j + 3][k + 3] = R[j][k]
             T[j + 6][k + 6] = R[j][k]
@@ -227,7 +228,6 @@ for i in range(len(elemList)):
     Kes = np.dot(np.dot(np.transpose(T), Kel), T)
     Mes = np.dot(np.dot(np.transpose(T), Mel), T)
 
-
     #Assemblage Matrice globale
     for j in range(len(locel[i])):
         for k in range(len(locel[i])):
@@ -235,17 +235,18 @@ for i in range(len(elemList)):
             M[locel[i][j]-1][locel[i][k]-1] = M[locel[i][j]-1][locel[i][k]-1] + Mes[j][k]
             K[locel[i][j]-1][locel[i][k]-1] = K[locel[i][j]-1][locel[i][k]-1] + Kes[j][k]
 
-
 nodeConstraint = [1, 2, 3, 4]
+def Add_const(nodeConstraint, M, K) :
+    for node in nodeConstraint:
+        for dof in dofList[node-1]:
+            for i in range(M.shape[0]):
+                M[dof-1][i] = 0
+                M[i][dof-1] = 0
 
-for node in nodeConstraint:
-    for dof in dofList[node-1]:
-        for i in range(M.shape[0]):
-            M[dof-1][i] = 0
-            M[i][dof-1] = 0
+                K[dof - 1][i] = 0
+                K[i][dof - 1] = 0
 
-            K[dof - 1][i] = 0
-            K[i][dof - 1] = 0
+Add_const(nodeConstraint,M,K)
 
 eigenvals, eigenvects = scipy.linalg.eigh(K, M)
 print(sorted(eigenvals)[0:8])
