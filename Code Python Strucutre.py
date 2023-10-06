@@ -148,16 +148,17 @@ for i in range(len(elemList)):
     v = prop[1] # [-]
     E = prop[2] # [GPa]
     A = prop[3] # [m2]
-    Ri = prop[4] # [m]
-    Re = prop[5] # [m
+    Re = prop[4] # [m]
+    Ri = prop[5] # [m
     
+    #Valeur vérifié avec autre groupe chez qui ca focntionne 
     m = prop[0] * prop[3] * l
-    Ix = m * ((Re**2 + Ri**2)/4 + l**2/12)
-    Iy = m * ((Re**2 + Ri**2)/4 + l**2/12)
-    Iz = m * (Re**2 + Ri**2)/2
-    Jx = Ix/2
+    Ix = (np.pi/64)*(Re**4 - Ri**4)
+    Iy = (np.pi/64)*(Re**4 - Ri**4)
+    Iz = (np.pi/64)*(Re**4 - Ri**4)
+    Jx = Ix*2
     G = E/(2*(1+v))
-    r = Re - Ri
+    r = np.sqrt(Iy/A)
 
     # Elementary stiffness matrix
     Kel = np.array([
@@ -174,7 +175,7 @@ for i in range(len(elemList)):
         [0, 0, -6 * E * Iy, 0, 2 * E * Iy / l, 0, 0, 0, 6 * E * Iy / l ** 2, 0, 4 * E * Iy / l, 0],
         [0, 6 * E * Iz / l ** 2, 0, 0, 0, 2 * E * Iz / l, 0, -6 * E * Iz / l ** 2, 0, 0, 0, 4 * E * Iz / l]
     ])
-
+    
     # Elementary mass matrix
     Mel = m * np.array([
         [1 / 3, 0, 0, 0, 0, 0, 1 / 6, 0, 0, 0, 0, 0],
