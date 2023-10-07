@@ -21,8 +21,8 @@ def plot(elemList, nodeList):
     ax = fig.add_subplot(111, projection='3d')
 
     for elem in elemList:
-        elem_1 = nodeList[elem[0] - 1]
-        elem_2 = nodeList[elem[1] - 1]
+        elem_1 = nodeList[elem[0]]
+        elem_2 = nodeList[elem[1]]
         ax.plot([elem_1[0], elem_2[0]], [elem_1[1], elem_2[1]], [elem_1[2], elem_2[2]], c='b')
 
     ax.set_xlim(-1, 6)
@@ -40,7 +40,7 @@ def plot(elemList, nodeList):
 ########################################################################################
     
 ########################################################################################
-def create_elemList(elemList0, nodeList, numberElem) :
+def create_elemList(elemList0, nodeList, numberElem):
     elemList = []
 
     for elem in elemList0:
@@ -50,22 +50,22 @@ def create_elemList(elemList0, nodeList, numberElem) :
 
         if propriety != 2:
             current = i
-            len_x = abs(nodeList[i - 1][0] - nodeList[j - 1][0]) / numberElem
-            if nodeList[i - 1][0] > nodeList[j - 1][0]:
+            len_x = abs(nodeList[i][0] - nodeList[j][0]) / numberElem
+            if nodeList[i][0] > nodeList[j][0]:
                 len_x *= -1
-            len_y = abs(nodeList[i - 1][1] - nodeList[j - 1][1]) / numberElem
-            if nodeList[i - 1][1] > nodeList[j - 1][1]:
+            len_y = abs(nodeList[i][1] - nodeList[j][1]) / numberElem
+            if nodeList[i][1] > nodeList[j][1]:
                 len_y *= -1
-            len_z = abs(nodeList[i - 1][2] - nodeList[j - 1][2]) / numberElem
-            if nodeList[i - 1][2] > nodeList[j - 1][2]:
+            len_z = abs(nodeList[i][2] - nodeList[j][2]) / numberElem
+            if nodeList[i][2] > nodeList[j][2]:
                 len_z *= -1
             
             for m in range(numberElem):
-                new = len(nodeList) + 1
+                new = len(nodeList)
                 if m != (numberElem - 2):
                     elemList.append([current, new, propriety])
-                    nodeList.append([nodeList[current - 1][0] + len_x, nodeList[current - 1][1] + len_y,
-                                 nodeList[current - 1][2] + len_z, propriety])
+                    nodeList.append([nodeList[current][0] + len_x, nodeList[current][1] + len_y,
+                                 nodeList[current][2] + len_z])
 
                     current = new
             else:
@@ -76,9 +76,10 @@ def create_elemList(elemList0, nodeList, numberElem) :
     return elemList
     
     
-def create_dofList(dof, nodeList, numberElem) :
+def create_dofList(nodeList):
     dofList = []
-    for i in range(len(nodeList * numberElem)):
+    dof = 0
+    for i in range(len(nodeList)):
         tmp = []
         for j in range(6):
             tmp.append(dof)
@@ -87,19 +88,23 @@ def create_dofList(dof, nodeList, numberElem) :
     return dofList
 
 
-def create_locel(elemList,dofList) :
+def create_locel(elemList,dofList):
     locel = []
     for i in range(len(elemList)):
-        dofNode1 = dofList[elemList[i][0] - 1]
-        dofNode2 = dofList[elemList[i][1] - 1]
+        dofNode1 = dofList[elemList[i][0]]
+        dofNode2 = dofList[elemList[i][1]]
         locel.append(dofNode1 + dofNode2)
     
     return locel
 
-def create_T(coord1,coord2,l) :
+def create_T(coord1,coord2,l):
+
+    if coord1 == [5.49, 5.49, 3.66]:
+        tmp = 1
+
     P1 = coord1
     P2 = coord2
-    P3 = [0.5, 0.5, 0]
+    P3 = [0.5, 0.3, 0]
 
     d2 = [P2[0] - P1[0], P2[1] - P1[1], P2[2] - P1[2]]
     d3 = [P3[0] - P1[0], P3[1] - P1[1], P3[2] - P1[2]]
@@ -126,10 +131,31 @@ def create_T(coord1,coord2,l) :
             T[j + 3][k + 3] = R[j][k]
             T[j + 6][k + 6] = R[j][k]
             T[j + 9][k + 9] = R[j][k]
-    return T;
+    return T
 
 def create_Kel(E,A,Jx,Iy,Iz,G,l) :
-    return np.array([
+
+    Kel =  [[E*A/l],
+           [0, 12*E*Iz/l*l*l],
+           [0, 0, 12*E*Iy/l*l*l],
+           [0, 0, 0, G*Jx/l],
+           [0, 0, -6*E*Iy/l*l, 0, 4*E*Iy/l],
+           [0, 6*E*Iz/l*l, 0, 0, 0, 4*E*Iz/l],
+           [-E*A/l, 0, 0, 0, 0, 0, E*A/l],
+           [0, -12*E*Iz/l*l*l, 0, 0, 0, -6*E*Iz/l*l, 0, 12*E*Iz/l*l*l],
+           [0, 0, -12*E*Iy/l*l*l, 0, 6*E*Iy/l*l, 0, 0, 0, 12*E*Iy/l*l*l],
+           [0, 0, 0, -G*Jx/l, 0, 0, 0, 0, 0, G*Jx/l],
+           [0, 0, -6*E*Iy/l*l, 0, 2*E*Iy/l, 0, 0, 0, 6*E*Iy/l*l, 0, 4*E*Iy/l],
+           [0, 6*E*Iz/l*l, 0, 0, 0, 2*E*Iz/l, 0, -6*E*Iz/l*l, 0, 0, 0, 4*E*Iz/l]]
+
+    for i in range(len(Kel)):
+        for j in range(i+1, len(Kel)):
+
+            Kel[i].append(Kel[j][i])
+
+    return np.array(Kel)
+"""
+        np.array([
         [E*A/l, 0, 0, 0, 0, 0, -E*A/l, 0, 0, 0, 0, 0],
         [0, 12*E*Iz/(l**3), 0, 0, 0, 6*E*Iz/(l**2), 0, -12*E*Iz/(l**3), 0, 0, 0, 6*E*Iz/(l**2)],
         [0, 0, 12*E*Iy/(l**3), 0, -6*E*Iy/(l**2), 0, 0, 0, -12*E*Iy/(l**3), 0, -6*E*Iy/(l**2),0],
@@ -141,11 +167,32 @@ def create_Kel(E,A,Jx,Iy,Iz,G,l) :
         [0, 0, -12*E*Iy/(l**3), 0, 6*E*Iy/(l**2), 0, 0, 0, 12*E*Iy/(l**3), 0, 6*E*Iy/(l**2), 0],
         [0, 0, 0, -G*Jx/l, 0, 0, 0, 0, 0, G*Jx/l, 0, 0],
         [0, 0, -6*E*Iy/(l**2), 0, 2*E*Iy/l, 0, 0, 0, 6*E*Iy/(l**2), 0, 4*E*Iy/l, 0],
-        [0, 6 * E*Iz/(l**2), 0, 0, 0, 2*E*Iz/l, 0, -6*E*Iz/(l**2), 0, 0, 0, 4*E*Iz/l]])
-
+        [0, 6*E*Iz/(l**2), 0, 0, 0, 2*E*Iz/l, 0, -6*E*Iz/(l**2), 0, 0, 0, 4*E*Iz/l]])
+"""
 
 def create_Mel(m,r,l) :
-    return  m * np.array([
+
+    Mel = [[1/3],
+           [0, 13/35],
+           [0, 0, 13/35],
+           [0, 0, 0, r*r/3],
+           [0, 0, -11*l/210, 0, l*l/105],
+           [0, 11*l/210, 0, 0, 0, l*l/105],
+           [1/6, 0, 0, 0, 0, 0, 1/3],
+           [0, 9/70, 0, 0, 0, 13*l/420, 0, 13/35],
+           [0, 0, 9/70, 0, -13*l/420, 0, 0, 0, 13/35],
+           [0, 0, 0, r*r/6, 0, 0, 0, 0, 0, r*r/3],
+           [0, 0, 13*l/420, 0, -l*l/140, 0, 0, 0, 11*l/210, 0, l*l/105],
+           [0, -13*l/420, 0, 0, 0, -l*l/140, 0, -11*l/210, 0, 0, 0, l*l/105]]
+
+    for i in range(len(Mel)):
+        for j in range(i+1, len(Mel)):
+            Mel[i].append(Mel[j][i])
+
+    return m * np.array(Mel)
+
+"""
+        [
         [1 / 3, 0, 0, 0, 0, 0, 1 / 6, 0, 0, 0, 0, 0],
         [0, 13 / 35, 0, 0, 0, 11 * l / 210, 0, 9 / 70, 0, 0, 0, -13 * l / 420],
         [0, 0, 13 / 35, 0, -11 * l / 210, 0, 0, 0, 9 / 70, 0, 13 * l / 420, 0],
@@ -158,15 +205,15 @@ def create_Mel(m,r,l) :
         [0, 0, 0, r ** 2 / 6, 0, 0, 0, 0, 0, r ** 2 / 3, 0, 0],
         [0, 0, 13 * l / 420, 0, -l ** 2 / 140, 0, 0, 0, 11 * l / 210, 0, l ** 2 / 105, 0],
         [0, -13 * l / 420, 0, 0, 0, -l ** 2 / 140, 0, -11 * l / 210, 0, 0, 0, l ** 2 / 105]])
-    
+"""
 
 def create_properties(mainBeam_d, othbeam_d, thickn):
     ## Main Beam
-    main_beam_prop = [7800, 0.3, 210 * (10 ** 6), np.pi * ((mainBeam_d / 2) ** 2 - (mainBeam_d / 2 - thickn) ** 2),
+    main_beam_prop = [7800, 0.3, 210e9, np.pi * ((mainBeam_d / 2) ** 2 - (mainBeam_d / 2 - thickn) ** 2),
                   mainBeam_d / 2, (mainBeam_d - 2 * thickn) / 2]
 
     ## Other Beam
-    other_beam_prop = [7800, 0.3, 210 * (10 ** 6), np.pi * ((othbeam_d / 2) ** 2 - (othbeam_d / 2 - thickn) ** 2),
+    other_beam_prop = [7800, 0.3, 210e9, np.pi * ((othbeam_d / 2) ** 2 - (othbeam_d / 2 - thickn) ** 2),
                    othbeam_d / 2, (othbeam_d - 2 * thickn) / 2]
 
     ## Rigid Link  
@@ -178,16 +225,16 @@ def create_properties(mainBeam_d, othbeam_d, thickn):
     
 def Add_const_emboit(nodeConstraint,dofList, M, K):
     for node in nodeConstraint:
-        for dof in dofList[node - 1]:
+        for dof in dofList[node]:
             for i in range(len(M)):
-                M[dof - 1][i] = 0
-                M[i][dof - 1] = 0
+                M[dof][i] = 0
+                M[i][dof] = 0
 
-                K[dof - 1][i] = 0
-                K[i][dof - 1] = 0
+                K[dof][i] = 0
+                K[i][dof] = 0
 
 def Add_lumped_mass(nodeLumped_mass, dofList, M):
     for node, mass in nodeLumped_mass:
-        for i in dofList[node - 1]:
-            for j in dofList[node - 1]:
-                M[i-1][j-1] += mass
+        for i in dofList[node]:
+            for j in dofList[node]:
+                M[i][j] += mass
