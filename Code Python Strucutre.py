@@ -99,7 +99,6 @@ for i in range(len(elemList)):
     Mel = fct.create_Mel(m, r, l)
     T = fct.create_T(coord1, coord2, l)
 
-
     #Kes = np.dot(np.dot(np.transpose(T), Kel), T)
     Kes = T.T @ Kel @ T
     #Mes = np.dot(np.dot(np.transpose(T), Mel), T)
@@ -118,4 +117,5 @@ fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
 
 eigenvals, eigenvects = scipy.linalg.eigh(K, M)
-print(sorted(eigenvals)[0:8])
+print(sorted(np.sqrt(eigenvals)[:8]/(2*np.pi)))
+print(np.argsort(eigenvals)[:8])

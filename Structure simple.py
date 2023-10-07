@@ -1,6 +1,8 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import fct
+import copy
 
 a = 5.49
 b = 3.66
@@ -85,4 +87,33 @@ fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
 eigenvals, eigenvects = scipy.linalg.eigh(K, M)
 
-print(sorted(np.sqrt(eigenvals[:6])/(2*np.pi)))
+print(sorted(eigenvals)[:8])
+index_sort = np.argsort(eigenvals)
+
+fig = plt.figure()
+newNodeList = []
+for i in range(8):
+    for j in range(len(nodeListsimple)):
+        coord = nodeListsimple[j]
+        if j not in nodeConstraint:
+
+            dx, dy, dz = eigenvects[i][6*j], eigenvects[i][6*j+1], eigenvects[i][6*j+2]
+
+            new_coord = [coord[0]+dx, coord[1]+dy, coord[2]+dz]
+            newNodeList.append(new_coord)
+        else:
+            newNodeList.append(coord)
+
+    ax = fig.add_subplot(2, 4, i+1, projection='3d')
+
+    for elem in elemList0simple:
+        newnode1 = newNodeList[elem[0]]
+        newnode2 = newNodeList[elem[1]]
+        node1 = nodeListsimple[elem[0]]
+        node2 = nodeListsimple[elem[1]]
+
+        ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]],'--', c='b')
+        ax.plot([newnode1[0], newnode2[0]], [newnode1[1], newnode2[1]], [newnode1[2], newnode2[2]], c='r')
+
+
+plt.show()
