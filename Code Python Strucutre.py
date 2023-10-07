@@ -100,26 +100,10 @@ for i in range(len(elemList)):
     T = fct.create_T(coord1,coord2,l)
 
 
-    Kes = np.dot(np.dot(np.transpose(T), Kel), T)
-    Mes = np.dot(np.dot(np.transpose(T), Mel), T)
-
-    if nodeConstraint.__contains__(node1+1):
-        for j in range(6):
-            for k in range(12):
-                Kes[j][k] = 0
-                Kes[k][j] = 0
-
-                Mes[j][k] = 0
-                Mes[k][j] = 0
-
-    elif nodeConstraint.__contains__(node2+1):
-        for j in range(6):
-            for k in range(12):
-                Kes[j+6][k] = 0
-                Kes[k][j+6] = 0
-
-                Mes[j+6][k] = 0
-                Mes[k][j+6] = 0
+    #Kes = np.dot(np.dot(np.transpose(T), Kel), T)
+    Kes = T.T @ Kel @ T
+    #Mes = np.dot(np.dot(np.transpose(T), Mel), T)
+    Mes = T.T @ Mel @ T
 
     # Assemblage Matrice globale
     for j in range(len(locel[i])):
@@ -130,8 +114,7 @@ for i in range(len(elemList)):
 
 fct.Add_lumped_mass(nodeLumped, dofList, M)
 
-
-#fct.Add_const_emboit(nodeConstraint, dofList, M, K)
+fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
 
 eigenvals, eigenvects = scipy.linalg.eigh(K, M)

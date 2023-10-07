@@ -15,6 +15,9 @@ def est_symetrique(matrice):
                 return False
     return True
 
+def is_pos_def(x):
+    return np.all(np.linalg.eigvals(x) > 0)
+
 def plot(elemList, nodeList):
     # Créez une figure 3D
     fig = plt.figure()
@@ -98,10 +101,6 @@ def create_locel(elemList,dofList):
     return locel
 
 def create_T(coord1,coord2,l):
-
-    if coord1 == [5.49, 5.49, 3.66]:
-        tmp = 1
-
     P1 = coord1
     P2 = coord2
     P3 = [0.5, 0.3, 0]
@@ -110,7 +109,7 @@ def create_T(coord1,coord2,l):
     d3 = [P3[0] - P1[0], P3[1] - P1[1], P3[2] - P1[2]]
 
     ex = [(P2[0] - P1[0]) / l, (P2[1] - P1[1]) / l, (P2[2] - P1[2]) / l]
-    ey = np.cross(d2, d3) / np.linalg.norm(np.cross(d2, d3))
+    ey = np.cross(d3, d2) / np.linalg.norm(np.cross(d3, d2))
     ez = np.cross(ex, ey)
     localAxe = [ex, ey, ez]
 
@@ -135,18 +134,18 @@ def create_T(coord1,coord2,l):
 
 def create_Kel(E,A,Jx,Iy,Iz,G,l) :
 
-    Kel =  [[E*A/l],
-           [0, 12*E*Iz/l*l*l],
-           [0, 0, 12*E*Iy/l*l*l],
+    Kel = [[E*A/l],
+           [0, 12*E*Iz/(l*l*l)],
+           [0, 0, 12*E*Iy/(l*l*l)],
            [0, 0, 0, G*Jx/l],
-           [0, 0, -6*E*Iy/l*l, 0, 4*E*Iy/l],
-           [0, 6*E*Iz/l*l, 0, 0, 0, 4*E*Iz/l],
+           [0, 0, -6*E*Iy/(l*l), 0, 4*E*Iy/l],
+           [0, 6*E*Iz/(l*l), 0, 0, 0, 4*E*Iz/l],
            [-E*A/l, 0, 0, 0, 0, 0, E*A/l],
-           [0, -12*E*Iz/l*l*l, 0, 0, 0, -6*E*Iz/l*l, 0, 12*E*Iz/l*l*l],
-           [0, 0, -12*E*Iy/l*l*l, 0, 6*E*Iy/l*l, 0, 0, 0, 12*E*Iy/l*l*l],
+           [0, -12*E*Iz/(l*l*l), 0, 0, 0, -6*E*Iz/(l*l), 0, 12*E*Iz/(l*l*l)],
+           [0, 0, -12*E*Iy/(l*l*l), 0, 6*E*Iy/(l*l), 0, 0, 0, 12*E*Iy/(l*l*l)],
            [0, 0, 0, -G*Jx/l, 0, 0, 0, 0, 0, G*Jx/l],
-           [0, 0, -6*E*Iy/l*l, 0, 2*E*Iy/l, 0, 0, 0, 6*E*Iy/l*l, 0, 4*E*Iy/l],
-           [0, 6*E*Iz/l*l, 0, 0, 0, 2*E*Iz/l, 0, -6*E*Iz/l*l, 0, 0, 0, 4*E*Iz/l]]
+           [0, 0, -6*E*Iy/(l*l), 0, 2*E*Iy/l, 0, 0, 0, 6*E*Iy/(l*l), 0, 4*E*Iy/l],
+           [0, 6*E*Iz/(l*l), 0, 0, 0, 2*E*Iz/l, 0, -6*E*Iz/(l*l), 0, 0, 0, 4*E*Iz/l]]
 
     for i in range(len(Kel)):
         for j in range(i+1, len(Kel)):
@@ -223,15 +222,15 @@ def create_properties(mainBeam_d, othbeam_d, thickn):
     return [main_beam_prop, other_beam_prop, rigid_link_prop]
     
     
-def Add_const_emboit(nodeConstraint,dofList, M, K):
+def Add_const_emboit(nodeConstraint, dofList, M, K):
+
     for node in nodeConstraint:
         for dof in dofList[node]:
-            for i in range(len(M)):
-                M[dof][i] = 0
-                M[i][dof] = 0
+            M = np.delete(M, dof, 0)
+            M = np.delete(M, dof, 1)
 
-                K[dof][i] = 0
-                K[i][dof] = 0
+            K = np.delete(K, dof, 0)
+            K = np.delete(K, dof, 1)
 
 def Add_lumped_mass(nodeLumped_mass, dofList, M):
     for node, mass in nodeLumped_mass:

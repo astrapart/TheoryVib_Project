@@ -22,6 +22,8 @@ elemList0simple = [[0, 4, 0], [1, 5, 0], [2, 6, 0], [3, 7, 0],
                    [4, 5, 1], [5, 7, 1], [7, 6, 1], [6, 4, 1],
                    [8, 9, 1], [9, 11, 1], [11, 10, 1], [10, 8, 1]]
 
+#fct.plot(elemList0simple, nodeListsimple)
+
 # proprieties = [rho [kg/m3], poisson [-], Young [Pa], Jx [m4], Iy [m4], Iz [m4]]
 vertical_beams = [7800, 0.3, 211e9, 5.14e-3, 1.73e-7, 6.9e-6, 8.49e-5]
 horizontal_beams = [7800, 0.3, 211e9, 5.68e-3, 1.76e-7, 1.2e-4, 7.3e-6]
@@ -66,30 +68,11 @@ for i in range(len(elemList)):
 
     Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
     Mel = fct.create_Mel(m, r, l)
+
     T = fct.create_T(coord1, coord2, l)
-    if fct.est_symetrique(T):
-        print(node1, node2)
 
-    Kes = np.dot(np.dot(np.transpose(T), Kel), T)
-    Mes = np.dot(np.dot(np.transpose(T), Mel), T)
-
-    if node1 in nodeConstraint:
-        for j in range(len(dofList[i])):
-            for k in range(len(locel[i])):
-                Kes[j][k] = 0
-                Kes[k][j] = 0
-
-                Mes[j][k] = 0
-                Mes[k][j] = 0
-
-    if node2 in nodeConstraint:
-        for j in range(len(dofList[i])):
-            for k in range(len(locel[i])):
-                Kes[j+6][k] = 0
-                Kes[k][j+6] = 0
-
-                Mes[j+6][k] = 0
-                Mes[k][j+6] = 0
+    Kes = T.T @ Kel @ T
+    Mes = T.T @ Mel @ T
 
     for j in range(len(locel[i])):
         for k in range(len(locel[i])):
@@ -98,6 +81,8 @@ for i in range(len(elemList)):
 
             K[locel[i][j]][locel[i][k]] = K[locel[i][j]][locel[i][k]] + Kes[j][k]
 
-
+fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
 eigenvals, eigenvects = scipy.linalg.eigh(K, M)
+
+print(sorted(eigenvals[:6]))
