@@ -91,7 +91,7 @@ def create_dofList(nodeList):
     return dofList
 
 
-def create_locel(elemList,dofList):
+def create_locel(elemList, dofList):
     locel = []
     for i in range(len(elemList)):
         dofNode1 = dofList[elemList[i][0]]
@@ -100,7 +100,7 @@ def create_locel(elemList,dofList):
     
     return locel
 
-def create_T(coord1,coord2,l):
+def create_T(coord1, coord2, l):
     P1 = coord1
     P2 = coord2
     P3 = [0.5, 0.3, 0]
@@ -132,20 +132,20 @@ def create_T(coord1,coord2,l):
             T[j + 9][k + 9] = R[j][k]
     return T
 
-def create_Kel(E,A,Jx,Iy,Iz,G,l) :
+def create_Kel(E, A, Jx, Iy, Iz, G, l) :
 
     Kel = [[E*A/l],
-           [0, 12*E*Iz/(l*l*l)],
-           [0, 0, 12*E*Iy/(l*l*l)],
-           [0, 0, 0, G*Jx/l],
-           [0, 0, -6*E*Iy/(l*l), 0, 4*E*Iy/l],
-           [0, 6*E*Iz/(l*l), 0, 0, 0, 4*E*Iz/l],
-           [-E*A/l, 0, 0, 0, 0, 0, E*A/l],
-           [0, -12*E*Iz/(l*l*l), 0, 0, 0, -6*E*Iz/(l*l), 0, 12*E*Iz/(l*l*l)],
-           [0, 0, -12*E*Iy/(l*l*l), 0, 6*E*Iy/(l*l), 0, 0, 0, 12*E*Iy/(l*l*l)],
-           [0, 0, 0, -G*Jx/l, 0, 0, 0, 0, 0, G*Jx/l],
-           [0, 0, -6*E*Iy/(l*l), 0, 2*E*Iy/l, 0, 0, 0, 6*E*Iy/(l*l), 0, 4*E*Iy/l],
-           [0, 6*E*Iz/(l*l), 0, 0, 0, 2*E*Iz/l, 0, -6*E*Iz/(l*l), 0, 0, 0, 4*E*Iz/l]]
+           [  0, 12*E*Iz/(l*l*l)],
+           [  0,       0,       12*E*Iy/(l*l*l)],
+           [  0,       0,              0,       G*Jx/l],
+           [  0,       0,        -6*E*Iy/(l*l),    0,   4*E*Iy/l],
+           [  0,   6*E*Iz/(l*l),       0,          0,       0,     4*E*Iz/l],
+           [-E*A/l,    0,              0,          0,       0,         0,         E*A/l],
+           [  0, -12*E*Iz/(l*l*l),     0,          0,       0,   -6*E*Iz/(l*l),     0,     12*E*Iz/(l*l*l)],
+           [  0,       0,       -12*E*Iy/(l*l*l),  0, 6*E*Iy/(l*l),    0,           0,            0,        12*E*Iy/(l*l*l)],
+           [  0,       0,              0,       -G*Jx/l,    0,         0,           0,            0,               0,          G*Jx/l],
+           [  0,       0,         -6*E*Iy/(l*l),   0,    2*E*Iy/l,     0,           0,            0,          6*E*Iy/(l*l),       0,   4*E*Iy/l],
+           [  0,   6*E*Iz/(l*l),       0,          0,       0,     2*E*Iz/l,        0,      -6*E*Iz/(l*l),         0,             0,       0,    4*E*Iz/l]]
 
     for i in range(len(Kel)):
         for j in range(i+1, len(Kel)):
@@ -169,7 +169,7 @@ def create_Kel(E,A,Jx,Iy,Iz,G,l) :
         [0, 6*E*Iz/(l**2), 0, 0, 0, 2*E*Iz/l, 0, -6*E*Iz/(l**2), 0, 0, 0, 4*E*Iz/l]])
 """
 
-def create_Mel(m,r,l) :
+def create_Mel(m, r, l) :
 
     Mel = [[1/3],
            [0, 13/35],

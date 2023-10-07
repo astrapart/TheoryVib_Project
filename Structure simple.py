@@ -85,4 +85,4 @@ fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
 eigenvals, eigenvects = scipy.linalg.eigh(K, M)
 
-print(sorted(eigenvals[:6]))
+print(sorted(np.sqrt(eigenvals[:6])/(2*np.pi)))

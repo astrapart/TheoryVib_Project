@@ -95,9 +95,9 @@ for i in range(len(elemList)):
         Iz *= 10**4
     """
 
-    Kel = fct.create_Kel(E,A,Jx,Iy,Iz,G,l)
-    Mel = fct.create_Mel(m,r,l)
-    T = fct.create_T(coord1,coord2,l)
+    Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
+    Mel = fct.create_Mel(m, r, l)
+    T = fct.create_T(coord1, coord2, l)
 
 
     #Kes = np.dot(np.dot(np.transpose(T), Kel), T)
