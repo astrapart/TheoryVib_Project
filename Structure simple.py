@@ -84,10 +84,9 @@ for i in range(len(elemList)):
             K[locel[i][j]][locel[i][k]] = K[locel[i][j]][locel[i][k]] + Kes[j][k]
 
 fct.Add_const_emboit(nodeConstraint, dofList, M, K)
-
 eigenvals, eigenvects = scipy.linalg.eigh(K, M)
 
-print(sorted(eigenvals)[:8])
+print(sorted(eigenvals))#[:8])
 index_sort = np.argsort(eigenvals)
 
 fig = plt.figure()

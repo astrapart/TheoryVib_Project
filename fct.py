@@ -133,7 +133,6 @@ def create_T(coord1, coord2, l):
     return T
 
 def create_Kel(E, A, Jx, Iy, Iz, G, l) :
-
     Kel = [[E*A/l],
            [  0, 12*E*Iz/(l*l*l)],
            [  0,       0,       12*E*Iy/(l*l*l)],
@@ -153,21 +152,6 @@ def create_Kel(E, A, Jx, Iy, Iz, G, l) :
             Kel[i].append(Kel[j][i])
 
     return np.array(Kel)
-"""
-        np.array([
-        [E*A/l, 0, 0, 0, 0, 0, -E*A/l, 0, 0, 0, 0, 0],
-        [0, 12*E*Iz/(l**3), 0, 0, 0, 6*E*Iz/(l**2), 0, -12*E*Iz/(l**3), 0, 0, 0, 6*E*Iz/(l**2)],
-        [0, 0, 12*E*Iy/(l**3), 0, -6*E*Iy/(l**2), 0, 0, 0, -12*E*Iy/(l**3), 0, -6*E*Iy/(l**2),0],
-        [0, 0, 0, G*Jx/l, 0, 0, 0, 0, 0, -G*Jx/l, 0, 0],
-        [0, 0, -6*E*Iy/(l**2), 0, 4*E*Iy/l, 0, 0, 0, 6*E*Iy/(l**2), 0, 2*E*Iy/l, 0],
-        [0, 6*E*Iz/(l**2), 0, 0, 0, 4*E*Iz/l, 0, -6*E*Iz/(l**2), 0, 0, 0, 2*E*Iz/l],
-        [-E*A/l, 0, 0, 0, 0, 0, E*A/l, 0, 0, 0, 0, 0],
-        [0, -12*E*Iz/(l**3), 0, 0, 0, -6*E*Iz/(l**2), 0, 12*E*Iz/(l**3), 0, 0, 0,-6*E*Iz/(l**2)],
-        [0, 0, -12*E*Iy/(l**3), 0, 6*E*Iy/(l**2), 0, 0, 0, 12*E*Iy/(l**3), 0, 6*E*Iy/(l**2), 0],
-        [0, 0, 0, -G*Jx/l, 0, 0, 0, 0, 0, G*Jx/l, 0, 0],
-        [0, 0, -6*E*Iy/(l**2), 0, 2*E*Iy/l, 0, 0, 0, 6*E*Iy/(l**2), 0, 4*E*Iy/l, 0],
-        [0, 6*E*Iz/(l**2), 0, 0, 0, 2*E*Iz/l, 0, -6*E*Iz/(l**2), 0, 0, 0, 4*E*Iz/l]])
-"""
 
 def create_Mel(m, r, l) :
 
@@ -190,22 +174,6 @@ def create_Mel(m, r, l) :
 
     return m * np.array(Mel)
 
-"""
-        [
-        [1 / 3, 0, 0, 0, 0, 0, 1 / 6, 0, 0, 0, 0, 0],
-        [0, 13 / 35, 0, 0, 0, 11 * l / 210, 0, 9 / 70, 0, 0, 0, -13 * l / 420],
-        [0, 0, 13 / 35, 0, -11 * l / 210, 0, 0, 0, 9 / 70, 0, 13 * l / 420, 0],
-        [0, 0, 0, r ** 2 / 3, 0, 0, 0, 0, 0, r ** 2 / 6, 0, 0],
-        [0, 0, -11 * l / 210, 0, l ** 2 / 105, 0, 0, 0, -13 * l / 420, 0, -l ** 2 / 140, 0],
-        [0, 11 * l / 210, 0, 0, 0, l ** 2 / 105, 0, 13 * l / 420, 0, 0, 0, -l ** 2 / 140],
-        [1 / 6, 0, 0, 0, 0, 0, 1 / 3, 0, 0, 0, 0, 0],
-        [0, 9 / 70, 0, 0, 0, 13 * l / 420, 0, 13 / 35, 0, 0, 0, -11 * l / 210],
-        [0, 0, 9 / 70, 0, -13 * l / 420, 0, 0, 0, 13 / 35, 0, 11 * l / 210, 0],
-        [0, 0, 0, r ** 2 / 6, 0, 0, 0, 0, 0, r ** 2 / 3, 0, 0],
-        [0, 0, 13 * l / 420, 0, -l ** 2 / 140, 0, 0, 0, 11 * l / 210, 0, l ** 2 / 105, 0],
-        [0, -13 * l / 420, 0, 0, 0, -l ** 2 / 140, 0, -11 * l / 210, 0, 0, 0, l ** 2 / 105]])
-"""
-
 def create_properties(mainBeam_d, othbeam_d, thickn):
     ## Main Beam
     main_beam_prop = [7800, 0.3, 210e9, np.pi * ((mainBeam_d / 2) ** 2 - (mainBeam_d / 2 - thickn) ** 2),
@@ -213,17 +181,28 @@ def create_properties(mainBeam_d, othbeam_d, thickn):
 
     ## Other Beam
     other_beam_prop = [7800, 0.3, 210e9, np.pi * ((othbeam_d / 2) ** 2 - (othbeam_d / 2 - thickn) ** 2),
-                   othbeam_d / 2, (othbeam_d - 2 * thickn) / 2]
+                   othbeam_d / 2, (othbeam_d - (2 * thickn)) / 2]
 
     ## Rigid Link  
-    rigid_link_prop = [main_beam_prop[0] * 10 ** 4, 0.3, main_beam_prop[2] * 10 ** 4, main_beam_prop[3] * 10 ** -2,
-                   mainBeam_d / 2, (mainBeam_d - 2 * thickn) / 2]
+    rigid_link_prop = [main_beam_prop[0]*10**(-4), 0.3, main_beam_prop[2] * 10 ** 4, main_beam_prop[3] * 10 ** -2,
+                   mainBeam_d / 2, (mainBeam_d - (2 * thickn)) / 2]
 
     return [main_beam_prop, other_beam_prop, rigid_link_prop]
     
     
 def Add_const_emboit(nodeConstraint, dofList, M, K):
-
+    ### CECI EST UN EST POUR LES CONTRAINTES? AVOIR SI CA MARCHE
+    """
+    for node in nodeConstraint:
+        for i in range(6):
+            # Réglez les déplacements correspondants à zéro dans les matrices globales
+            K[6 * node, :] = 0
+            K[:, 6 * node + i] = 0
+            M[6 * node + i, :] = 0
+            M[:, 6 * node + i] = 0
+            # Placez 1 sur la diagonale pour la masse globale (pour éviter une matrice singulière)
+            M[6 * node + i, 6 * node + i] = 1.0
+    """
     for node in nodeConstraint:
         for dof in dofList[node]:
             M = np.delete(M, dof, 0)
@@ -231,6 +210,7 @@ def Add_const_emboit(nodeConstraint, dofList, M, K):
 
             K = np.delete(K, dof, 0)
             K = np.delete(K, dof, 1)
+            
 
 def Add_lumped_mass(nodeLumped_mass, dofList, M):
     for node, mass in nodeLumped_mass:

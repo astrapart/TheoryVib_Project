@@ -46,7 +46,7 @@ elemList = fct.create_elemList(elemList0, nodeList, numberElem)
 dofList = fct.create_dofList(nodeList)
 locel = fct.create_locel(elemList, dofList)
 
-nodeConstraint = np.array([1, 2, 3, 4])
+nodeConstraint = np.array([0, 1, 2, 3])
 nodeLumped = np.array([[22, 200000]])
 
 #fct.plot(elemList, nodeList)
@@ -81,10 +81,10 @@ for i in range(len(elemList)):
     Ri = prop[5]  # [m]
 
     m = prop[0] * prop[3] * l
-    Ix = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [kg*m2]
-    Iy = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [kg*m2]
-    Iz = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [kg*m2]
-    Jx = Ix * 2  # [kg*m2]
+    Ix = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
+    Iy = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
+    Iz = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
+    Jx = Ix * 2  # [m4]
     G = E / (2 * (1 + v))  # [GPa]
     r = np.sqrt(Iy/A)  # [m]
 
@@ -95,7 +95,7 @@ for i in range(len(elemList)):
         Iz *= 10**4
     """
 
-    Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
+    Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)²
     Mel = fct.create_Mel(m, r, l)
     T = fct.create_T(coord1, coord2, l)
 
@@ -110,12 +110,11 @@ for i in range(len(elemList)):
             M[locel[i][j]][locel[i][k]] = M[locel[i][j]][locel[i][k]] + Mes[j][k]
             K[locel[i][j]][locel[i][k]] = K[locel[i][j]][locel[i][k]] + Kes[j][k]
 
-
 fct.Add_lumped_mass(nodeLumped, dofList, M)
 
 fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
 
 eigenvals, eigenvects = scipy.linalg.eigh(K, M)
-print(sorted(np.sqrt(eigenvals)[:8]/(2*np.pi)))
+#print(sorted(np.sqrt(eigenvals)[:8]/(2*np.pi)))
 print(np.argsort(eigenvals)[:8])
