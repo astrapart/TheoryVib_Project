@@ -27,8 +27,8 @@ elemList0simple = [[0, 4, 0], [1, 5, 0], [2, 6, 0], [3, 7, 0],
 #fct.plot(elemList0simple, nodeListsimple)
 
 # proprieties = [rho [kg/m3], poisson [-], Young [Pa], Jx [m4], Iy [m4], Iz [m4]]
-vertical_beams = [7800, 0.3, 211e9, 5.14e-3, 1.73e-7, 6.9e-6, 8.49e-5]
-horizontal_beams = [7800, 0.3, 211e9, 5.68e-3, 1.76e-7, 1.2e-4, 7.3e-6]
+vertical_beams = [7800, 0.3, 2.1e10, 5.14e-3, 1.73e-7, 6.9e-6, 8.49e-5]
+horizontal_beams = [7800, 0.3, 2.1e10, 5.68e-3, 1.76e-7, 1.2e-4, 7.3e-6]
 
 proprieties = [vertical_beams, horizontal_beams]
 
@@ -68,6 +68,7 @@ for i in range(len(elemList)):
     r = np.sqrt(Iy/A)      # [m]
     m = rho * l * A        # [kg]
 
+    print(Jx, Iy, Iz)
     Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
     Mel = fct.create_Mel(m, r, l)
 
@@ -86,12 +87,12 @@ for i in range(len(elemList)):
 fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 eigenvals, eigenvects = scipy.linalg.eigh(K, M)
 
-print(sorted(eigenvals))#[:8])
+print(np.sqrt(eigenvals[:4])/(2*np.pi))
 index_sort = np.argsort(eigenvals)
 
 fig = plt.figure()
 newNodeList = []
-for i in range(8):
+for i in range(4):
     for j in range(len(nodeListsimple)):
         coord = nodeListsimple[j]
         if j not in nodeConstraint:
@@ -103,16 +104,17 @@ for i in range(8):
         else:
             newNodeList.append(coord)
 
-    ax = fig.add_subplot(2, 4, i+1, projection='3d')
+    ax = fig.add_subplot(2, 2, i+1, projection='3d')
 
     for elem in elemList0simple:
-        newnode1 = newNodeList[elem[0]]
-        newnode2 = newNodeList[elem[1]]
-        node1 = nodeListsimple[elem[0]]
-        node2 = nodeListsimple[elem[1]]
+        if elem[2] != 2:
+            newnode1 = newNodeList[elem[0]]
+            newnode2 = newNodeList[elem[1]]
+            node1 = nodeListsimple[elem[0]]
+            node2 = nodeListsimple[elem[1]]
 
-        ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]],'--', c='b')
-        ax.plot([newnode1[0], newnode2[0]], [newnode1[1], newnode2[1]], [newnode1[2], newnode2[2]], c='r')
+            ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]],'--', c='b')
+            ax.plot([newnode1[0], newnode2[0]], [newnode1[1], newnode2[1]], [newnode1[2], newnode2[2]], c='r')
 
 
 plt.show()
