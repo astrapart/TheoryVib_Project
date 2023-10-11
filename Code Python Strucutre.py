@@ -154,4 +154,16 @@ def ElementFini(numberElem):
     plt.show()
 
 
-ElementFini(3)
+#ElementFini(3)
+
+def EtudeConvergence(precision):
+
+    TestElem = np.arange(1, precision, 1)
+    Result = np.zeros(len(TestElem))
+
+    for i in range(len(Result)):
+        Result[i] = ElementFini(TestElem[i])
+
+    
+
+EtudeConvergence(5)
