@@ -3,6 +3,7 @@
 IMPORT
 ########################################################################################################################
 """
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -11,6 +12,7 @@ import numpy as np
 Fonction create
 ########################################################################################################################
 """
+
 def create_elemList(elemList0, nodeList, numberElem):
     elemList = []
 
@@ -194,23 +196,24 @@ Fonction Calculate
 """
 def calculate_length (coord1, coord2) :
     return np.sqrt((coord1[0] - coord2[0]) ** 2 + (coord1[1] - coord2[1]) ** 2 + (coord1[2] - coord2[2]) ** 2)
-def properties (type_beam, proprieties, l) :
-    rho = proprieties[type_beam][0]
-    v   = proprieties[type_beam][1]  # [-]
-    E   = proprieties[type_beam][2]  # [GPa]
-    A   = proprieties[type_beam][3]  # [m2]
-    Re  = proprieties[type_beam][4]  # [m]
-    Ri  = proprieties[type_beam][5]  # [m]
 
-    m    = rho * A * l
+def properties (type_beam, proprieties, l) :
+    rho = proprieties[type_beam][0]            # [kg/m3]
+    v   = proprieties[type_beam][1]            # [-]
+    E   = proprieties[type_beam][2]            # [GPa]
+    A   = proprieties[type_beam][3]            # [m2]
+    Re  = proprieties[type_beam][4]            # [m]
+    Ri  = proprieties[type_beam][5]            # [m]
+
+    m    = rho * A * l                         # [kg]
     Ix   = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
     Iy   = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
     Iz   = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
-    Jx   = Ix * 2  # [m4]
-    G    = E / (2 * (1 + v))  # [GPa]
-    r    = np.sqrt(Iy / A)  # [m]
+    Jx   = Ix * 2                              # [m4]
+    G    = E / (2 * (1 + v))                   # [GPa]
+    r    = np.sqrt(Iy / A)                     # [m]
 
-    return rho,v,E,A,Re,Ri,m,Jx,Iy,Iz,G,r
+    return rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r
 
 """
 ########################################################################################################################
