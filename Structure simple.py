@@ -53,7 +53,7 @@ for i in range(len(elemList)):
     r = np.sqrt(Iy/A)      # [m]
     m = rho * l * A        # [kg]
 
-    print(Jx, Iy, Iz)
+    #print(Jx, Iy, Iz)
     Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
     Mel = fct.create_Mel(m, r, l)
 

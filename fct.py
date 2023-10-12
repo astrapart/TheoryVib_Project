@@ -181,7 +181,7 @@ def Add_const_emboit(nodeConstraint, dofList, M, K):
 
             K = np.delete(K, dof, 0)
             K = np.delete(K, dof, 1)
-            
+
 
 def Add_lumped_mass(nodeLumped_mass, dofList, M):
     for node, mass in nodeLumped_mass:
@@ -212,6 +212,15 @@ def properties (type_beam, proprieties, l) :
     Jx   = Ix * 2                              # [m4]
     G    = E / (2 * (1 + v))                   # [GPa]
     r    = np.sqrt(Iy / A)                     # [m]
+
+    if type_beam == 2:
+        Jx = Jx*10**4
+        Iy = Iy*10**4
+        Iz = Iz*10**4
+
+        A = A*10**(-2)
+        E = E*10**4
+        rho = rho*10**(-4)
 
     return rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r
 
