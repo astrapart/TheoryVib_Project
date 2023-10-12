@@ -218,12 +218,15 @@ def properties (type_beam, l) :
 
     return rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r
 
-def calculate_mtot(M) :
+def calculate_mtot(M, ltot):
+
     m_tot = 0
-    for i in range(0,len(M),6) :
-        m_tot += M[i][i]
+    for i in range(len(M)):
+        for j in range(len(M)):
+            m_tot += M[i][j]
+
     #606878.6228652314
-    return m_tot
+    return m_tot/ltot
 
 
 

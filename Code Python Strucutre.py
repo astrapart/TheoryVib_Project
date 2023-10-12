@@ -25,6 +25,7 @@ def ElementFini(numberElem):
 
     M = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
     K = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
+    ltot = 0
 
     for i in range(len(elemList)):
         node1 = elemList[i][0]
@@ -35,6 +36,7 @@ def ElementFini(numberElem):
         coord2 = nodeList[node2]
 
         l = fct.calculate_length(coord1, coord2)
+        ltot += l
 
         rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r = fct.properties(type_beam, l)
 
@@ -54,7 +56,7 @@ def ElementFini(numberElem):
 
     fct.Add_lumped_mass(nodeLumped, dofList, M)
     fct.Add_const_emboit(nodeConstraint, dofList, M, K)
-    print(fct.calculate_mtot(M))
+    print(fct.calculate_mtot(M, ltot))
 
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
     val_prop = np.sort(eigenvals)
