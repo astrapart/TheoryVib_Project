@@ -221,9 +221,8 @@ def properties (type_beam, l) :
 def calculate_mtot(M) :
     m_tot = 0
     for i in range(0,len(M),6) :
-        for j in range(3) :
-            m_tot += M[i+j][i+j]
-
+        m_tot += M[i][i]
+    #606878.6228652314
     return m_tot
 
 

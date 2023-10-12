@@ -54,7 +54,6 @@ def ElementFini(numberElem):
 
     fct.Add_lumped_mass(nodeLumped, dofList, M)
     fct.Add_const_emboit(nodeConstraint, dofList, M, K)
-
     print(fct.calculate_mtot(M))
 
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
