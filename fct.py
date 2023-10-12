@@ -255,15 +255,16 @@ def plot_structure(elemList, nodeList):
 
 def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
     fig = plt.figure()
-    newNodeList = []
     for i in range(8):
+        newNodeList = []
         for j in range(len(nodeList)):
             coord = nodeList[j]
             if j not in nodeConstraint:
 
                 dx, dy, dz = eigenvects[i][6 * j], eigenvects[i][6 * j + 1], eigenvects[i][6 * j + 2]
 
-                new_coord = [coord[0] + dx, coord[1] + dy, coord[2] + dz]
+                factor = 10
+                new_coord = [coord[0] + dx*factor, coord[1] + dy*factor, coord[2] + dz*factor]
                 newNodeList.append(new_coord)
             else:
                 newNodeList.append(coord)

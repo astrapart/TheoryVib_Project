@@ -53,7 +53,6 @@ for i in range(len(elemList)):
     r = np.sqrt(Iy/A)      # [m]
     m = rho * l * A        # [kg]
 
-    #print(Jx, Iy, Iz)
     Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
     Mel = fct.create_Mel(m, r, l)
 
@@ -70,21 +69,23 @@ for i in range(len(elemList)):
             K[locel[i][j]][locel[i][k]] = K[locel[i][j]][locel[i][k]] + Kes[j][k]
 
 fct.Add_const_emboit(nodeConstraint, dofList, M, K)
-eigenvals, eigenvects = scipy.linalg.eigh(K, M)
+eigenvals, eigenvects = scipy.linalg.eig(K, M, right=True)
+val_prop = np.sort(eigenvals)
 
-print(np.sqrt(eigenvals[:4])/(2*np.pi))
+print(np.real(np.sqrt(val_prop[:4])/(2*np.pi)))
 index_sort = np.argsort(eigenvals)
 
 fig = plt.figure()
-newNodeList = []
 for i in range(4):
+    newNodeList = []
     for j in range(len(nodeListsimple)):
         coord = nodeListsimple[j]
         if j not in nodeConstraint:
 
             dx, dy, dz = eigenvects[i][6*j], eigenvects[i][6*j+1], eigenvects[i][6*j+2]
 
-            new_coord = [coord[0]+dx, coord[1]+dy, coord[2]+dz]
+            factor = 10
+            new_coord = [coord[0]+dx*factor, coord[1]+dy*factor, coord[2]+dz*factor]
             newNodeList.append(new_coord)
         else:
             newNodeList.append(coord)

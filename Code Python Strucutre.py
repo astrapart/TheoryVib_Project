@@ -58,11 +58,13 @@ def ElementFini(numberElem):
     fct.Add_const_emboit(nodeConstraint, dofList, M, K)
     print(fct.calculate_mtot(M, ltot))
 
-    eigenvals, eigenvects = scipy.linalg.eig(K, M)
+    eigenvals, eigenvects = scipy.linalg.eig(K, M, right=True)
     val_prop = np.sort(eigenvals)
-    return np.real(np.sqrt(val_prop[:8])/(2*np.pi))
 
     fct.plot_result(nodeList, nodeConstraint, eigenvects, elemList0)
+    return np.real(np.sqrt(val_prop[:8])/(2*np.pi))
+
+
 
 
 def EtudeConvergence(precision):
