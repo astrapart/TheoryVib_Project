@@ -1,48 +1,16 @@
+"""
+########################################################################################################################
+IMPORT
+########################################################################################################################
+"""
 import matplotlib.pyplot as plt
 import numpy as np
-import math
 
-
-def est_symetrique(matrice):
-    # Vérifiez si le nombre de lignes est égal au nombre de colonnes
-    if len(matrice) != len(matrice[0]):
-        return False
-    
-    # Comparez la matrice à sa transposée
-    for i in range(len(matrice)):
-        for j in range(len(matrice)):
-            if matrice[i][j] != matrice[j][i]:
-                return False
-    return True
-
-def is_pos_def(x):
-    return np.all(np.linalg.eigvals(x) > 0)
-
-def plot(elemList, nodeList):
-    # Créez une figure 3D
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    for elem in elemList:
-        elem_1 = nodeList[elem[0]]
-        elem_2 = nodeList[elem[1]]
-        ax.plot([elem_1[0], elem_2[0]], [elem_1[1], elem_2[1]], [elem_1[2], elem_2[2]], c='b')
-
-    ax.set_xlim(-1, 6)
-    ax.set_ylim(-1, 6)
-
-    # Titres des axes
-    ax.set_xlabel('Axe X')
-    ax.set_ylabel('Axe Y')
-    ax.set_zlabel('Axe Z')
-
-    # Affichez le graphique
-    plt.show()
-
-
-########################################################################################
-    
-########################################################################################
+"""
+########################################################################################################################
+Fonction create
+########################################################################################################################
+"""
 def create_elemList(elemList0, nodeList, numberElem):
     elemList = []
 
@@ -189,7 +157,8 @@ def create_properties(mainBeam_d, othbeam_d, thickn):
 
     return [main_beam_prop, other_beam_prop, rigid_link_prop]
     
-    
+
+
 def Add_const_emboit(nodeConstraint, dofList, M, K):
     ### CECI EST UN EST POUR LES CONTRAINTES? AVOIR SI CA MARCHE
     """
@@ -217,3 +186,85 @@ def Add_lumped_mass(nodeLumped_mass, dofList, M):
         for i in dofList[node]:
             for j in dofList[node]:
                 M[i][j] += mass
+
+"""
+########################################################################################################################
+Fonction Calculate
+########################################################################################################################
+"""
+def calculate_length (coord1, coord2) :
+    return np.sqrt((coord1[0] - coord2[0]) ** 2 + (coord1[1] - coord2[1]) ** 2 + (coord1[2] - coord2[2]) ** 2)
+def properties (type_beam, proprieties, l) :
+    rho = proprieties[type_beam][0]
+    v   = proprieties[type_beam][1]  # [-]
+    E   = proprieties[type_beam][2]  # [GPa]
+    A   = proprieties[type_beam][3]  # [m2]
+    Re  = proprieties[type_beam][4]  # [m]
+    Ri  = proprieties[type_beam][5]  # [m]
+
+    m    = rho * A * l
+    Ix   = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
+    Iy   = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
+    Iz   = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
+    Jx   = Ix * 2  # [m4]
+    G    = E / (2 * (1 + v))  # [GPa]
+    r    = np.sqrt(Iy / A)  # [m]
+
+    return rho,v,E,A,Re,Ri,m,Jx,Iy,Iz,G,r
+
+"""
+########################################################################################################################
+Fonctions PLOT 
+########################################################################################################################
+"""
+def plot_structure(elemList, nodeList):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    for elem in elemList:
+        elem_1 = nodeList[elem[0]]
+        elem_2 = nodeList[elem[1]]
+        ax.plot([elem_1[0], elem_2[0]], [elem_1[1], elem_2[1]], [elem_1[2], elem_2[2]], c='b')
+
+    ax.set_xlim(-1, 6)
+    ax.set_ylim(-1, 6)
+
+    ax.set_xlabel('Axe X')
+    ax.set_ylabel('Axe Y')
+    ax.set_zlabel('Axe Z')
+
+    plt.show()
+
+def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
+    fig = plt.figure()
+    newNodeList = []
+    for i in range(8):
+        for j in range(len(nodeList)):
+            coord = nodeList[j]
+            if j not in nodeConstraint:
+
+                dx, dy, dz = eigenvects[i][6 * j], eigenvects[i][6 * j + 1], eigenvects[i][6 * j + 2]
+
+                # print(dx, dy, dz)
+
+                new_coord = [coord[0] + dx, coord[1] + dy, coord[2] + dz]
+                newNodeList.append(new_coord)
+            else:
+                newNodeList.append(coord)
+
+        ax = fig.add_subplot(2, 4, i + 1, projection='3d')
+
+        for elem in elemList0:
+            if elem[2] != 2:
+                newnode1 = newNodeList[elem[0]]
+                newnode2 = newNodeList[elem[1]]
+                node1 = nodeList[elem[0]]
+                node2 = nodeList[elem[1]]
+
+                ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], '--', c='b')
+                ax.plot([newnode1[0], newnode2[0]], [newnode1[1], newnode2[1]], [newnode1[2], newnode2[2]], c='r')
+
+    plt.show()
+
+
+

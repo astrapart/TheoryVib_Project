@@ -2,29 +2,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import fct
+import data
 import copy
+
 
 a = 5.49
 b = 3.66
-nodeListsimple = [[0, 0, 0],    # node 0
-                  [a, 0, 0],    # node 1
-                  [0, a, 0],    # node 2
-                  [a, a, 0],    # node 3
-                  [0, 0, b],    # node 4
-                  [a, 0, b],    # node 5
-                  [0, a, b],    # node 6
-                  [a, a, b],    # node 7
-                  [0, 0, 2*b],  # node 8
-                  [a, 0, 2*b],  # node 9
-                  [0, a, 2*b],  # node 10
-                  [a, a, 2*b]]  # node 11
-
-elemList0simple = [[0, 4, 0], [1, 5, 0], [2, 6, 0], [3, 7, 0],
-                   [4, 8, 0], [5, 9, 0], [6, 10, 0], [7, 11, 0],
-                   [4, 5, 1], [5, 7, 1], [7, 6, 1], [6, 4, 1],
-                   [8, 9, 1], [9, 11, 1], [11, 10, 1], [10, 8, 1]]
-
-#fct.plot(elemList0simple, nodeListsimple)
+nodeListsimple = data.nodeList_example
+elemList0simple = data.elemList0_example
 
 # proprieties = [rho [kg/m3], poisson [-], Young [Pa], Jx [m4], Iy [m4], Iz [m4]]
 vertical_beams = [7800, 0.3, 2.1e10, 5.14e-3, 1.73e-7, 6.9e-6, 8.49e-5]
