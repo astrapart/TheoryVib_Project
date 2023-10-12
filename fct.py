@@ -171,10 +171,17 @@ def Add_const_emboit(nodeConstraint, dofList, M, K):
 
 
 def Add_lumped_mass(nodeLumped_mass, dofList, M):
+    mass = 200000
+    J = 24000000
+
     for node, mass in nodeLumped_mass:
+        count = 0
         for i in dofList[node]:
-            for j in dofList[node]:
-                M[i][j] += mass
+            if count >= 2:
+                M[i][i] = J
+            else:
+                M[i][i] += mass
+            count+=1
 
 """
 ########################################################################################################################
