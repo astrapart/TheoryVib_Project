@@ -11,7 +11,6 @@ import data
 def ElementFini(numberElem):
     nodeList = data.nodeList_eol
     elemList0 = data.elemList0_eol
-
     elemList = fct.create_elemList(elemList0, nodeList, numberElem)
     dofList = fct.create_dofList(nodeList)
     locel = fct.create_locel(elemList, dofList)
@@ -22,7 +21,7 @@ def ElementFini(numberElem):
     mainBeam_d  = 1     # [m]
     othbeam_d   = 0.6   # [m]
     thickn      = 0.02  # [m]
-    proprieties = fct.create_properties(mainBeam_d, othbeam_d, thickn)
+    #proprieties = fct.create_properties(mainBeam_d, othbeam_d, thickn)
 
     M = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
     K = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
@@ -37,7 +36,7 @@ def ElementFini(numberElem):
 
         l = fct.calculate_length(coord1, coord2)
 
-        rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r = fct.properties(type_beam, proprieties, l)
+        rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r = fct.properties(type_beam, l)
 
         Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
         Mel = fct.create_Mel(m, r, l)

@@ -6,6 +6,7 @@ IMPORT
 
 import matplotlib.pyplot as plt
 import numpy as np
+import data
 
 """
 ########################################################################################################################
@@ -43,8 +44,8 @@ def create_elemList(elemList0, nodeList, numberElem):
                     current = new
             else:
                 elemList.append([new, j, propriety])
-    else:
-        elemList.append(elem)
+        else:
+            elemList.append(elem)
             
     return elemList
     
@@ -144,23 +145,6 @@ def create_Mel(m, r, l) :
 
     return m * np.array(Mel)
 
-def create_properties(mainBeam_d, othbeam_d, thickn):
-    ## Main Beam
-    main_beam_prop = [7800, 0.3, 210e9, np.pi * ((mainBeam_d / 2) ** 2 - (mainBeam_d / 2 - thickn) ** 2),
-                  mainBeam_d / 2, (mainBeam_d - 2 * thickn) / 2]
-
-    ## Other Beam
-    other_beam_prop = [7800, 0.3, 210e9, np.pi * ((othbeam_d / 2) ** 2 - (othbeam_d / 2 - thickn) ** 2),
-                   othbeam_d / 2, (othbeam_d - (2 * thickn)) / 2]
-
-    ## Rigid Link  
-    rigid_link_prop = [main_beam_prop[0]*10**(-4), 0.3, main_beam_prop[2] * 10 ** 4, main_beam_prop[3] * 10 ** -2,
-                   mainBeam_d / 2, (mainBeam_d - (2 * thickn)) / 2]
-
-    return [main_beam_prop, other_beam_prop, rigid_link_prop]
-    
-
-
 def Add_const_emboit(nodeConstraint, dofList, M, K):
     ### CECI EST UN EST POUR LES CONTRAINTES? AVOIR SI CA MARCHE
     """
@@ -197,13 +181,13 @@ Fonction Calculate
 def calculate_length (coord1, coord2) :
     return np.sqrt((coord1[0] - coord2[0]) ** 2 + (coord1[1] - coord2[1]) ** 2 + (coord1[2] - coord2[2]) ** 2)
 
-def properties (type_beam, proprieties, l) :
-    rho = proprieties[type_beam][0]            # [kg/m3]
-    v   = proprieties[type_beam][1]            # [-]
-    E   = proprieties[type_beam][2]            # [GPa]
-    A   = proprieties[type_beam][3]            # [m2]
-    Re  = proprieties[type_beam][4]            # [m]
-    Ri  = proprieties[type_beam][5]            # [m]
+def properties (type_beam, l) :
+    rho = data.density_beam                                     # [kg/m3]
+    v = data.poisson_ratio                                      # [-]
+    E = data.young_mod                                          # [Pa]
+    Re = data.rayon_beam[type_beam]                             # [m2]
+    Ri = data.rayon_beam[type_beam] - data.thickness_beam       # [m]
+    A = np.pi * (Re-Ri)**2                                      # [m]
 
     m    = rho * A * l                         # [kg]
     Ix   = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
@@ -214,13 +198,13 @@ def properties (type_beam, proprieties, l) :
     r    = np.sqrt(Iy / A)                     # [m]
 
     if type_beam == 2:
+        rho = rho * 10 **(-4)
+        A = A * 10 **(-2)
+        E = E * 10 ** 4
+
         Jx = Jx*10**4
         Iy = Iy*10**4
         Iz = Iz*10**4
-
-        A = A*10**(-2)
-        E = E*10**4
-        rho = rho*10**(-4)
 
     return rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r
 

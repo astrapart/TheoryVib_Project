@@ -10,6 +10,12 @@ import numpy as np
 DATA PROJECT
 ########################################################################################################################
 """
+density_beam = 7800 #[kg/m3]
+poisson_ratio = 0.3
+young_mod = 210e9
+rayon_beam = [1/2, 0.6/2, 1/2]
+thickness_beam = 0.02
+
 
 tan_3 = np.tan(np.radians(3))
 nodeList_eol = [[0, 0, 0],  # node 0
