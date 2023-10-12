@@ -61,7 +61,7 @@ def ElementFini(numberElem):
     eigenvals, eigenvects = scipy.linalg.eig(K, M, right=True)
     val_prop = np.sort(eigenvals)
 
-    fct.plot_result(nodeList, nodeConstraint, eigenvects, elemList0)
+    #fct.plot_result(nodeList, nodeConstraint, eigenvects, elemList0)
     return np.real(np.sqrt(val_prop[:8])/(2*np.pi))
 
 
@@ -69,12 +69,14 @@ def ElementFini(numberElem):
 
 def EtudeConvergence(precision):
 
-    TestElem = np.arange(1, precision, 1)
-    Result = np.zeros(len(TestElem))
+    TestElem = np.arange(2, precision, 1)
+    Result = []
 
-    for i in range(len(Result)):
-        Result[i] = ElementFini(TestElem[i])
+    for i in range(len(TestElem)):
+        tmp = ElementFini(TestElem[i])
+        print(tmp)
+        Result.append(tmp)
 
     
-print(ElementFini(3))
+print(ElementFini(50))
 #EtudeConvergence(5)

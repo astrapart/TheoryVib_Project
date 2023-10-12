@@ -176,7 +176,7 @@ def Add_lumped_mass(nodeLumped, dofList, M):
 
     count = 0
     for i in dofList[nodeLumped] :
-        if count <= 2 :
+        if count <= 2:
             M[i][i] += mass
         else :
             M[i][i] += J
