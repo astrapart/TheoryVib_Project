@@ -15,6 +15,8 @@ poisson_ratio = 0.3
 young_mod = 210e9
 rayon_beam = [1/2, 0.6/2, 1/2]
 thickness_beam = 0.02
+mass_lumped = 200000
+node_lumped_J = 24000000
 
 
 tan_3 = np.tan(np.radians(3))

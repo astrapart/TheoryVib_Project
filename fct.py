@@ -170,18 +170,18 @@ def Add_const_emboit(nodeConstraint, dofList, M, K):
             K = np.delete(K, dof, 1)
 
 
-def Add_lumped_mass(nodeLumped_mass, dofList, M):
-    mass = 200000
-    J = 24000000
+def Add_lumped_mass(nodeLumped, dofList, M):
+    mass = data.mass_lumped
+    J = data.node_lumped_J
 
-    for node, mass in nodeLumped_mass:
-        count = 0
-        for i in dofList[node]:
-            if count >= 2:
-                M[i][i] = J
-            else:
-                M[i][i] += mass
-            count+=1
+    count = 0
+    for i in dofList[nodeLumped] :
+        if count <= 2 :
+            M[i][i] += mass
+        else :
+            M[i][i] += J
+        count += 1
+
 
 """
 ########################################################################################################################
@@ -250,8 +250,6 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
             if j not in nodeConstraint:
 
                 dx, dy, dz = eigenvects[i][6 * j], eigenvects[i][6 * j + 1], eigenvects[i][6 * j + 2]
-
-                # print(dx, dy, dz)
 
                 new_coord = [coord[0] + dx, coord[1] + dy, coord[2] + dz]
                 newNodeList.append(new_coord)

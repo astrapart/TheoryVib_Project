@@ -16,7 +16,7 @@ def ElementFini(numberElem):
     locel = fct.create_locel(elemList, dofList)
 
     nodeConstraint = np.array([0, 1, 2, 3])
-    nodeLumped = np.array([[22, 200000]])
+    nodeLumped = 22
 
     mainBeam_d  = 1     # [m]
     othbeam_d   = 0.6   # [m]
@@ -57,7 +57,7 @@ def ElementFini(numberElem):
 
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
     val_prop = np.sort(eigenvals)
-    return np.sqrt(val_prop[:8])/(2*np.pi)
+    return np.real(np.sqrt(val_prop[:8])/(2*np.pi))
 
     fct.plot_result(nodeList, nodeConstraint, eigenvects, elemList0)
 
