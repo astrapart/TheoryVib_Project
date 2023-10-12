@@ -148,6 +148,7 @@ def create_Mel(m, r, l) :
 def Add_const_emboit(nodeConstraint, dofList, M, K):
     ### CECI EST UN EST POUR LES CONTRAINTES? AVOIR SI CA MARCHE
     """
+
     for node in nodeConstraint:
         for i in range(6):
             # Réglez les déplacements correspondants à zéro dans les matrices globales
@@ -157,6 +158,8 @@ def Add_const_emboit(nodeConstraint, dofList, M, K):
             M[:, 6 * node + i] = 0
             # Placez 1 sur la diagonale pour la masse globale (pour éviter une matrice singulière)
             M[6 * node + i, 6 * node + i] = 1.0
+
+
     """
     for node in nodeConstraint:
         for dof in dofList[node]:
