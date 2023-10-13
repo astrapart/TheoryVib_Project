@@ -62,7 +62,7 @@ def ElementFini(numberElem):
     val_prop = np.sort(eigenvals)
 
     #fct.plot_result(nodeList, nodeConstraint, eigenvects, elemList0)
-    return np.real(np.sqrt(val_prop[:8])/(2*np.pi))
+    return val_prop[:8]
 
 
 
@@ -77,6 +77,6 @@ def EtudeConvergence(precision):
         print(tmp)
         Result.append(tmp)
 
-    
-print(ElementFini(50))
+
+print(fct.print_freq(ElementFini(3)))
 #EtudeConvergence(5)

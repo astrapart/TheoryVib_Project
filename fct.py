@@ -283,5 +283,11 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
 
     plt.show()
 
+def print_freq(list_eign) :
+    count = 0
+    for elem in list_eign :
+        f = np.real(np.sqrt(elem)/(2*np.pi))
+        print("La fréquence pour la valeur propre", count, "vaut :" , f, "Hz")
+        count+=1
 
 
