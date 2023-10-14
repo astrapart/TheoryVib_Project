@@ -244,6 +244,12 @@ def plot_structure(elemList, nodeList):
         elem_2 = nodeList[elem[1]]
         ax.plot([elem_1[0], elem_2[0]], [elem_1[1], elem_2[1]], [elem_1[2], elem_2[2]], c='b')
 
+    for node in nodeList:
+        x = node[0]
+        y = node[1]
+        z = node[2]
+        ax.scatter(x, y, z, c='g')
+
     ax.set_xlim(-1, 6)
     ax.set_ylim(-1, 6)
 
@@ -253,7 +259,7 @@ def plot_structure(elemList, nodeList):
 
     plt.show()
 
-def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
+def plot_result(nodeList, nodeConstraint, eigenvects, index_vects, elemList0) :
     fig = plt.figure()
     for i in range(8):
         newNodeList = []
@@ -261,7 +267,7 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
             coord = nodeList[j]
             if j not in nodeConstraint:
 
-                dx, dy, dz = eigenvects[i][6 * j], eigenvects[i][6 * j + 1], eigenvects[i][6 * j + 2]
+                dx, dy, dz = eigenvects[index_vects[i]][6 * j], eigenvects[index_vects[i]][6 * j + 1], eigenvects[index_vects[i]][6 * j + 2]
 
                 factor = 10
                 new_coord = [coord[0] + dx*factor, coord[1] + dy*factor, coord[2] + dz*factor]
@@ -284,10 +290,10 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
     plt.show()
 
 def print_freq(list_eign) :
-    count = 0
-    for elem in list_eign :
-        f = np.real(np.sqrt(elem)/(2*np.pi))
-        print("La fréquence pour la valeur propre", count, "vaut :" , f, "Hz")
-        count+=1
+
+    for i in range(len(list_eign)):
+        f = np.real(np.sqrt(list_eign[i])/(2*np.pi))
+        print("La fréquence pour la valeur propre", i, "vaut :", f, "Hz")
+
 
 

@@ -8,12 +8,16 @@ import scipy
 import fct
 import data
 
-def ElementFini(numberElem):
+def ElementFini(numberElem, verbose):
+
     nodeList = data.nodeList_eol
     elemList0 = data.elemList0_eol
     elemList = fct.create_elemList(elemList0, nodeList, numberElem)
     dofList = fct.create_dofList(nodeList)
     locel = fct.create_locel(elemList, dofList)
+
+    if verbose:
+        fct.plot_structure(elemList, nodeList)
 
     nodeConstraint = np.array([0, 1, 2, 3])
     nodeLumped = 22
@@ -56,27 +60,26 @@ def ElementFini(numberElem):
 
     fct.Add_lumped_mass(nodeLumped, dofList, M)
     fct.Add_const_emboit(nodeConstraint, dofList, M, K)
-    print(fct.calculate_mtot(M, ltot))
+    print("m =", fct.calculate_mtot(M, ltot), "[kg]")
 
     eigenvals, eigenvects = scipy.linalg.eig(K, M, right=True)
     val_prop = np.sort(eigenvals)
 
-    #fct.plot_result(nodeList, nodeConstraint, eigenvects, elemList0)
+    if verbose:
+        fct.plot_result(nodeList, nodeConstraint, eigenvects, np.argsort(eigenvals), elemList0)
+
     return val_prop[:8]
-
-
 
 
 def EtudeConvergence(precision):
 
-    TestElem = np.arange(2, precision, 1)
+    TestElem = np.arange(2, precision+1, 1)
     Result = []
 
     for i in range(len(TestElem)):
-        tmp = ElementFini(TestElem[i])
-        print(tmp)
+        tmp = ElementFini(TestElem[i], False)
         Result.append(tmp)
 
 
-print(fct.print_freq(ElementFini(3)))
+fct.print_freq(ElementFini(3, True))
 #EtudeConvergence(5)
