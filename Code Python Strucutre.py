@@ -22,11 +22,6 @@ def ElementFini(numberElem, verbose):
     nodeConstraint = np.array([0, 1, 2, 3])
     nodeLumped = 22
 
-    mainBeam_d  = 1     # [m]
-    othbeam_d   = 0.6   # [m]
-    thickn      = 0.02  # [m]
-    #proprieties = fct.create_properties(mainBeam_d, othbeam_d, thickn)
-
     M = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
     K = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
     ltot = 0

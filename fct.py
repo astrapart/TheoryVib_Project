@@ -211,7 +211,6 @@ def properties (type_beam, l) :
         rho = rho * 10 **(-4)
         A = A * 10 **(-2)
         E = E * 10 ** 4
-
         Jx = Jx*10**4
         Iy = Iy*10**4
         Iz = Iz*10**4
