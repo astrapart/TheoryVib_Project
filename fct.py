@@ -293,6 +293,7 @@ def print_freq(list_eign) :
     for i in range(len(list_eign)):
         f = np.real(np.sqrt(list_eign[i])/(2*np.pi))
         print("La fréquence pour la valeur propre", i, "vaut :", f, "Hz")
+    return
 
 
 
