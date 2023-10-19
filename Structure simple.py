@@ -22,7 +22,7 @@ def ElementFini(numberElem, verbose):
     if verbose:
         fct.plot_structure(elemList, nodeListsimple)
 
-    nodeConstraint = [0, 1, 2, 3]
+    nodeConstraint = [1, 2, 3, 4]
 
     numberNode = len(nodeListsimple)
     M = np.zeros([numberNode*6, numberNode*6])
@@ -31,8 +31,8 @@ def ElementFini(numberElem, verbose):
 
     for i in range(len(elemList)):
 
-        node1 = elemList[i][0]
-        node2 = elemList[i][1]
+        node1 = elemList[i][0]-1
+        node2 = elemList[i][1]-1
         indexProp = elemList[i][2]
 
         coord1 = nodeListsimple[node1]
@@ -65,18 +65,22 @@ def ElementFini(numberElem, verbose):
         for j in range(len(locel[i])):
             for k in range(len(locel[i])):
 
-                M[locel[i][j]][locel[i][k]] = M[locel[i][j]][locel[i][k]] + Mes[j][k]
+                M[locel[i][j]-1][locel[i][k]-1] = M[locel[i][j]-1][locel[i][k]-1] + Mes[j][k]
 
-                K[locel[i][j]][locel[i][k]] = K[locel[i][j]][locel[i][k]] + Kes[j][k]
+                K[locel[i][j]-1][locel[i][k]-1] = K[locel[i][j]-1][locel[i][k]-1] + Kes[j][k]
 
     fct.Add_const_emboit(nodeConstraint, dofList, M, K)
     eigenvals, eigenvects = scipy.linalg.eig(K, M, right=True)
     print("m =", fct.calculate_mtot(M, ltot), "[kg]")
     val_prop = np.sort(eigenvals)
-    index_sort = np.argsort(eigenvals)
 
     if verbose:
-        fct.plot_result(nodeListsimple, nodeConstraint, np.argsort(eigenvals), eigenvects, elemList0simple)
+        new_index = np.argsort(eigenvals)
+        vect_prop = []
+        for i in new_index:
+            vect_prop.append(eigenvects[i])
+            
+        fct.plot_result(nodeListsimple, nodeConstraint, eigenvects, elemList0simple)
 
     return val_prop[:4]
 
