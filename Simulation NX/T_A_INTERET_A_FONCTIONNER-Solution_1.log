@@ -1,0 +1,1075 @@
+Simcenter Samcef: Running module bacon
+ User requested workspace             131000000 words  (    1048 MBytes)
+ Memory allocation / DB                65500000 /      65500000 words
+@@@CSH:SMGINI: BACON
+@@@CSH:SMGINT: PID =    33424 : Current Process ID
+ Release 2019.1-1859 - Build 1859.1912.091 - Date 25-Feb-2019 (LONG INTEGERS)
+ Graphic driver used: Windows   
+ 
+ >>> Sold-to info: SoldTO: 1471462 - Universite de Liege Webkey: PK3IL4N46V <<<
+
+ Input 1>!
+ Input 1>!                     ====================================
+ Input 1>!                     Programme   <BACON> : Version 2019.1
+ Input 1>!                     ====================================
+ Input 1>!
+ Input 1>!
+ Input 1>MODE M 1
+ Spy file :  9 - "C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1.spy"
+ Input 1>INPUT INIT
+ Input 1>EXIT
+ Input12>! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+ Input12>!
+ Input12>!              NX 1859 TRANSLATOR
+ Input12>!   This file is compatible with Samcef 2019.1 (19.1-01) and next versions
+ Input12>!
+ Input12>!              FEM FILE: C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\ProjetV1.fem
+ Input12>!              SIM FILE: C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\T'A INTERET A FONCTIONNER.sim
+ Input12>!         ANALYSIS TYPE: Simcenter Samcef - Structural
+ Input12>!         SOLUTION NAME: Solution 1
+ Input12>!         SOLUTION TYPE: Modal Analysis
+ Input12>!     SOLVER INPUT FILE: T_A_INTERET_A_FONCTIONNER-Solution_1.dat
+ Input12>!         CREATION DATE: 19-octobre-2023
+ Input12>!         CREATION TIME: 11:41:55
+ Input12>!              HOSTNAME: Microsoft-Strapart
+ Input12>!              USERNAME: arnau
+ Input12>!
+ Input12>! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+ Input12> 
+ Input12>MODE M -1 LECTURE 256
+ Input12>!User Prolog
+ Input12>!-------------
+ Input12>! No User Prolog defined for the current solution.
+ Input12> 
+ Input12>! Samcef Bank File: UNITS.
+ Input12>! ------------------------
+ Input12>.UNIT
+ Input12> LENGTH 0.001 ! Unit = MilliMeter
+ Input12> MASS 1 ! Unit = Kilogram
+ Input12> CELSIUS
+ Input12> TIME 1
+ Input12> 
+ Input12>.GEL
+ Input12>TEMP 20 ! Default Temperature from Solution
+ Input12> 
+ Input12>! Samcef Bank File: NODES.
+ Input12>! ------------------------
+ Input12>.NOE
+ Input12> I 4 X 510 Y 4490 Z 17000
+ Input12> I 172 X 670 Y 4330 Z 22333.3333
+ Input12> I 173 X 590 Y 4410 Z 19666.6667
+ Input12> I 5 X 4490 Y 4490 Z 17000
+ Input12> I 8 X 4730 Y 4730 Z 9000
+ Input12> I 174 X 4570 Y 4570 Z 14333.3333
+ Input12> I 175 X 4650 Y 4650 Z 11666.6667
+ Input12> I 176 X 4330 Y 4330 Z 22333.3333
+ Input12> I 177 X 4410 Y 4410 Z 19666.6667
+ Input12> I 15 X 4490 Y 510 Z 17000
+ Input12> I 178 X 4330 Y 670 Z 22333.3333
+ Input12> I 179 X 4410 Y 590 Z 19666.6667
+ Input12> I 18 X 4730 Y 270 Z 9000
+ Input12> I 180 X 4570 Y 430 Z 14333.3333
+ Input12> I 181 X 4650 Y 350 Z 11666.6667
+ Input12> I 22 X 510 Y 510 Z 17000
+ Input12> I 182 X 670 Y 670 Z 22333.3333
+ Input12> I 183 X 590 Y 590 Z 19666.6667
+ Input12> I 25 X 270 Y 4730 Z 9000
+ Input12> I 184 X 430 Y 4570 Z 14333.3333
+ Input12> I 185 X 350 Y 4650 Z 11666.6667
+ Input12> I 28 X 270 Y 270 Z 9000
+ Input12> I 186 X 430 Y 430 Z 14333.3333
+ Input12> I 187 X 350 Y 350 Z 11666.6667
+ Input12> I 31 X 0 Y 0 Z 1000
+ Input12> I 188 X 180 Y 180 Z 6333.33333
+ Input12> I 189 X 90 Y 90 Z 3666.66667
+ Input12> I 34 X 5000 Y 0 Z 1000
+ Input12> I 190 X 4820 Y 180 Z 6333.33333
+ Input12> I 191 X 4910 Y 90 Z 3666.66667
+ Input12> I 37 X 0 Y 5000 Z 1000
+ Input12> I 192 X 180 Y 4820 Z 6333.33333
+ Input12> I 193 X 90 Y 4910 Z 3666.66667
+ Input12> I 40 X 5000 Y 5000 Z 1000
+ Input12> I 194 X 4820 Y 4820 Z 6333.33333
+ Input12> I 195 X 4910 Y 4910 Z 3666.66667
+ Input12> I 196 X 5000 Y 5000 Z 0
+ Input12> I 197 X 5000 Y 5000 Z 333.333333
+ Input12> I 198 X 5000 Y 5000 Z 666.666667
+ Input12> I 199 X 5000 Y 0 Z 0
+ Input12> I 200 X 5000 Y 0 Z 333.333333
+ Input12> I 201 X 5000 Y 0 Z 666.666667
+ Input12> I 202 X 0 Y 0 Z 0
+ Input12> I 203 X 0 Y 0 Z 333.333333
+ Input12> I 204 X 0 Y 0 Z 666.666667
+ Input12> I 205 X 0 Y 5000 Z 0
+ Input12> I 206 X 0 Y 5000 Z 333.333333
+ Input12> I 207 X 0 Y 5000 Z 666.666667
+ Input12> I 116 X 4250 Y 3083.33333 Z 25000
+ Input12> I 117 X 4250 Y 1916.66667 Z 25000
+ Input12> I 118 X 3083.33333 Y 750 Z 25000
+ Input12> I 119 X 1916.66667 Y 750 Z 25000
+ Input12> I 120 X 750 Y 1916.66667 Z 25000
+ Input12> I 121 X 750 Y 3083.33333 Z 25000
+ Input12> I 122 X 3083.33333 Y 4250 Z 25000
+ Input12> I 123 X 1916.66667 Y 4250 Z 25000
+ Input12> I 124 X 4330 Y 3003.33333 Z 22333.3333
+ Input12> I 125 X 4410 Y 1756.66667 Z 19666.6667
+ Input12> I 126 X 3003.33333 Y 4330 Z 22333.3333
+ Input12> I 127 X 1756.66667 Y 4410 Z 19666.6667
+ Input12> I 128 X 1996.66667 Y 670 Z 22333.3333
+ Input12> I 129 X 3243.33333 Y 590 Z 19666.6667
+ Input12> I 130 X 590 Y 3243.33333 Z 19666.6667
+ Input12> I 131 X 670 Y 1996.66667 Z 22333.3333
+ Input12> I 132 X 3163.33333 Y 510 Z 17000
+ Input12> I 133 X 1836.66667 Y 510 Z 17000
+ Input12> I 134 X 510 Y 1836.66667 Z 17000
+ Input12> I 135 X 510 Y 3163.33333 Z 17000
+ Input12> I 136 X 1836.66667 Y 4490 Z 17000
+ Input12> I 137 X 3163.33333 Y 4490 Z 17000
+ Input12> I 138 X 4490 Y 3163.33333 Z 17000
+ Input12> I 139 X 4490 Y 1836.66667 Z 17000
+ Input12> I 140 X 4650 Y 3323.33333 Z 11666.6667
+ Input12> I 141 X 4570 Y 1916.66667 Z 14333.3333
+ Input12> I 142 X 1916.66667 Y 4570 Z 14333.3333
+ Input12> I 143 X 3323.33333 Y 4650 Z 11666.6667
+ Input12> I 144 X 3083.33333 Y 430 Z 14333.3333
+ Input12> I 145 X 1676.66667 Y 350 Z 11666.6667
+ Input12> I 146 X 350 Y 1676.66667 Z 11666.6667
+ Input12> I 147 X 430 Y 3083.33333 Z 14333.3333
+ Input12> I 148 X 1756.66667 Y 270 Z 9000
+ Input12> I 149 X 3243.33333 Y 270 Z 9000
+ Input12> I 150 X 270 Y 3243.33333 Z 9000
+ Input12> I 151 X 270 Y 1756.66667 Z 9000
+ Input12> I 152 X 1846.66667 Y 180 Z 6333.33333
+ Input12> I 153 X 3423.33333 Y 90 Z 3666.66667
+ Input12> I 154 X 180 Y 1846.66667 Z 6333.33333
+ Input12> I 155 X 90 Y 3423.33333 Z 3666.66667
+ Input12> I 156 X 4730 Y 3243.33333 Z 9000
+ Input12> I 157 X 4730 Y 1756.66667 Z 9000
+ Input12> I 158 X 1756.66667 Y 4730 Z 9000
+ Input12> I 159 X 3243.33333 Y 4730 Z 9000
+ Input12> I 160 X 3153.33333 Y 4820 Z 6333.33333
+ Input12> I 161 X 1576.66667 Y 4910 Z 3666.66667
+ Input12> I 162 X 4820 Y 3153.33333 Z 6333.33333
+ Input12> I 163 X 4910 Y 1576.66667 Z 3666.66667
+ Input12> I 164 X 5000 Y 3333.33333 Z 1000
+ Input12> I 165 X 5000 Y 1666.66667 Z 1000
+ Input12> I 166 X 3333.33333 Y 5000 Z 1000
+ Input12> I 167 X 1666.66667 Y 5000 Z 1000
+ Input12> I 168 X 3333.33333 Y 0 Z 1000
+ Input12> I 169 X 1666.66667 Y 0 Z 1000
+ Input12> I 170 X 0 Y 1666.66667 Z 1000
+ Input12> I 171 X 0 Y 3333.33333 Z 1000
+ Input12> I 115 X 2500 Y 2500 Z 25000
+ Input12> I 114 X 2500 Y 2500 Z 80000
+ Input12> I 12 X 4250 Y 750 Z 25000
+ Input12> I 19 X 750 Y 750 Z 25000
+ Input12> I 1 X 750 Y 4250 Z 25000
+ Input12> I 9 X 4250 Y 4250 Z 25000
+ Input12>! Samcef Bank File: ELEMENTS.
+ Input12>! ---------------------------
+ Input12>.MAI
+ Input12> I 228 AT 1 0 N 1 172
+ Input12> I 229 AT 1 0 N 172 173
+ Input12> I 230 AT 1 0 N 173 4
+ Input12> I 231 AT 1 0 N 5 174
+ Input12> I 232 AT 1 0 N 174 175
+ Input12> I 233 AT 1 0 N 175 8
+ Input12> I 234 AT 1 0 N 9 176
+ Input12> I 235 AT 1 0 N 176 177
+ Input12> I 236 AT 1 0 N 177 5
+ Input12> I 237 AT 1 0 N 12 178
+ Input12> I 238 AT 1 0 N 178 179
+ Input12> I 239 AT 1 0 N 179 15
+ Input12> I 240 AT 1 0 N 15 180
+ Input12> I 241 AT 1 0 N 180 181
+ Input12> I 242 AT 1 0 N 181 18
+ Input12> I 243 AT 1 0 N 19 182
+ Input12> I 244 AT 1 0 N 182 183
+ Input12> I 245 AT 1 0 N 183 22
+ Input12> I 246 AT 1 0 N 4 184
+ Input12> I 247 AT 1 0 N 184 185
+ Input12> I 248 AT 1 0 N 185 25
+ Input12> I 249 AT 1 0 N 22 186
+ Input12> I 250 AT 1 0 N 186 187
+ Input12> I 251 AT 1 0 N 187 28
+ Input12> I 252 AT 1 0 N 28 188
+ Input12> I 253 AT 1 0 N 188 189
+ Input12> I 254 AT 1 0 N 189 31
+ Input12> I 255 AT 1 0 N 18 190
+ Input12> I 256 AT 1 0 N 190 191
+ Input12> I 257 AT 1 0 N 191 34
+ Input12> I 258 AT 1 0 N 25 192
+ Input12> I 259 AT 1 0 N 192 193
+ Input12> I 260 AT 1 0 N 193 37
+ Input12> I 261 AT 1 0 N 8 194
+ Input12> I 262 AT 1 0 N 194 195
+ Input12> I 263 AT 1 0 N 195 40
+ Input12> I 264 AT 1 0 N 196 197
+ Input12> I 265 AT 1 0 N 197 198
+ Input12> I 266 AT 1 0 N 198 40
+ Input12> I 267 AT 1 0 N 199 200
+ Input12> I 268 AT 1 0 N 200 201
+ Input12> I 269 AT 1 0 N 201 34
+ Input12> I 270 AT 1 0 N 202 203
+ Input12> I 271 AT 1 0 N 203 204
+ Input12> I 272 AT 1 0 N 204 31
+ Input12> I 273 AT 1 0 N 205 206
+ Input12> I 274 AT 1 0 N 206 207
+ Input12> I 275 AT 1 0 N 207 37
+ Input12> I 144 AT 2 0 N 9 116
+ Input12> I 145 AT 2 0 N 116 117
+ Input12> I 146 AT 2 0 N 117 12
+ Input12> I 147 AT 2 0 N 12 118
+ Input12> I 148 AT 2 0 N 118 119
+ Input12> I 149 AT 2 0 N 119 19
+ Input12> I 150 AT 2 0 N 19 120
+ Input12> I 151 AT 2 0 N 120 121
+ Input12> I 152 AT 2 0 N 121 1
+ Input12> I 153 AT 2 0 N 9 122
+ Input12> I 154 AT 2 0 N 122 123
+ Input12> I 155 AT 2 0 N 123 1
+ Input12> I 156 AT 2 0 N 9 124
+ Input12> I 157 AT 2 0 N 124 125
+ Input12> I 158 AT 2 0 N 125 15
+ Input12> I 159 AT 2 0 N 9 126
+ Input12> I 160 AT 2 0 N 126 127
+ Input12> I 161 AT 2 0 N 127 4
+ Input12> I 162 AT 2 0 N 19 128
+ Input12> I 163 AT 2 0 N 128 129
+ Input12> I 164 AT 2 0 N 129 15
+ Input12> I 165 AT 2 0 N 4 130
+ Input12> I 166 AT 2 0 N 130 131
+ Input12> I 167 AT 2 0 N 131 19
+ Input12> I 168 AT 2 0 N 15 132
+ Input12> I 169 AT 2 0 N 132 133
+ Input12> I 170 AT 2 0 N 133 22
+ Input12> I 171 AT 2 0 N 22 134
+ Input12> I 172 AT 2 0 N 134 135
+ Input12> I 173 AT 2 0 N 135 4
+ Input12> I 174 AT 2 0 N 4 136
+ Input12> I 175 AT 2 0 N 136 137
+ Input12> I 176 AT 2 0 N 137 5
+ Input12> I 177 AT 2 0 N 5 138
+ Input12> I 178 AT 2 0 N 138 139
+ Input12> I 179 AT 2 0 N 139 15
+ Input12> I 180 AT 2 0 N 8 140
+ Input12> I 181 AT 2 0 N 140 141
+ Input12> I 182 AT 2 0 N 141 15
+ Input12> I 183 AT 2 0 N 4 142
+ Input12> I 184 AT 2 0 N 142 143
+ Input12> I 185 AT 2 0 N 143 8
+ Input12> I 186 AT 2 0 N 15 144
+ Input12> I 187 AT 2 0 N 144 145
+ Input12> I 188 AT 2 0 N 145 28
+ Input12> I 189 AT 2 0 N 28 146
+ Input12> I 190 AT 2 0 N 146 147
+ Input12> I 191 AT 2 0 N 147 4
+ Input12> I 192 AT 2 0 N 28 148
+ Input12> I 193 AT 2 0 N 148 149
+ Input12> I 194 AT 2 0 N 149 18
+ Input12> I 195 AT 2 0 N 25 150
+ Input12> I 196 AT 2 0 N 150 151
+ Input12> I 197 AT 2 0 N 151 28
+ Input12> I 198 AT 2 0 N 28 152
+ Input12> I 199 AT 2 0 N 152 153
+ Input12> I 200 AT 2 0 N 153 34
+ Input12> I 201 AT 2 0 N 28 154
+ Input12> I 202 AT 2 0 N 154 155
+ Input12> I 203 AT 2 0 N 155 37
+ Input12> I 204 AT 2 0 N 8 156
+ Input12> I 205 AT 2 0 N 156 157
+ Input12> I 206 AT 2 0 N 157 18
+ Input12> I 207 AT 2 0 N 25 158
+ Input12> I 208 AT 2 0 N 158 159
+ Input12> I 209 AT 2 0 N 159 8
+ Input12> I 210 AT 2 0 N 8 160
+ Input12> I 211 AT 2 0 N 160 161
+ Input12> I 212 AT 2 0 N 161 37
+ Input12> I 213 AT 2 0 N 8 162
+ Input12> I 214 AT 2 0 N 162 163
+ Input12> I 215 AT 2 0 N 163 34
+ Input12> I 216 AT 2 0 N 40 164
+ Input12> I 217 AT 2 0 N 164 165
+ Input12> I 218 AT 2 0 N 165 34
+ Input12> I 219 AT 2 0 N 40 166
+ Input12> I 220 AT 2 0 N 166 167
+ Input12> I 221 AT 2 0 N 167 37
+ Input12> I 222 AT 2 0 N 34 168
+ Input12> I 223 AT 2 0 N 168 169
+ Input12> I 224 AT 2 0 N 169 31
+ Input12> I 225 AT 2 0 N 31 170
+ Input12> I 226 AT 2 0 N 170 171
+ Input12> I 227 AT 2 0 N 171 37
+ Input12>! Samcef Bank File : GROUPS.
+ Input12>! --------------------------
+ Input12>.SEL
+  Current accuracy =  9.00000000E+00
+ Input12> GROUP 1 MAILLE NOM "@SC@1d_mesh(1)_0"
+ Input12> I 228 J 275 K 1
+ Input12> GROUP 2 MAILLE NOM "@SC@1d_mesh(2)_1"
+ Input12> I 144 J 227 K 1
+ Input12> GROUP 3 NOEUDS NOM "@SC@RBE_278_Slaves"
+ Input12> I 115
+ Input12> GROUP 4 NOEUDS NOM "@SC@RBE_143_Slaves"
+ Input12> I 114
+ Input12> GROUP 5 NOEUDS NOM "@SC@Fixed(1)"
+ Input12> I 196 J 205 K 3
+ Input12>! Samcef Bank File: MATERIALS.
+ Input12>! ----------------------------
+ Input12>.MAT
+ Input12>   I 1 NOM "Steel for Beam::ProjetV1::[1]"
+ Input12>   BEHA "ELASTIC"
+ Input12>   YT 2.1e+08  ! Young's modulus (E)
+ Input12>   NT 0.3  ! Poisson's ratio (NU)
+ Input12>   G 8.07692e+07  ! Shear modulus (G)
+ Input12>   M 7.8e-06  !  Mass Density (Rho)
+ Input12> 
+ Input12>! Samcef Bank File: BEAM
+ Input12>! ----------------------
+ Input12>.BEAM
+ Number of nodes reloaded =         110
+ Largest  node  number    =         207
+ Number of cells reloaded =         132
+ Largest  cell  number    =         275
+  Current accuracy =  9.00000000E-01
+ Input12>I 228 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 229 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 230 PLANZ DIR -0.707107 -0.707107 1.38778e-17
+ Input12>I 231 PLANZ DIR -0.707107 -0.705835 -0.0423883
+ Input12>I 232 PLANZ DIR -0.707107 -0.705835 -0.0423883
+ Input12>I 233 PLANZ DIR -0.707107 -0.705835 -0.0423883
+ Input12>I 234 PLANZ DIR -0.707107 -0.705835 -0.0423883
+ Input12>I 235 PLANZ DIR -0.707107 -0.705835 -0.0423883
+ Input12>I 236 PLANZ DIR -0.707107 -0.705835 -0.0423883
+ Input12>I 237 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 238 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 239 PLANZ DIR -0.707107 -0.707107 1.38778e-17
+ Input12>I 240 PLANZ DIR -0.707107 -0.707107 -1.73472e-17
+ Input12>I 241 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 242 PLANZ DIR -0.707107 -0.707107 1.38778e-17
+ Input12>I 243 PLANZ DIR -0.705835 -0.707107 0.0423883
+ Input12>I 244 PLANZ DIR -0.705835 -0.707107 0.0423883
+ Input12>I 245 PLANZ DIR -0.705835 -0.707107 0.0423883
+ Input12>I 246 PLANZ DIR -0.707107 -0.707107 -1.73472e-17
+ Input12>I 247 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 248 PLANZ DIR -0.707107 -0.707107 1.38778e-17
+ Input12>I 249 PLANZ DIR -0.705835 -0.707107 0.0423883
+ Input12>I 250 PLANZ DIR -0.705835 -0.707107 0.0423883
+ Input12>I 251 PLANZ DIR -0.705835 -0.707107 0.0423883
+ Input12>I 252 PLANZ DIR -0.705667 -0.706938 0.0476754
+ Input12>I 253 PLANZ DIR -0.705667 -0.706938 0.0476754
+ Input12>I 254 PLANZ DIR -0.705667 -0.706938 0.0476754
+ Input12>I 255 PLANZ DIR -0.707107 -0.707107 -1.38778e-17
+ Input12>I 256 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 257 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 258 PLANZ DIR -0.707107 -0.707107 -1.38778e-17
+ Input12>I 259 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 260 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 261 PLANZ DIR -0.706938 -0.705667 -0.0476754
+ Input12>I 262 PLANZ DIR -0.706938 -0.705667 -0.0476754
+ Input12>I 263 PLANZ DIR -0.706938 -0.705667 -0.0476754
+ Input12>I 264 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 265 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 266 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 267 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 268 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 269 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 270 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 271 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 272 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 273 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 274 PLANZ DIR -0.707107 -0.707107 0
+ Input12>I 275 PLANZ DIR -0.707107 -0.707107 0
+ Input12> 
+ Input12>I 144 PLANZ DIR 1 0 0
+ Input12>I 145 PLANZ DIR 1 0 0
+ Input12>I 146 PLANZ DIR 1 0 0
+ Input12>I 147 PLANZ DIR 0 -1 0
+ Input12>I 148 PLANZ DIR 0 -1 0
+ Input12>I 149 PLANZ DIR 0 -1 0
+ Input12>I 150 PLANZ DIR -1 0 0
+ Input12>I 151 PLANZ DIR -1 0 0
+ Input12>I 152 PLANZ DIR -1 0 0
+ Input12>I 153 PLANZ DIR 0 -1 0
+ Input12>I 154 PLANZ DIR 0 -1 0
+ Input12>I 155 PLANZ DIR 0 -1 0
+ Input12>I 156 PLANZ DIR 0.999481 0.0271668 0.017284
+ Input12>I 157 PLANZ DIR 0.999481 0.0271668 0.017284
+ Input12>I 158 PLANZ DIR 0.999481 0.0271668 0.017284
+ Input12>I 159 PLANZ DIR 0.815771 -0.423349 -0.394073
+ Input12>I 160 PLANZ DIR 0.815771 -0.423349 -0.394073
+ Input12>I 161 PLANZ DIR 0.815771 -0.423349 -0.394073
+ Input12>I 162 PLANZ DIR 0.837927 -0.368303 0.40278
+ Input12>I 163 PLANZ DIR 0.837927 -0.368303 0.40278
+ Input12>I 164 PLANZ DIR 0.837927 -0.368303 0.40278
+ Input12>I 165 PLANZ DIR -0.368303 0.837927 0.40278
+ Input12>I 166 PLANZ DIR -0.368303 0.837927 0.40278
+ Input12>I 167 PLANZ DIR -0.368303 0.837927 0.40278
+ Input12>I 168 PLANZ DIR -1.7472e-17 -0.407779 -0.913081
+ Input12>I 169 PLANZ DIR -0 -0.407779 -0.913081
+ Input12>I 170 PLANZ DIR 1.7472e-17 -0.407779 -0.913081
+ Input12>I 171 PLANZ DIR -0.407779 1.7472e-17 -0.913081
+ Input12>I 172 PLANZ DIR -0.407779 0 -0.913081
+ Input12>I 173 PLANZ DIR -0.407779 -1.7472e-17 -0.913081
+ Input12>I 174 PLANZ DIR 0 0.99669 -0.0812948
+ Input12>I 175 PLANZ DIR 0 0.99669 -0.0812948
+ Input12>I 176 PLANZ DIR 0 0.99669 -0.0812948
+ Input12>I 177 PLANZ DIR 0.99669 0 -0.0812948
+ Input12>I 178 PLANZ DIR 0.99669 0 -0.0812948
+ Input12>I 179 PLANZ DIR 0.99669 0 -0.0812948
+ Input12>I 180 PLANZ DIR -0.447373 0.796507 0.406736
+ Input12>I 181 PLANZ DIR -0.447373 0.796507 0.406736
+ Input12>I 182 PLANZ DIR -0.447373 0.796507 0.406736
+ Input12>I 183 PLANZ DIR 0.796507 -0.447373 0.406736
+ Input12>I 184 PLANZ DIR 0.796507 -0.447373 0.406736
+ Input12>I 185 PLANZ DIR 0.796507 -0.447373 0.406736
+ Input12>I 186 PLANZ DIR 0.81814 -0.39298 -0.419779
+ Input12>I 187 PLANZ DIR 0.81814 -0.39298 -0.419779
+ Input12>I 188 PLANZ DIR 0.81814 -0.39298 -0.419779
+ Input12>I 189 PLANZ DIR -0.39298 0.81814 -0.419779
+ Input12>I 190 PLANZ DIR -0.39298 0.81814 -0.419779
+ Input12>I 191 PLANZ DIR -0.39298 0.81814 -0.419779
+ Input12>I 192 PLANZ DIR -3.82355e-17 1 -1.50433e-31
+ Input12>I 193 PLANZ DIR 0 1 -1.97215e-31
+ Input12>I 194 PLANZ DIR 3.82355e-17 1 -3.37563e-31
+ Input12>I 195 PLANZ DIR 1 3.82355e-17 -4.67825e-32
+ Input12>I 196 PLANZ DIR 1 0 0
+ Input12>I 197 PLANZ DIR 1 -3.82355e-17 -4.67825e-32
+ Input12>I 198 PLANZ DIR 0.748495 0.508732 0.425378
+ Input12>I 199 PLANZ DIR 0.748495 0.508732 0.425378
+ Input12>I 200 PLANZ DIR 0.748495 0.508732 0.425378
+ Input12>I 201 PLANZ DIR 0.998283 -0.0290397 -0.0508618
+ Input12>I 202 PLANZ DIR 0.998283 -0.0290397 -0.0508618
+ Input12>I 203 PLANZ DIR 0.998283 -0.0290397 -0.0508618
+ Input12>I 204 PLANZ DIR 1 -1.49704e-30 -1.22354e-15
+ Input12>I 205 PLANZ DIR 1 0 -1.22354e-15
+ Input12>I 206 PLANZ DIR 1 1.49704e-30 -1.22354e-15
+ Input12>I 207 PLANZ DIR 1.49704e-30 1 -1.22354e-15
+ Input12>I 208 PLANZ DIR 0 1 -1.22354e-15
+ Input12>I 209 PLANZ DIR -1.49704e-30 1 -1.22354e-15
+ Input12>I 210 PLANZ DIR 0.733451 -0.508732 -0.450823
+ Input12>I 211 PLANZ DIR 0.733451 -0.508732 -0.450823
+ Input12>I 212 PLANZ DIR 0.733451 -0.508732 -0.450823
+ Input12>I 213 PLANZ DIR 0.999441 0.0290397 0.0165614
+ Input12>I 214 PLANZ DIR 0.999441 0.0290397 0.0165614
+ Input12>I 215 PLANZ DIR 0.999441 0.0290397 0.0165614
+ Input12>I 216 PLANZ DIR 1 0 0
+ Input12>I 217 PLANZ DIR 1 0 0
+ Input12>I 218 PLANZ DIR 1 0 0
+ Input12>I 219 PLANZ DIR 0 -1 0
+ Input12>I 220 PLANZ DIR 0 -1 0
+ Input12>I 221 PLANZ DIR 0 -1 0
+ Input12>I 222 PLANZ DIR 0 0.464487 -0.88558
+ Input12>I 223 PLANZ DIR 0 0.464487 -0.88558
+ Input12>I 224 PLANZ DIR 0 0.464487 -0.88558
+ Input12>I 225 PLANZ DIR 0.464487 0 -0.88558
+ Input12>I 226 PLANZ DIR 0.464487 0 -0.88558
+ Input12>I 227 PLANZ DIR 0.464487 0 -0.88558
+ Input12> 
+ Input12>! Samcef Bank File: HYPOTHESES
+ Input12>! ----------------------------
+ Input12>.HYP MINDLIN GROUP "@SC@1d_mesh(1)_0"
+ Input12>.HYP MINDLIN GROUP "@SC@1d_mesh(2)_1"
+ Input12>! Samcef Bank File: Beam Profiles
+ Input12>! -------------------------------
+ Input12>.BPR
+ Input12>NOM "Red" UNIT 0.001  TYPE "CIRCLE0" R1 1000 R2 980
+ Input12>NOM "Blue" UNIT 0.001  TYPE "CIRCLE0" R1 600 R2 0.58
+ Input12>! Samcef Bank File: Concentrated Masses
+ Input12>! -------------------------------------
+ Input12>.MASS
+ Input12>! 0d_manual_mesh(1)
+ Input12>I 138 N 114 ATT 3 MASS 200000 MIXX 2.4e+13 MIYY 2.4e+13 MIZZ 2.4e+13
+ Input12>! Samcef Bank File: CONSTRAINTS.
+ Input12>! ------------------------------
+ Input12>.CLM ADD
+ Input12>!
+ Input12>! Fixed(1)
+ Input12> GROUP "@SC@Fixed(1)" FIX
+ Input12> 
+ Input12>! Samcef Bank File: Rigid Bodies
+ Input12>! ------------------------------
+ Input12>.RBE
+ Input12>! connection_recipe_5_mesh
+ Input12>I 278 N 12 GROUP "@SC@RBE_278_Slaves" ATT 4
+ Input12>! connection_recipe_6_mesh
+ Input12>I 276 N 19 GROUP "@SC@RBE_278_Slaves" ATT 5
+ Input12>! connection_recipe_7_mesh
+ Input12>I 277 N 1 GROUP "@SC@RBE_278_Slaves" ATT 6
+ Input12>! connection_recipe_8_mesh
+ Input12>I 279 N 9 GROUP "@SC@RBE_278_Slaves" ATT 7
+ Input12>! connection_recipe_9_mesh
+ Input12>I 143 N 115 GROUP "@SC@RBE_143_Slaves" ATT 8
+ Input12>! Samcef Bank File: Elements Attributes
+ Input12>! -------------------------------------
+ Input12>.AEL
+ Input12>GROUP "@SC@1d_mesh(1)_0" PROFILE "Red"
+ Input12>GROUP "@SC@1d_mesh(2)_1" PROFILE "Blue"
+ Input12> I 228 J 275 K 1 MAT 1
+ Input12> I 144 J 227 K 1 MAT 1
+ Input12>! Samcef Bank File: Solution Parameters : .ALGO.
+ Input12>! ----------------------------------------------
+ Input12>.ALGO
+ Input12> LANCNVA 8 FREQ 0
+ Input12> 
+ Input12>! Samcef Bank File: Solution Parameters: .SAM.
+ Input12>! --------------------------------------------
+ Input12>.SAM
+ Input12> ISTO 8
+ Input12>! Samcef Bank File: .SAI
+ Input12>! ----------------------
+ Input12>.SAI
+ Input12> ARCHIVE STRUCTURE STYPE -221 !Suppress obsolete code
+ Input12>! Element Output Requests
+ Input12> ARCHIVE STRUCTURE STYP 1437 3437 1438 3438 ! Normal Forces Moments (Samcef default)
+ Input12> ARCHIVE STRUCTURE STYP 1524 3524 1525 3525 1251 3251 ! Shear Forces Moments (Samcef default)
+ Input12> ARCHIVE STRUCTURE STYP 1440 3440 ! Normal Stress Beams Rods (Samcef default)
+ Input12> ARCHIVE STRUCTURE STYP 1450 3450 ! Shear Stress Beams (Samcef default)
+ Input12> ARCHIVE STRUCTURE STYP 1411 3411 1436 3436 1435 3435 1431 3431 ! Linear Stress Tensor (Samcef default)
+ Input12> ARCHIVE STRUCTURE STYP 1421 3421 1446 3446 1445 3445 1528 3528 ! Total Strain Tensor (Samcef default)
+ Input12> ARCHIVE STRUCTURE STYP 334 ! Strain Energy
+ Input12> ARCHIVE STRUCTURE STYP 335 ! Kinetic Energy
+ Input12>! Nodal Output Requests
+ Input12> 
+ Input12>! Summary of the model
+ Input12>! --------------------
+ Input12>! Number of nodes: 110
+ Input12>! Minimum node id: 1
+ Input12>! Maximum node id: 110
+ Input12>! Number of elements: 132
+ Input12>! Minimum element id: 1
+ Input12>! Maximum element id: 132
+ Input12> 
+ Input12>!User Epilog
+ Input12>!-------------
+ Input12>! Declaration of abreviations for the Epilog:
+ Input12>! ==========================================
+ Input12>! Greater Node Number:     NUMBERMAXNODE
+ Input12>#INQ (/NUMBERMAXNODE,NOD,,MAX)
+ Input12>! Greater Element Number:  NUMBERMAXELEMENT
+ Input12>#INQ (/NUMBERMAXELEMENT,ELE,,MAX)
+ Input12>! Greater Function Number: NUMBERMAXFUNCTION
+ Input12>#INQ (/NUMBERMAXFUNCTION,FUN,,MAX)
+ Input12>! Greater Material Number: NUMBERMAXMATERIAL
+ Input12>#INQ (/NUMBERMAXMATERIAL,MAT,,MAX)
+ Input12>! No User Epilog defined for the current solution.
+ Input12> 
+ Input12> 
+ Input12>! No Warning Messages
+ Input12>! No Error Messages
+ Input12>! No Critical Messages
+ Input12> 
+ Input12>RETURN
+
+ Samcef File (Binary) :  3 - "C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1.sam"
+
+
+      SAMCEF FILE CREATION
+      ********************
+    NR  DATA TYPE            OBJECT NAME   RECORDS
+ =================================================
+     1  ELEM.ATTRIB.          (.AEL)          5
+     2  TITLE       
+     3  NODES-.NOE            (.NOE)        242
+     4  ELEMENT-.MAI          (.MAI)        133
+     5  HYPOTHESIS            (.HYP)        133
+     6  ELEMENT-.ELE          (.MC*)          5
+     7  FIXATIONS             (.CLM)          4
+
+      DB FILE CREATION
+      ****************
+
+ Saving the auxiliary memory in the DB ...
+ Saving the rotation matrix in the DB ...
+ Saving the ABREviations in the DB ...
+ Saving the release flag in the DB ...
+ Writing the DB on a binary file ...
+ DB File     : "C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1.sdb"
+
+@@@CSH:SMGFIN: I_RUNSUCCESS
+ -------------------------------------------------------------------------------
+ File size statistics
+ File name                                                            Size
+ -------------------------------------------------------------------------------
+ C:\PROGRA~1\Siemens\NX\SIMULA~1\samcef\Exec\pilote.dat             201087 Bytes
+ C... imulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1_ba.w02        1125 Bytes
+ C... t\Simulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1.sam       73440 Bytes
+ C... t\Simulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1.spy        1197 Bytes
+ C... t\Simulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1.dat       17360 Bytes
+ C... t\Simulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1.sdb    18757912 Bytes
+ C:\PROGRA~1\Siemens\NX\SIMULA~1\samcef\Exec\dic.dic                481422 Bytes
+ C:\PROGRA~1\Siemens\NX\SIMULA~1\samcef\Exec\samcef.proc             86131 Bytes
+ -------------------------------------------------------------------------------
+Simcenter Samcef: Module bacon completed
+Simcenter Samcef: Running module dynam
+@@@CSH:SMGINI: DYNAM
+@@@CSH:SMGINT: PID =    15424 : Current Process ID
+@@@CSH:SMGBEG:  1 /  6 : Data Analysis
+@@@CSH:SMGEVO:     1 /     4 : Front Width Optimization
+@@@CSH:SMGEVO:     2 /     4 : Dof Numbering
+@@@CSH:SMGEVO:     3 /     4 : Substructuring
+@@@CSH:SMGEVO:     4 /     4 : Resource Estimation
+@@@CSH:SMGINT: NBRDDL =      666 : Number of dof's
+@@@CSH:SMGINF: Disk space report for device "C:\"
+@@@CSH:SMGREA: DISKFREE =   351414.734 : Free disk space (Mb).
+@@@CSH:SMGREA: DISKREQUIRED =       17.000 : Required disk space (Mb).
+@@@CSH:SMGEND: -1 /  6 : Data Analysis
+@@@CSH:SMGBEG:  2 /  6 : Element Generation
+@@@CSH:SMGEVO:     1 /   138 : Elements generated@@@CSH:SMGEVO:   138 /   138 : Elements generated
+@@@CSH:SMGREA: TOTLENGTH%LENGTH = 2.7657370734646E5 : Total length.
+@@@CSH:SMGREA: TOTVOLUME%VOLUME = 2.1204605803237E11 : Total volume.
+@@@CSH:SMGREA: TOTMASS%MASS = 1.8539592526525E6 : Total mass.
+@@@CSH:SMGEND: -2 /  6 : Element Generation
+@@@CSH:SMGBEG:  5 /  6 : Lanczos for sparse matrix.
+@@@CSH:SMGEVO:     1 /   100 : Factorization %@@@CSH:SMGEVO:   100 /   100 : Factorization %@@@CSH:SMGEVO:   100 /   100 : Factorization %
+@@@CSH:SMGEND: -5 /  6 : Lanczos for sparse matrix.
+@@@CSH:SMGBEG:  7 /  6 : Modal Mass Computation
+@@@CSH:SMGREA: FREQUENCY%FREQUENCY =  8.90813451E-01 : Frequency Nbr. 1
+@@@CSH:SMGREA: FREQUENCY%FREQUENCY =  9.23984569E-01 : Frequency Nbr. 2
+@@@CSH:SMGREA: FREQUENCY%FREQUENCY =  4.40157423E+00 : Frequency Nbr. 3
+@@@CSH:SMGREA: FREQUENCY%FREQUENCY =  5.65192906E+00 : Frequency Nbr. 4
+@@@CSH:SMGREA: FREQUENCY%FREQUENCY =  5.75429160E+00 : Frequency Nbr. 5
+@@@CSH:SMGREA: FREQUENCY%FREQUENCY =  1.59573620E+01 : Frequency Nbr. 6
+@@@CSH:SMGREA: FREQUENCY%FREQUENCY =  1.81580774E+01 : Frequency Nbr. 7
+@@@CSH:SMGREA: FREQUENCY%FREQUENCY =  2.59993759E+01 : Frequency Nbr. 8
+@@@CSH:SMGEND: -7 /  6 : Modal Mass Computation
+@@@CSH:SMGBEG:  8 /  6 : Modal Stresses Computation
+@@@CSH:SMGINT: NBRWRN =        3 : Number of warning(s)
+@@@CSH:SMGINT: NBRERR =        0 : Number of error(s)
+@@@CSH:SMGFIN: I_RUNSUCCESS
+Simcenter Samcef: Module dynam completed
+ User requested workspace             131000000 words  (    1048 MBytes)
+@@@CSH:SMGINI: FAC
+@@@CSH:SMGINT: PID =    33972 : Current Process ID
+ Release 2019.1-1859 - Build 1859.1912.091 - Date 25-Feb-2019 (LONG INTEGERS)
+
+ ===============================================================================
+ Status of the DB            : "T_A_INTERET_A_FONCTIONNER-Solution_1"
+ ================
+ DB created by BACON for arnau (OCT 19 2023 11:41:58)
+ modified   by BACON for arnau (OCT 19 2023 11:41:58)
+ modified   by DYNAM for arnau (OCT 19 2023 11:41:58)
+ modified   by FAC for arnau (OCT 19 2023 11:41:59)
+ Release                     :   19.1- 2
+ DB file name                : "C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1.sdb"
+ DB size                     :        2771999 (Max=       691283999)
+ Memory allocated            :        2772300
+ Size of the garbage         :            254 (  0.01% of the DB size)
+ Relational level            :              0
+ Object counter              :            414
+ Pagination flag             :        on (not yet triggered)
+ Swap count                  :              6 page I/O on disk
+ Used pages in memory        :             41 on              41
+ Used records in swap file   :              0 on           10473
+ Page alignment garbage      :            301 (  0.01% of the DB size)
+ Archive length :            :              0
+ Archive garbage :           :              0
+ Archive loading endian swap :              0
+ ===============================================================================
+----------------------------------------------------------------------
+    MEMORY ALLOCATION / DB:                     128217697   2772302
+----------------------------------------------------------------------
+ +===============================================================+======+======+
+ !  Processed Data                                               ! Code ! Type !
+ +===============================================================+======+======+
+ ! "Creation date of the display file  [OCT 19 2023 11:41:59]"   !   24 ! CHAR !
+ !---------------------------------------------------------------!------!------!
+ ! "Module name  [DYNAM]"                                        !   23 ! CHAR !
+ !---------------------------------------------------------------!------!------!
+ ! "Number of errors  [0]"                                       !   59 ! INTG !
+ !---------------------------------------------------------------!------!------!
+ ! "Number of warnings  [3]"                                     !   60 ! INTG !
+ !---------------------------------------------------------------!------!------!
+ FILE=C:\PROGRA~1\Siemens\NX\SIMULA~1\samcef\Exec\bacon_van.mes
+ %%%WARNING-902%%%
+ One (or more) error(s) or warning(s) was (were) issued during
+ computation.
+ Please check your listing file: results may be incomplete.
+ ! Computation statistics
+ ! ----------------------
+ ! Number of errors  :     0
+ ! Number of warnings:     3
+ !---------------------------------------------------------------!------!------!
+ ! "CPU Time (Sec.)  [1]"                                        ! 1006 ! INTG !
+ !---------------------------------------------------------------!------!------!
+ ! "Elapsed Time (Sec.)  [1]"                                    ! 1007 ! INTG !
+ !---------------------------------------------------------------!------!------!
+ ! "Elements  [138]"                                             !    2 ! INTG !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodes  [242]"                                                !    1 ! INTG !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal coordinates (X,Y,Z)"                                   !  153 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal displacements (DX,DY,DZ)"                              !  163 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal rotation (RX,RY,RZ)"                                   !  191 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal displacements (DX,DY,DZ)"                              !  163 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal rotation (RX,RY,RZ)"                                   !  191 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal displacements (DX,DY,DZ)"                              !  163 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal rotation (RX,RY,RZ)"                                   !  191 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal displacements (DX,DY,DZ)"                              !  163 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal rotation (RX,RY,RZ)"                                   !  191 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal displacements (DX,DY,DZ)"                              !  163 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal rotation (RX,RY,RZ)"                                   !  191 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal displacements (DX,DY,DZ)"                              !  163 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal rotation (RX,RY,RZ)"                                   !  191 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal displacements (DX,DY,DZ)"                              !  163 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal rotation (RX,RY,RZ)"                                   !  191 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal displacements (DX,DY,DZ)"                              !  163 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Nodal rotation (RX,RY,RZ)"                                   !  191 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr          1"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy density"                                       !  334 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Kinetic energy density"                                      !  335 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr          2"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy percentage"                                    ! 3234 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Percentage of kinetic energy"                                ! 3235 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr          3"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy density"                                       !  334 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Kinetic energy density"                                      !  335 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr          4"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy percentage"                                    ! 3234 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Percentage of kinetic energy"                                ! 3235 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr          5"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy density"                                       !  334 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Kinetic energy density"                                      !  335 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr          6"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy percentage"                                    ! 3234 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Percentage of kinetic energy"                                ! 3235 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr          7"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy density"                                       !  334 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Kinetic energy density"                                      !  335 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr          8"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy percentage"                                    ! 3234 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Percentage of kinetic energy"                                ! 3235 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr          9"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy density"                                       !  334 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Kinetic energy density"                                      !  335 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         10"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy percentage"                                    ! 3234 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Percentage of kinetic energy"                                ! 3235 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         11"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy density"                                       !  334 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Kinetic energy density"                                      !  335 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         12"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy percentage"                                    ! 3234 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Percentage of kinetic energy"                                ! 3235 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         13"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy density"                                       !  334 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Kinetic energy density"                                      !  335 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         14"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy percentage"                                    ! 3234 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Percentage of kinetic energy"                                ! 3235 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         15"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy density"                                       !  334 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Kinetic energy density"                                      !  335 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         16"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain energy percentage"                                    ! 3234 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Percentage of kinetic energy"                                ! 3235 !      !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         17"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "MNT data (beams)"                                            ! 1439 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 1440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 1450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         18"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 1524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 1525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         19"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 1528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         20"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 3440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 3450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         21"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 3524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 3525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         22"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 3528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "MNT data (beams)"                                            ! 1439 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 1440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 1450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 1524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 1525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 1528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 3440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 3450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 3524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 3525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 3528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         23"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "MNT data (beams)"                                            ! 1439 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 1440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 1450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         24"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 1524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 1525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         25"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 1528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         26"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 3440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 3450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         27"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 3524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 3525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         28"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 3528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "MNT data (beams)"                                            ! 1439 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 1440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 1450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 1524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 1525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 1528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 3440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 3450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 3524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 3525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 3528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         29"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "MNT data (beams)"                                            ! 1439 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 1440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 1450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         30"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 1524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 1525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         31"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 1528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         32"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 3440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 3450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         33"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 3524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 3525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         34"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 3528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "MNT data (beams)"                                            ! 1439 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 1440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 1450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 1524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 1525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 1528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 3440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 3450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 3524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 3525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 3528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         35"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "MNT data (beams)"                                            ! 1439 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 1440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 1450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         36"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 1524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 1525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         37"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 1528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         38"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 3440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 3450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         39"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 3524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 3525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ !  "Subset Nr         40"                                       !      !      !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 3528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "MNT data (beams)"                                            ! 1439 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 1440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 1450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 1524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 1525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 1528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Normal stress data (beams sections points)"                  ! 3440 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Shear stress data (beams sections points)"                   ! 3450 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Force vector"                                                ! 3524 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Moment vector"                                               ! 3525 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Strain"                                                      ! 3528 ! REAL !
+ !---------------------------------------------------------------!------!------!
+ ! "Status of the FAC program"                                   !   62 !      !
+ !---------------------------------------------------------------!------!------!
+ ! "FAC Pointers"                                                ! 1073 ! INTG !
+ !---------------------------------------------------------------!------!------!
+ !...Closing DB "T_A_INTERET_A_FONCTIONNER-Solution_1"                         !
+@@@CSH:SMGFIN: I_RUNSUCCESS
+ -------------------------------------------------------------------------------
+ File size statistics
+ File name                                                            Size
+ -------------------------------------------------------------------------------
+ T_A_INTERET_A_FONCTIONNER-Solution_1_dy.u18                       1610152 Bytes
+ T_A_INTERET_A_FONCTIONNER-Solution_1_dy.des                         28487 Bytes
+ T_A_INTERET_A_FONCTIONNER-Solution_1_dy.fac                        542096 Bytes
+ C:\PROGRA~1\Siemens\NX\SIMULA~1\samcef\Exec\dic.dic                481422 Bytes
+ T... 00002376.dir\T_A_INTERET_A_FONCTIONNER-Solution_1_fa.w07       57888 Bytes
+ T... 00002376.dir\T_A_INTERET_A_FONCTIONNER-Solution_1_fa.w10      144432 Bytes
+ C:\PROGRA~1\Siemens\NX\SIMULA~1\samcef\Exec\bacon_van.mes          354352 Bytes
+ C... t\Simulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1.sdb    21926104 Bytes
+ C... 00002376.dir\T_A_INTERET_A_FONCTIONNER-Solution_1_fa.w80     1584000 Bytes
+ C:\PROGRA~1\Siemens\NX\SIMULA~1\samcef\Exec\samcef.proc             86131 Bytes
+ -------------------------------------------------------------------------------

@@ -1,0 +1,26 @@
+!***********************************************************************
+! Bacon Spy File
+! Problem name: T_A_INTERET_A_FONCTIONNER-Solution_1
+! Creation Date: OCT 19 2023 11:41:58
+!
+INPUT INIT
+EXIT
+;INPUT  "C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\T_A_INTERET_A_FONCTIONNER-Solution_1.dat"
+! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+!
+!              NX 1859 TRANSLATOR
+!   This file is compatible with Samcef 2019.1 (19.1-01) and next versions
+!
+!              FEM FILE: C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\ProjetV1.fem
+!              SIM FILE: C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\T'A INTERET A FONCTIONNER.sim
+!         ANALYSIS TYPE: Simcenter Samcef - Structural
+!         SOLUTION NAME: Solution 1
+!         SOLUTION TYPE: Modal Analysis
+!     SOLVER INPUT FILE: T_A_INTERET_A_FONCTIONNER-Solution_1.dat
+!         CREATION DATE: 19-octobre-2023
+!         CREATION TIME: 11:41:55
+!              HOSTNAME: Microsoft-Strapart
+!              USERNAME: arnau
+!
+! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+MODE M -1 LECTURE 256
