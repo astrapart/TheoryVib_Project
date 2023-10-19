@@ -44,8 +44,8 @@ def ElementFini(numberElem, verbose):
 
         T = fct.create_T(coord1, coord2, l)
 
-        Kes = T.T @ Kel @ T
-        Mes = T.T @ Mel @ T
+        Kes = np.transpose(T) @ Kel @ T
+        Mes = np.transpose(T) @ Mel @ T
 
         # Assemblage Matrice globale
         for j in range(len(locel[i])):
@@ -53,12 +53,17 @@ def ElementFini(numberElem, verbose):
                 M[locel[i][j]-1][locel[i][k]-1] = M[locel[i][j]-1][locel[i][k]-1] + Mes[j][k]
                 K[locel[i][j]-1][locel[i][k]-1] = K[locel[i][j]-1][locel[i][k]-1] + Kes[j][k]
 
+    print("m =", fct.calculate_mtot_rigid(M, nodeList), "[kg] rigid")
+
     fct.Add_lumped_mass(nodeLumped, dofList, M)
-    fct.Add_const_emboit(nodeConstraint, dofList, M, K)
     print("m =", fct.calculate_mtot(M, ltot), "[kg]")
+
+    fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
     eigenvals, eigenvects = scipy.linalg.eig(K, M, right=True)
     val_prop = np.sort(eigenvals)
+
+    fct.print_freq(val_prop[:8])
 
     if verbose:
         new_index = np.argsort(eigenvals)
@@ -66,7 +71,7 @@ def ElementFini(numberElem, verbose):
         for i in new_index:
             vect_prop.append(eigenvects[i])
 
-        fct.plot_result(nodeList, nodeConstraint, vect_prop, elemList0)
+        fct.plot_result(nodeList, nodeConstraint, vect_prop[:8], elemList0)
 
     return val_prop[:8]
 
@@ -81,5 +86,5 @@ def EtudeConvergence(precision):
         Result.append(tmp)
 
 
-fct.print_freq(ElementFini(3, True))
+ElementFini(3, False)
 #EtudeConvergence(5)

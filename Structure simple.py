@@ -6,8 +6,8 @@ import data
 
 
 # proprieties = [rho [kg/m3], poisson [-], Young [Pa], Jx [m4], Iy [m4], Iz [m4]]
-vertical_beams = [7800, 0.3, 2.1e10, 5.14e-3, 1.73e-7, 6.9e-6, 8.49e-5]
-horizontal_beams = [7800, 0.3, 2.1e10, 5.68e-3, 1.76e-7, 1.2e-4, 7.3e-6]
+vertical_beams = [7800, 0.3, 2.1e11, 5.14e-3, 1.73e-7, 6.9e-6, 8.49e-5]
+horizontal_beams = [7800, 0.3, 2.1e11, 5.68e-3, 1.76e-7, 1.2e-4, 7.3e-6]
 
 proprieties = [vertical_beams, horizontal_beams]
 
@@ -59,8 +59,8 @@ def ElementFini(numberElem, verbose):
 
         T = fct.create_T(coord1, coord2, l)
 
-        Kes = T.T @ Kel @ T
-        Mes = T.T @ Mel @ T
+        Kes = np.dot(np.dot(np.transpose(T), Kel), T)
+        Mes = np.dot(np.dot(np.transpose(T), Mel), T)
 
         for j in range(len(locel[i])):
             for k in range(len(locel[i])):
@@ -69,19 +69,23 @@ def ElementFini(numberElem, verbose):
 
                 K[locel[i][j]-1][locel[i][k]-1] = K[locel[i][j]-1][locel[i][k]-1] + Kes[j][k]
 
+    print("m =", fct.calculate_mtot_rigid(M, nodeListsimple), "[kg] rigid")
+    print("m =", fct.calculate_mtot(M, ltot), "[kg]")
+
     fct.Add_const_emboit(nodeConstraint, dofList, M, K)
     eigenvals, eigenvects = scipy.linalg.eig(K, M, right=True)
-    print("m =", fct.calculate_mtot(M, ltot), "[kg]")
     val_prop = np.sort(eigenvals)
+
+    fct.print_freq(val_prop[:4])
 
     if verbose:
         new_index = np.argsort(eigenvals)
         vect_prop = []
         for i in new_index:
             vect_prop.append(eigenvects[i])
-            
-        fct.plot_result(nodeListsimple, nodeConstraint, eigenvects, elemList0simple)
+
+        fct.plot_result(nodeListsimple, nodeConstraint, vect_prop[:4], elemList0simple)
 
     return val_prop[:4]
 
-fct.print_freq(ElementFini(3, True))
+ElementFini(3, False)

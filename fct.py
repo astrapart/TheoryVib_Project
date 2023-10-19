@@ -74,7 +74,7 @@ def create_locel(elemList, dofList):
 def create_T(coord1, coord2, l):
     P1 = coord1
     P2 = coord2
-    P3 = [0.5, 0.3, 0]
+    P3 = [0.5, 0.3, 1]
 
     d2 = [P2[0] - P1[0], P2[1] - P1[1], P2[2] - P1[2]]
     d3 = [P3[0] - P1[0], P3[1] - P1[1], P3[2] - P1[2]]
@@ -89,7 +89,7 @@ def create_T(coord1, coord2, l):
     eZ = [0, 0, 1]
     globalAxe = [eX, eY, eZ]
 
-    R = np.zeros((3,3))
+    R = np.zeros((3, 3))
     for j in range(3):
         for k in range(3):
             R[j][k] = np.dot(globalAxe[k], localAxe[j])
@@ -226,10 +226,17 @@ def calculate_mtot(M, ltot):
         for j in range(len(M)):
             m_tot += M[i][j]
 
-    #606878.6228652314
     return m_tot/ltot
 
+def calculate_mtot_rigid(M, nodeList):
 
+    ue = np.zeros(len(M))
+    for i in range(len(nodeList)):
+        ue[i*6 + 1] = 1
+
+    mtot = np.transpose(ue) @ M @ ue
+
+    return mtot
 
 """
 ########################################################################################################################
@@ -262,7 +269,7 @@ def plot_structure(elemList, nodeList):
 
 def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
     fig = plt.figure()
-    for i in range(8):
+    for i in range(len(eigenvects)):
         newNodeList = []
         for j in range(len(nodeList)):
             coord = nodeList[j]
@@ -270,7 +277,7 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
 
                 dx, dy, dz = eigenvects[i][6 * j], eigenvects[i][6 * j + 1], eigenvects[i][6 * j + 2]
 
-                factor = 10
+                factor = 5
                 new_coord = [coord[0] + dx*factor, coord[1] + dy*factor, coord[2] + dz*factor]
                 newNodeList.append(new_coord)
             else:
@@ -293,10 +300,11 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
 def print_freq(list_eign) :
 
     for i in range(len(list_eign)):
-        f = np.real(np.sqrt(list_eign[i])/(2*np.pi))
+        f = np.real(np.sqrt(list_eign[i]))/(2*np.pi)
         #print("La fréquence pour la valeur propre", i, "vaut :", f, "Hz")
-        print("La fréquence pour la valeur propre {index} vaut : {val:.10f} [Hz]".format(index=i, val=f))
+        # 0.44 valeur propre 1
+        # 0.45 valeur propre 2
+        # 0.9  valeur propre 3
+        print("La fréquence pour la valeur propre {index} vaut : {val:.5f} [Hz]".format(index=i, val=f))
+
     return
-
-
-
