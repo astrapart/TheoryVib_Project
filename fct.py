@@ -18,12 +18,12 @@ def create_elemList(elemList0, nodeList, numberElem):
     elemList = []
 
     for elem in elemList0:
-        i = elem[0]
-        j = elem[1]
+        i = elem[0]-1
+        j = elem[1]-1
         propriety = elem[2]
 
         if propriety != 2:
-            current = i
+            current = i + 1
             len_x = abs(nodeList[i][0] - nodeList[j][0]) / numberElem
             if nodeList[i][0] > nodeList[j][0]:
                 len_x *= -1
@@ -35,15 +35,15 @@ def create_elemList(elemList0, nodeList, numberElem):
                 len_z *= -1
             
             for m in range(numberElem):
-                new = len(nodeList)
+                new = len(nodeList) + 1
                 if m != (numberElem - 2):
                     elemList.append([current, new, propriety])
-                    nodeList.append([nodeList[current][0] + len_x, nodeList[current][1] + len_y,
-                                 nodeList[current][2] + len_z])
+                    nodeList.append([nodeList[current-1][0] + len_x, nodeList[current-1][1] + len_y,
+                                 nodeList[current-1][2] + len_z])
 
                     current = new
             else:
-                elemList.append([new, j, propriety])
+                elemList.append([new, j+1, propriety])
         else:
             elemList.append(elem)
             
@@ -52,7 +52,7 @@ def create_elemList(elemList0, nodeList, numberElem):
     
 def create_dofList(nodeList):
     dofList = []
-    dof = 0
+    dof = 1
     for i in range(len(nodeList)):
         tmp = []
         for j in range(6):
@@ -65,8 +65,8 @@ def create_dofList(nodeList):
 def create_locel(elemList, dofList):
     locel = []
     for i in range(len(elemList)):
-        dofNode1 = dofList[elemList[i][0]]
-        dofNode2 = dofList[elemList[i][1]]
+        dofNode1 = dofList[elemList[i][0]-1]
+        dofNode2 = dofList[elemList[i][1]-1]
         locel.append(dofNode1 + dofNode2)
     
     return locel
@@ -162,7 +162,8 @@ def Add_const_emboit(nodeConstraint, dofList, M, K):
 
     """
     for node in nodeConstraint:
-        for dof in dofList[node]:
+        for tmp in dofList[node-1]:
+            dof = tmp-1
             M = np.delete(M, dof, 0)
             M = np.delete(M, dof, 1)
 
@@ -175,7 +176,8 @@ def Add_lumped_mass(nodeLumped, dofList, M):
     J = data.node_lumped_J
 
     count = 0
-    for i in dofList[nodeLumped] :
+    for tmp in dofList[nodeLumped-1]:
+        i = tmp-1
         if count <= 2:
             M[i][i] += mass
         else :
@@ -239,8 +241,8 @@ def plot_structure(elemList, nodeList):
     ax = fig.add_subplot(111, projection='3d')
 
     for elem in elemList:
-        elem_1 = nodeList[elem[0]]
-        elem_2 = nodeList[elem[1]]
+        elem_1 = nodeList[elem[0]-1]
+        elem_2 = nodeList[elem[1]-1]
         ax.plot([elem_1[0], elem_2[0]], [elem_1[1], elem_2[1]], [elem_1[2], elem_2[2]], c='b')
 
     for node in nodeList:
@@ -258,15 +260,15 @@ def plot_structure(elemList, nodeList):
 
     plt.show()
 
-def plot_result(nodeList, nodeConstraint, eigenvects, index_vects, elemList0) :
+def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
     fig = plt.figure()
     for i in range(8):
         newNodeList = []
         for j in range(len(nodeList)):
             coord = nodeList[j]
-            if j not in nodeConstraint:
+            if j+1 not in nodeConstraint:
 
-                dx, dy, dz = eigenvects[index_vects[i]][6 * j], eigenvects[index_vects[i]][6 * j + 1], eigenvects[index_vects[i]][6 * j + 2]
+                dx, dy, dz = eigenvects[i][6 * j], eigenvects[i][6 * j + 1], eigenvects[i][6 * j + 2]
 
                 factor = 10
                 new_coord = [coord[0] + dx*factor, coord[1] + dy*factor, coord[2] + dz*factor]
@@ -278,10 +280,10 @@ def plot_result(nodeList, nodeConstraint, eigenvects, index_vects, elemList0) :
 
         for elem in elemList0:
             if elem[2] != 2:
-                newnode1 = newNodeList[elem[0]]
-                newnode2 = newNodeList[elem[1]]
-                node1 = nodeList[elem[0]]
-                node2 = nodeList[elem[1]]
+                newnode1 = newNodeList[elem[0]-1]
+                newnode2 = newNodeList[elem[1]-1]
+                node1 = nodeList[elem[0]-1]
+                node2 = nodeList[elem[1]-1]
 
                 ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], '--', c='b')
                 ax.plot([newnode1[0], newnode2[0]], [newnode1[1], newnode2[1]], [newnode1[2], newnode2[2]], c='r')
@@ -292,7 +294,8 @@ def print_freq(list_eign) :
 
     for i in range(len(list_eign)):
         f = np.real(np.sqrt(list_eign[i])/(2*np.pi))
-        print("La fréquence pour la valeur propre", i, "vaut :", f, "Hz")
+        #print("La fréquence pour la valeur propre", i, "vaut :", f, "Hz")
+        print("La fréquence pour la valeur propre {index} vaut : {val:.10f} [Hz]".format(index=i, val=f))
     return
 
 

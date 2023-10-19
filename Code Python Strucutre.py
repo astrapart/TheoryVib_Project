@@ -19,16 +19,16 @@ def ElementFini(numberElem, verbose):
     if verbose:
         fct.plot_structure(elemList, nodeList)
 
-    nodeConstraint = np.array([0, 1, 2, 3])
-    nodeLumped = 22
+    nodeConstraint = np.array([1, 2, 3, 4])
+    nodeLumped = 23
 
     M = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
     K = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
     ltot = 0
 
     for i in range(len(elemList)):
-        node1 = elemList[i][0]
-        node2 = elemList[i][1]
+        node1 = elemList[i][0]-1
+        node2 = elemList[i][1]-1
         type_beam = elemList[i][2]
 
         coord1 = nodeList[node1]
@@ -50,8 +50,8 @@ def ElementFini(numberElem, verbose):
         # Assemblage Matrice globale
         for j in range(len(locel[i])):
             for k in range(len(locel[i])):
-                M[locel[i][j]][locel[i][k]] = M[locel[i][j]][locel[i][k]] + Mes[j][k]
-                K[locel[i][j]][locel[i][k]] = K[locel[i][j]][locel[i][k]] + Kes[j][k]
+                M[locel[i][j]-1][locel[i][k]-1] = M[locel[i][j]-1][locel[i][k]-1] + Mes[j][k]
+                K[locel[i][j]-1][locel[i][k]-1] = K[locel[i][j]-1][locel[i][k]-1] + Kes[j][k]
 
     fct.Add_lumped_mass(nodeLumped, dofList, M)
     fct.Add_const_emboit(nodeConstraint, dofList, M, K)
@@ -61,7 +61,12 @@ def ElementFini(numberElem, verbose):
     val_prop = np.sort(eigenvals)
 
     if verbose:
-        fct.plot_result(nodeList, nodeConstraint, eigenvects, np.argsort(eigenvals), elemList0)
+        new_index = np.argsort(eigenvals)
+        vect_prop = []
+        for i in new_index:
+            vect_prop.append(eigenvects[i])
+
+        fct.plot_result(nodeList, nodeConstraint, vect_prop, elemList0)
 
     return val_prop[:8]
 
@@ -76,5 +81,5 @@ def EtudeConvergence(precision):
         Result.append(tmp)
 
 
-fct.print_freq(ElementFini(3, False))
+fct.print_freq(ElementFini(3, True))
 #EtudeConvergence(5)
