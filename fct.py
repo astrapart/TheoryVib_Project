@@ -199,15 +199,12 @@ def properties (type_beam, l) :
     E = data.young_mod                                          # [Pa]
     Re = data.rayon_beam[type_beam]                             # [m2]
     Ri = data.rayon_beam[type_beam] - data.thickness_beam       # [m]
-    A = np.pi * (Re-Ri)**2                                      # [m]
+    A = np.pi * (Re*Re-Ri*Ri)                                   # [m]
 
-    m    = rho * A * l                         # [kg]
-    Ix   = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
-    Iy   = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
-    Iz   = (np.pi / 64) * (Re ** 4 - Ri ** 4)  # [m4]
+    Ix   = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
+    Iy   = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
+    Iz   = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
     Jx   = Ix * 2                              # [m4]
-    G    = E / (2 * (1 + v))                   # [GPa]
-    r    = np.sqrt(Iy / A)                     # [m]
 
     if type_beam == 2:
         rho = rho * 10 **(-4)
@@ -216,6 +213,10 @@ def properties (type_beam, l) :
         Jx = Jx*10**4
         Iy = Iy*10**4
         Iz = Iz*10**4
+
+    m    = rho * A * l                         # [kg]
+    G    = E / (2 * (1 + v))                   # [GPa]
+    r    = np.sqrt(Jx / A)                     # [m]
 
     return rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r
 
@@ -232,7 +233,7 @@ def calculate_mtot_rigid(M, nodeList):
 
     ue = np.zeros(len(M))
     for i in range(len(nodeList)):
-        ue[i*6 + 1] = 1
+        ue[i*6] = 1
 
     mtot = np.transpose(ue) @ M @ ue
 

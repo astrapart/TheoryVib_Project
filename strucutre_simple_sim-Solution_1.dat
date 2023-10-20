@@ -1,0 +1,282 @@
+! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+!
+!              NX 1859 TRANSLATOR
+!   This file is compatible with Samcef 2019.1 (19.1-01) and next versions
+!
+!              FEM FILE: C:\Users\antoi\Documents\Unif\Master\Master1\MECA029 - Theory Vibration\Projet\TheoryVib_Project\structure_simple.fem
+!              SIM FILE: C:\Users\antoi\Documents\Unif\Master\Master1\MECA029 - Theory Vibration\Projet\TheoryVib_Project\strucutre_simple_sim.sim
+!         ANALYSIS TYPE: Simcenter Samcef - Structural
+!         SOLUTION NAME: Solution 1
+!         SOLUTION TYPE: Modal Analysis
+!     SOLVER INPUT FILE: strucutre_simple_sim-Solution_1.dat
+!         CREATION DATE: 19-octobre-2023
+!         CREATION TIME: 12:29:32
+!              HOSTNAME: LAPTOP-PD7S6HSE
+!              USERNAME: antoi
+! 
+! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+MODE M -1 LECTURE 256
+!User Prolog
+!-------------
+! No User Prolog defined for the current solution.
+
+! Samcef Bank File: UNITS.
+! ------------------------
+.UNIT
+ LENGTH 0.001 ! Unit = MilliMeter
+ MASS 1 ! Unit = Kilogram
+ CELSIUS
+ TIME 1
+
+.GEL
+TEMP 20 ! Default Temperature from Solution
+
+! Samcef Bank File: NODES.
+! ------------------------
+.NOE
+ I 1 X 0 Y 0 Z 3660
+ I 2 X 0 Y 0 Z 4880
+ I 3 X 0 Y 0 Z 6100
+ I 4 X 0 Y 0 Z 7320
+ I 5 X 0 Y 0 Z 0
+ I 6 X 0 Y 0 Z 1220
+ I 7 X 0 Y 0 Z 2440
+ I 8 X 5490 Y 0 Z 3660
+ I 9 X 5490 Y 0 Z 4880
+ I 10 X 5490 Y 0 Z 6100
+ I 11 X 5490 Y 0 Z 7320
+ I 12 X 0 Y 5490 Z 0
+ I 13 X 0 Y 5490 Z 1220
+ I 14 X 0 Y 5490 Z 2440
+ I 15 X 0 Y 5490 Z 3660
+ I 16 X 5490 Y 0 Z 0
+ I 17 X 5490 Y 0 Z 1220
+ I 18 X 5490 Y 0 Z 2440
+ I 19 X 0 Y 5490 Z 4880
+ I 20 X 0 Y 5490 Z 6100
+ I 21 X 0 Y 5490 Z 7320
+ I 22 X 5490 Y 5490 Z 3660
+ I 23 X 5490 Y 5490 Z 4880
+ I 24 X 5490 Y 5490 Z 6100
+ I 25 X 5490 Y 5490 Z 7320
+ I 26 X 5490 Y 5490 Z 0
+ I 27 X 5490 Y 5490 Z 1220
+ I 28 X 5490 Y 5490 Z 2440
+ I 29 X 0 Y 1830 Z 7320
+ I 30 X 0 Y 3660 Z 7320
+ I 31 X 1830 Y 5490 Z 7320
+ I 32 X 3660 Y 5490 Z 7320
+ I 33 X 5490 Y 3660 Z 7320
+ I 34 X 5490 Y 1830 Z 7320
+ I 35 X 3660 Y 0 Z 7320
+ I 36 X 1830 Y 0 Z 7320
+ I 37 X 0 Y 3660 Z 3660
+ I 38 X 0 Y 1830 Z 3660
+ I 39 X 1830 Y 0 Z 3660
+ I 40 X 3660 Y 0 Z 3660
+ I 41 X 3660 Y 5490 Z 3660
+ I 42 X 1830 Y 5490 Z 3660
+ I 43 X 5490 Y 1830 Z 3660
+ I 44 X 5490 Y 3660 Z 3660
+! Samcef Bank File: ELEMENTS.
+! ---------------------------
+.MAI
+ I 1 AT 1 0 N 1 2
+ I 2 AT 1 0 N 2 3
+ I 3 AT 1 0 N 3 4
+ I 4 AT 1 0 N 1 7
+ I 5 AT 1 0 N 7 6
+ I 6 AT 1 0 N 6 5
+ I 7 AT 1 0 N 8 9
+ I 8 AT 1 0 N 9 10
+ I 9 AT 1 0 N 10 11
+ I 10 AT 1 0 N 15 14
+ I 11 AT 1 0 N 14 13
+ I 12 AT 1 0 N 13 12
+ I 13 AT 1 0 N 8 18
+ I 14 AT 1 0 N 18 17
+ I 15 AT 1 0 N 17 16
+ I 16 AT 1 0 N 15 19
+ I 17 AT 1 0 N 19 20
+ I 18 AT 1 0 N 20 21
+ I 19 AT 1 0 N 25 24
+ I 20 AT 1 0 N 24 23
+ I 21 AT 1 0 N 23 22
+ I 22 AT 1 0 N 22 28
+ I 23 AT 1 0 N 28 27
+ I 24 AT 1 0 N 27 26
+ I 25 AT 2 0 N 4 29
+ I 26 AT 2 0 N 29 30
+ I 27 AT 2 0 N 30 21
+ I 28 AT 2 0 N 21 31
+ I 29 AT 2 0 N 31 32
+ I 30 AT 2 0 N 32 25
+ I 31 AT 2 0 N 25 33
+ I 32 AT 2 0 N 33 34
+ I 33 AT 2 0 N 34 11
+ I 34 AT 2 0 N 11 35
+ I 35 AT 2 0 N 35 36
+ I 36 AT 2 0 N 36 4
+ I 37 AT 2 0 N 15 37
+ I 38 AT 2 0 N 37 38
+ I 39 AT 2 0 N 38 1
+ I 40 AT 2 0 N 1 39
+ I 41 AT 2 0 N 39 40
+ I 42 AT 2 0 N 40 8
+ I 43 AT 2 0 N 15 42
+ I 44 AT 2 0 N 42 41
+ I 45 AT 2 0 N 41 22
+ I 46 AT 2 0 N 22 44
+ I 47 AT 2 0 N 44 43
+ I 48 AT 2 0 N 43 8
+! Samcef Bank File : GROUPS.
+! --------------------------
+.SEL
+ GROUP 1 MAILLE NOM "@SC@Vbeam_0"
+ I 1 J 24 K 1 
+ GROUP 2 MAILLE NOM "@SC@Hbeam_1"
+ I 25 J 48 K 1 
+ GROUP 3 NOEUDS NOM "@SC@Fixed(1)"
+ I 5 
+ I 12 
+ I 16 
+ I 26 
+! Samcef Bank File: MATERIALS.
+! ----------------------------
+.MAT
+   I 1 NOM "Steel::structure_simple::[1]" 
+   BEHA "ELASTIC" 
+   YT 2.1e+08  ! Young's modulus (E)
+   NT 0.3  ! Poisson's ratio (NU)
+   M 7.8e-06  !  Mass Density (Rho)
+
+! Samcef Bank File: BEAM
+! ----------------------
+.BEAM
+I 25 PLANZ DIR -1 0 0
+I 26 PLANZ DIR -1 0 0
+I 27 PLANZ DIR -1 0 0
+I 28 PLANZ DIR 0 1 0
+I 29 PLANZ DIR 0 1 0
+I 30 PLANZ DIR 0 1 0
+I 31 PLANZ DIR 1 0 0
+I 32 PLANZ DIR 1 0 0
+I 33 PLANZ DIR 1 0 0
+I 34 PLANZ DIR 0 -1 0
+I 35 PLANZ DIR 0 -1 0
+I 36 PLANZ DIR 0 -1 0
+I 37 PLANZ DIR 1 0 0
+I 38 PLANZ DIR 1 0 0
+I 39 PLANZ DIR 1 0 0
+I 40 PLANZ DIR 0 1 0
+I 41 PLANZ DIR 0 1 0
+I 42 PLANZ DIR 0 1 0
+I 43 PLANZ DIR 0 1 0
+I 44 PLANZ DIR 0 1 0
+I 45 PLANZ DIR 0 1 0
+I 46 PLANZ DIR 1 0 0
+I 47 PLANZ DIR 1 0 0
+I 48 PLANZ DIR 1 0 0
+
+I 1 PLANZ DIR 0 1 -0
+I 2 PLANZ DIR 0 1 -0
+I 3 PLANZ DIR 0 1 -0
+I 4 PLANZ DIR 0 -1 0
+I 5 PLANZ DIR 0 -1 0
+I 6 PLANZ DIR 0 -1 0
+I 7 PLANZ DIR 0 1 -0
+I 8 PLANZ DIR 0 1 -0
+I 9 PLANZ DIR 0 1 -0
+I 10 PLANZ DIR 0 -1 0
+I 11 PLANZ DIR 0 -1 0
+I 12 PLANZ DIR 0 -1 0
+I 13 PLANZ DIR 0 -1 0
+I 14 PLANZ DIR 0 -1 0
+I 15 PLANZ DIR 0 -1 0
+I 16 PLANZ DIR 0 1 -0
+I 17 PLANZ DIR 0 1 -0
+I 18 PLANZ DIR 0 1 -0
+I 19 PLANZ DIR 0 -1 0
+I 20 PLANZ DIR 0 -1 0
+I 21 PLANZ DIR 0 -1 0
+I 22 PLANZ DIR 0 -1 0
+I 23 PLANZ DIR 0 -1 0
+I 24 PLANZ DIR 0 -1 0
+
+! Samcef Bank File: HYPOTHESES
+! ----------------------------
+.HYP MINDLIN GROUP "@SC@Vbeam_0"
+.HYP MINDLIN GROUP "@SC@Hbeam_1"
+! Samcef Bank File: Beam Profiles
+! -------------------------------
+.BPR
+NOM "hbeam" UNIT 0.001  TYPE "RECT" H 75.36 B 75.36
+NOM "vbeam" UNIT 0.001  TYPE "RECT" H 71.7 B 71.7
+! Samcef Bank File: CONSTRAINTS.
+! ------------------------------
+.CLM ADD
+! 
+! Fixed(1)
+ GROUP "@SC@Fixed(1)" FIX 
+
+! Samcef Bank File: Elements Attributes
+! -------------------------------------
+.AEL
+GROUP "@SC@Hbeam_1" PROFILE "hbeam" 
+GROUP "@SC@Vbeam_0" PROFILE "vbeam" 
+ I 1 J 24 K 1 MAT 1
+ I 25 J 48 K 1 MAT 1
+! Samcef Bank File: Solution Parameters : .ALGO.
+! ----------------------------------------------
+.ALGO
+ LANCNVA 4 FREQ 0
+
+! Samcef Bank File: Solution Parameters: .SAM.
+! --------------------------------------------
+.SAM
+ ISTO 8
+! Samcef Bank File: .SAI
+! ----------------------
+.SAI
+ ARCHIVE STRUCTURE STYPE -221 !Suppress obsolete code
+! Element Output Requests
+ ARCHIVE STRUCTURE STYP 1437 3437 1438 3438 ! Normal Forces Moments (Samcef default)
+ ARCHIVE STRUCTURE STYP 1524 3524 1525 3525 1251 3251 ! Shear Forces Moments (Samcef default)
+ ARCHIVE STRUCTURE STYP 1440 3440 ! Normal Stress Beams Rods (Samcef default)
+ ARCHIVE STRUCTURE STYP 1450 3450 ! Shear Stress Beams (Samcef default)
+ ARCHIVE STRUCTURE STYP 1411 3411 1436 3436 1435 3435 1431 3431 ! Linear Stress Tensor (Samcef default)
+ ARCHIVE STRUCTURE STYP 1421 3421 1446 3446 1445 3445 1528 3528 ! Total Strain Tensor (Samcef default)
+ ARCHIVE STRUCTURE STYP 334 ! Strain Energy
+ ARCHIVE STRUCTURE STYP 335 ! Kinetic Energy
+! Nodal Output Requests
+
+! Summary of the model
+! --------------------
+! Number of nodes: 44
+! Minimum node id: 1
+! Maximum node id: 44
+! Number of elements: 48
+! Minimum element id: 1
+! Maximum element id: 48
+
+!User Epilog
+!-------------
+! Declaration of abreviations for the Epilog:
+! ==========================================
+! Greater Node Number:     NUMBERMAXNODE
+#INQ (/NUMBERMAXNODE,NOD,,MAX)
+! Greater Element Number:  NUMBERMAXELEMENT
+#INQ (/NUMBERMAXELEMENT,ELE,,MAX)
+! Greater Function Number: NUMBERMAXFUNCTION
+#INQ (/NUMBERMAXFUNCTION,FUN,,MAX)
+! Greater Material Number: NUMBERMAXMATERIAL
+#INQ (/NUMBERMAXMATERIAL,MAT,,MAX)
+! No User Epilog defined for the current solution.
+
+
+! No Warning Messages
+! No Error Messages
+! No Critical Messages
+
+RETURN

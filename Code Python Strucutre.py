@@ -53,10 +53,10 @@ def ElementFini(numberElem, verbose):
                 M[locel[i][j]-1][locel[i][k]-1] = M[locel[i][j]-1][locel[i][k]-1] + Mes[j][k]
                 K[locel[i][j]-1][locel[i][k]-1] = K[locel[i][j]-1][locel[i][k]-1] + Kes[j][k]
 
+    fct.Add_lumped_mass(nodeLumped, dofList, M)
     print("m =", fct.calculate_mtot_rigid(M, nodeList), "[kg] rigid")
 
-    fct.Add_lumped_mass(nodeLumped, dofList, M)
-    print("m =", fct.calculate_mtot(M, ltot), "[kg]")
+    #print("m =", fct.calculate_mtot(M, ltot), "[kg]")
 
     fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
@@ -85,6 +85,5 @@ def EtudeConvergence(precision):
         tmp = ElementFini(TestElem[i], False)
         Result.append(tmp)
 
-
-ElementFini(3, False)
+ElementFini(2, False)
 #EtudeConvergence(5)
