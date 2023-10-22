@@ -27,7 +27,6 @@ def ElementFini(numberElem, verbose):
     numberNode = len(nodeListsimple)
     M = np.zeros([numberNode*6, numberNode*6])
     K = np.zeros([numberNode*6, numberNode*6])
-    ltot = 0
 
     for i in range(len(elemList)):
 
@@ -39,7 +38,6 @@ def ElementFini(numberElem, verbose):
         coord2 = nodeListsimple[node2]
 
         l = np.sqrt((coord1[0] - coord2[0])**2 + (coord1[1] - coord2[1])**2 + (coord1[2] - coord2[2])**2)
-        ltot += l
 
         propriety = proprieties[indexProp]
 
@@ -57,7 +55,7 @@ def ElementFini(numberElem, verbose):
         Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
         Mel = fct.create_Mel(m, r, l)
 
-        T = fct.create_T(coord1, coord2, l)
+        T = fct.create_T(coord1, coord2)
 
         Kes = np.dot(np.dot(np.transpose(T), Kel), T)
         Mes = np.dot(np.dot(np.transpose(T), Mel), T)
@@ -69,8 +67,7 @@ def ElementFini(numberElem, verbose):
 
                 K[locel[i][j]-1][locel[i][k]-1] = K[locel[i][j]-1][locel[i][k]-1] + Kes[j][k]
 
-    print("m =", fct.calculate_mtot_rigid(M, nodeListsimple), "[kg] rigid")
-    print("m =", fct.calculate_mtot(M, ltot), "[kg]")
+    print("m =", fct.calculate_mtot_rigid(M), "[kg] rigid")
 
     fct.Add_const_emboit(nodeConstraint, dofList, M, K)
     eigenvals, eigenvects = scipy.linalg.eig(K, M, right=True)

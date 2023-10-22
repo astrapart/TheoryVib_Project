@@ -14,6 +14,7 @@ Fonction create
 ########################################################################################################################
 """
 
+
 def create_elemList(elemList0, nodeList, numberElem):
     elemList = []
 
@@ -33,7 +34,7 @@ def create_elemList(elemList0, nodeList, numberElem):
             len_z = abs(nodeList[i][2] - nodeList[j][2]) / numberElem
             if nodeList[i][2] > nodeList[j][2]:
                 len_z *= -1
-            
+
             for m in range(numberElem):
                 new = len(nodeList) + 1
                 if m != (numberElem - 2):
@@ -42,13 +43,13 @@ def create_elemList(elemList0, nodeList, numberElem):
                                  nodeList[current-1][2] + len_z])
 
                     current = new
-            else:
-                elemList.append([new, j+1, propriety])
+                else:
+                    elemList.append([new, j+1, propriety])
         else:
             elemList.append(elem)
-            
+
     return elemList
-    
+
     
 def create_dofList(nodeList):
     dofList = []
@@ -71,17 +72,19 @@ def create_locel(elemList, dofList):
     
     return locel
 
-def create_T(coord1, coord2, l):
+def create_T(coord1, coord2):
     P1 = coord1
     P2 = coord2
-    P3 = [0.5, 0.3, 1]
+    P3 = [1, 1, 2]
 
     d2 = [P2[0] - P1[0], P2[1] - P1[1], P2[2] - P1[2]]
     d3 = [P3[0] - P1[0], P3[1] - P1[1], P3[2] - P1[2]]
 
-    ex = [(P2[0] - P1[0]) / l, (P2[1] - P1[1]) / l, (P2[2] - P1[2]) / l]
+    l = np.sqrt(d2[0]*d2[0] + d2[1]*d2[1] + d2[2]*d2[2])
+    ex = [d2[0]/l, d2[1]/l, d2[2]/l]
     ey = np.cross(d3, d2) / np.linalg.norm(np.cross(d3, d2))
     ez = np.cross(ex, ey)
+
     localAxe = [ex, ey, ez]
 
     eX = [1, 0, 0]
@@ -201,10 +204,10 @@ def properties (type_beam, l) :
     Ri = data.rayon_beam[type_beam] - data.thickness_beam       # [m]
     A = np.pi * (Re*Re-Ri*Ri)                                   # [m]
 
-    Ix   = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
-    Iy   = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
-    Iz   = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
-    Jx   = Ix * 2                              # [m4]
+    Ix = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
+    Iy = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
+    Iz = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
+    Jx = Ix * 2                                      # [m4]
 
     if type_beam == 2:
         rho = rho * 10 **(-4)
@@ -214,9 +217,9 @@ def properties (type_beam, l) :
         Iy = Iy*10**4
         Iz = Iz*10**4
 
-    m    = rho * A * l                         # [kg]
-    G    = E / (2 * (1 + v))                   # [GPa]
-    r    = np.sqrt(Jx / A)                     # [m]
+    m = rho * A * l                         # [kg]
+    G = E / (2 * (1 + v))                   # [GPa]
+    r = np.sqrt(Jx / A)                     # [m]
 
     return rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r
 
@@ -229,10 +232,10 @@ def calculate_mtot(M, ltot):
 
     return m_tot/ltot
 
-def calculate_mtot_rigid(M, nodeList):
+def calculate_mtot_rigid(M):
 
     ue = np.zeros(len(M))
-    for i in range(len(nodeList)):
+    for i in range(len(M)//6):
         ue[i*6] = 1
 
     mtot = np.transpose(ue) @ M @ ue
@@ -307,5 +310,12 @@ def print_freq(list_eign) :
         # 0.45 valeur propre 2
         # 0.9  valeur propre 3
         print("La fréquence pour la valeur propre {index} vaut : {val:.5f} [Hz]".format(index=i, val=f))
+
+    return
+
+def print_matrix(matrix):
+
+    for line in matrix:
+        print("      ".join(map(str, line)))
 
     return

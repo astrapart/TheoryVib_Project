@@ -6,6 +6,7 @@ Analysis of the dynamic behaviour of an offshore wind turbine of jacket
 import numpy as np
 import scipy
 import fct
+import fct_verif
 import data
 
 def ElementFini(numberElem, verbose):
@@ -16,15 +17,14 @@ def ElementFini(numberElem, verbose):
     dofList = fct.create_dofList(nodeList)
     locel = fct.create_locel(elemList, dofList)
 
-    if verbose:
-        fct.plot_structure(elemList, nodeList)
+    #if verbose:
+        #fct.plot_structure(elemList, nodeList)
 
     nodeConstraint = np.array([1, 2, 3, 4])
     nodeLumped = 23
 
     M = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
     K = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
-    ltot = 0
 
     for i in range(len(elemList)):
         node1 = elemList[i][0]-1
@@ -35,17 +35,36 @@ def ElementFini(numberElem, verbose):
         coord2 = nodeList[node2]
 
         l = fct.calculate_length(coord1, coord2)
-        ltot += l
 
         rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r = fct.properties(type_beam, l)
+
+        if verbose:
+            print("--------Propriety {beam} for elem [{node1}, {node2}]--------".format(beam=type_beam, node1=node1+1, node2=node2+1))
+            print("rho = {rho}  v = {v}  E = {E}  A = {A}  l = {l}".format(rho=rho, v=v, E=E, A=A, l=l))
+            print("Re = {Re}  Ri = {Ri}  G = {G}  r = {r}  m = {m}".format(Re=Re, Ri=Ri, G=G, r=r, m=m))
+            print("Jx = {Jx}  Iy = {Iy}  Iz = {Iz}".format(Jx=Jx, Iy=Iy, Iz=Iz))
+            print()
 
         Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
         Mel = fct.create_Mel(m, r, l)
 
-        T = fct.create_T(coord1, coord2, l)
+        T = fct.create_T(coord1, coord2)
 
         Kes = np.transpose(T) @ Kel @ T
         Mes = np.transpose(T) @ Mel @ T
+
+        """
+        if i == 0:
+            fct.print_matrix(Kel)
+            print()
+            fct.print_matrix(Mel)
+            print()
+            fct.print_matrix(Kes)
+            print(fct_verif.est_def_pos(Kes))
+            print()
+            fct.print_matrix(Mes)
+            print(fct_verif.est_def_pos(Mes))
+        """
 
         # Assemblage Matrice globale
         for j in range(len(locel[i])):
@@ -54,7 +73,7 @@ def ElementFini(numberElem, verbose):
                 K[locel[i][j]-1][locel[i][k]-1] = K[locel[i][j]-1][locel[i][k]-1] + Kes[j][k]
 
     fct.Add_lumped_mass(nodeLumped, dofList, M)
-    print("m =", fct.calculate_mtot_rigid(M, nodeList), "[kg] rigid")
+    print("m =", fct.calculate_mtot_rigid(M), "[kg] rigid")
 
     #print("m =", fct.calculate_mtot(M, ltot), "[kg]")
 
