@@ -149,29 +149,13 @@ def create_Mel(m, r, l) :
     return m * np.array(Mel)
 
 def Add_const_emboit(nodeConstraint, dofList, M, K):
-    ### CECI EST UN EST POUR LES CONTRAINTES? AVOIR SI CA MARCHE
-    """
-
-    for node in nodeConstraint:
-        for i in range(6):
-            # Réglez les déplacements correspondants à zéro dans les matrices globales
-            K[6 * node, :] = 0
-            K[:, 6 * node + i] = 0
-            M[6 * node + i, :] = 0
-            M[:, 6 * node + i] = 0
-            # Placez 1 sur la diagonale pour la masse globale (pour éviter une matrice singulière)
-            M[6 * node + i, 6 * node + i] = 1.0
-
-
-    """
     for node in nodeConstraint:
         for tmp in dofList[node-1]:
-            dof = tmp-1
-            M = np.delete(M, dof, 0)
-            M = np.delete(M, dof, 1)
+            M = np.delete(M, tmp-1, 0)
+            M = np.delete(M, tmp-1, 1)
 
-            K = np.delete(K, dof, 0)
-            K = np.delete(K, dof, 1)
+            K = np.delete(K, tmp-1, 0)
+            K = np.delete(K, tmp-1, 1)
 
 
 def Add_lumped_mass(nodeLumped, dofList, M):
