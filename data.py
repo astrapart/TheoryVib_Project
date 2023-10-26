@@ -13,7 +13,7 @@ DATA PROJECT
 density_beam = 7800       # [kg/m3]
 poisson_ratio = 0.3       # [-]
 young_mod = 210e9         # [Pa]
-rayon_beam = [1/2, 0.6/2, 1/2]
+diam_beam = [1, 0.6, 1]   # [m]
 thickness_beam = 0.02     # [m]
 mass_lumped = 200000      # [kg]
 node_lumped_J = 24000000  # [kg*m2]

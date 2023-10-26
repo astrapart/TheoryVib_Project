@@ -36,19 +36,19 @@ def ElementFini(numberElem, verbose):
 
         l = fct.calculate_length(coord1, coord2)
 
-        rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r = fct.properties(type_beam, l)
+        rho, v, E, A, D, m, Jx, Iy, Iz, G, r = fct.properties(type_beam, l)
 
-        if verbose:
-            print("--------Propriety {beam} for elem [{node1}, {node2}]--------".format(beam=type_beam, node1=node1+1, node2=node2+1))
-            print("rho = {rho}  v = {v}  E = {E}  A = {A}  l = {l}".format(rho=rho, v=v, E=E, A=A, l=l))
-            print("Re = {Re}  Ri = {Ri}  G = {G}  r = {r}  m = {m}".format(Re=Re, Ri=Ri, G=G, r=r, m=m))
-            print("Jx = {Jx}  Iy = {Iy}  Iz = {Iz}".format(Jx=Jx, Iy=Iy, Iz=Iz))
-            print()
+
+        print("--------Propriety {beam} for elem [{node1}, {node2}]--------".format(beam=type_beam, node1=node1+1, node2=node2+1))
+        print("rho = {rho}, E = {E}  A = {A}  l = {l}".format(rho=rho, E=E, A=A, l=l))
+        print("G = {G}  r = {r}  m = {m}".format(G=G, r=r, m=m))
+        print("Jx = {Jx}  I = {Iy}".format(Jx=Jx, Iy=Iy))
+        print()
 
         Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
         Mel = fct.create_Mel(m, r, l)
 
-        T = fct.create_T(coord1, coord2)
+        T = fct.create_T(coord1, coord2, l)
 
         Kes = np.transpose(T) @ Kel @ T
         Mes = np.transpose(T) @ Mel @ T
@@ -104,5 +104,5 @@ def EtudeConvergence(precision):
         tmp = ElementFini(TestElem[i], False)
         Result.append(tmp)
 
-ElementFini(2, False)
+ElementFini(3, False)
 #EtudeConvergence(5)

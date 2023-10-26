@@ -72,15 +72,14 @@ def create_locel(elemList, dofList):
     
     return locel
 
-def create_T(coord1, coord2):
+def create_T(coord1, coord2, l):
     P1 = coord1
     P2 = coord2
-    P3 = [1, 1, 2]
+    P3 = [2, 1, -1]
 
     d2 = [P2[0] - P1[0], P2[1] - P1[1], P2[2] - P1[2]]
     d3 = [P3[0] - P1[0], P3[1] - P1[1], P3[2] - P1[2]]
 
-    l = np.sqrt(d2[0]*d2[0] + d2[1]*d2[1] + d2[2]*d2[2])
     ex = [d2[0]/l, d2[1]/l, d2[2]/l]
     ey = np.cross(d3, d2) / np.linalg.norm(np.cross(d3, d2))
     ez = np.cross(ex, ey)
@@ -106,6 +105,7 @@ def create_T(coord1, coord2):
             T[j + 9][k + 9] = R[j][k]
     return T
 
+
 def create_Kel(E, A, Jx, Iy, Iz, G, l) :
     Kel = [[E*A/l],
            [  0, 12*E*Iz/(l*l*l)],
@@ -126,6 +126,7 @@ def create_Kel(E, A, Jx, Iy, Iz, G, l) :
             Kel[i].append(Kel[j][i])
 
     return np.array(Kel)
+
 
 def create_Mel(m, r, l) :
 
@@ -183,7 +184,7 @@ def Add_lumped_mass(nodeLumped, dofList, M):
         i = tmp-1
         if count <= 2:
             M[i][i] += mass
-        else :
+        else:
             M[i][i] += J
         count += 1
 
@@ -193,25 +194,25 @@ def Add_lumped_mass(nodeLumped, dofList, M):
 Fonction Calculate
 ########################################################################################################################
 """
-def calculate_length (coord1, coord2) :
+def calculate_length(coord1, coord2):
     return np.sqrt((coord1[0] - coord2[0]) ** 2 + (coord1[1] - coord2[1]) ** 2 + (coord1[2] - coord2[2]) ** 2)
 
-def properties (type_beam, l) :
+
+def properties(type_beam, l):
     rho = data.density_beam                                     # [kg/m3]
     v = data.poisson_ratio                                      # [-]
     E = data.young_mod                                          # [Pa]
-    Re = data.rayon_beam[type_beam]                             # [m2]
-    Ri = data.rayon_beam[type_beam] - data.thickness_beam       # [m]
-    A = np.pi * (Re*Re-Ri*Ri)                                   # [m]
+    D = data.diam_beam[type_beam]                               # [m]
+    A = np.pi * (D*D - (D - 2 * data.thickness_beam) ** 2)/4    # [m2]
 
-    Ix = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
-    Iy = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
-    Iz = (np.pi / 64) * ((2*Re) ** 4 - (2*Ri) ** 4)  # [m4]
-    Jx = Ix * 2                                      # [m4]
+    Ix = (np.pi / 64) * (D ** 4 - (D - 2 * data.thickness_beam) ** 4)  # [m4]
+    Jx = Ix * 2  # [m4]
+    Iy = Ix  # [m4]
+    Iz = Iy  # [m4]
 
     if type_beam == 2:
-        rho = rho * 10 **(-4)
-        A = A * 10 **(-2)
+        rho = rho * 10 ** (-4)
+        A = A * 10 ** (-2)
         E = E * 10 ** 4
         Jx = Jx*10**4
         Iy = Iy*10**4
@@ -221,16 +222,8 @@ def properties (type_beam, l) :
     G = E / (2 * (1 + v))                   # [GPa]
     r = np.sqrt(Jx / A)                     # [m]
 
-    return rho, v, E, A, Re, Ri, m, Jx, Iy, Iz, G, r
+    return rho, v, E, A, D, m, Jx, Iy, Iz, G, r
 
-def calculate_mtot(M, ltot):
-
-    m_tot = 0
-    for i in range(len(M)):
-        for j in range(len(M)):
-            m_tot += M[i][j]
-
-    return m_tot/ltot
 
 def calculate_mtot_rigid(M):
 
@@ -271,7 +264,8 @@ def plot_structure(elemList, nodeList):
 
     plt.show()
 
-def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
+
+def plot_result(nodeList, nodeConstraint, eigenvects, elemList0):
     fig = plt.figure()
     for i in range(len(eigenvects)):
         newNodeList = []
@@ -301,7 +295,8 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0) :
 
     plt.show()
 
-def print_freq(list_eign) :
+
+def print_freq(list_eign):
 
     for i in range(len(list_eign)):
         f = np.real(np.sqrt(list_eign[i]))/(2*np.pi)
@@ -312,6 +307,7 @@ def print_freq(list_eign) :
         print("La fréquence pour la valeur propre {index} vaut : {val:.5f} [Hz]".format(index=i, val=f))
 
     return
+
 
 def print_matrix(matrix):
 

@@ -55,7 +55,7 @@ def ElementFini(numberElem, verbose):
         Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
         Mel = fct.create_Mel(m, r, l)
 
-        T = fct.create_T(coord1, coord2)
+        T = fct.create_T(coord1, coord2, l)
 
         Kes = np.dot(np.dot(np.transpose(T), Kel), T)
         Mes = np.dot(np.dot(np.transpose(T), Mel), T)
