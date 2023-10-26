@@ -6,6 +6,8 @@ IMPORT
 
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.linalg
+
 import data
 
 """
@@ -48,7 +50,7 @@ def create_elemList(elemList0, nodeList, numberElem):
         else:
             elemList.append(elem)
 
-    return elemList
+    return np.array(elemList)
 
     
 def create_dofList(nodeList):
@@ -60,7 +62,7 @@ def create_dofList(nodeList):
             tmp.append(dof)
             dof += 1
         dofList.append(tmp)
-    return dofList
+    return np.array(dofList)
 
 
 def create_locel(elemList, dofList):
@@ -68,42 +70,33 @@ def create_locel(elemList, dofList):
     for i in range(len(elemList)):
         dofNode1 = dofList[elemList[i][0]-1]
         dofNode2 = dofList[elemList[i][1]-1]
-        locel.append(dofNode1 + dofNode2)
+        locel.append(np.concatenate((dofNode1, dofNode2), axis=0))
     
-    return locel
+    return np.array(locel)
 
 def create_T(coord1, coord2, l):
-    P1 = coord1
-    P2 = coord2
-    P3 = [2, 1, -1]
+    P1 = np.array(coord1)
+    P2 = np.array(coord2)
+    P3 = np.array([1, 1, 1])
 
-    d2 = [P2[0] - P1[0], P2[1] - P1[1], P2[2] - P1[2]]
-    d3 = [P3[0] - P1[0], P3[1] - P1[1], P3[2] - P1[2]]
+    d2 = P2 - P1
+    d3 = P3 - P1
 
-    ex = [d2[0]/l, d2[1]/l, d2[2]/l]
+    ex = d2 / l
     ey = np.cross(d3, d2) / np.linalg.norm(np.cross(d3, d2))
     ez = np.cross(ex, ey)
-
-    localAxe = [ex, ey, ez]
 
     eX = [1, 0, 0]
     eY = [0, 1, 0]
     eZ = [0, 0, 1]
-    globalAxe = [eX, eY, eZ]
 
-    R = np.zeros((3, 3))
-    for j in range(3):
-        for k in range(3):
-            R[j][k] = np.dot(globalAxe[k], localAxe[j])
+    R = [[np.dot(eX, ex), np.dot(eY, ex), np.dot(eZ, ex)],
+         [np.dot(eX, ey), np.dot(eY, ey), np.dot(eZ, ey)],
+         [np.dot(eX, ez), np.dot(eY, ez), np.dot(eZ, ez)]]
 
-    T = np.zeros((12, 12))
-    for j in range(3):
-        for k in range(3):
-            T[j][k] = R[j][k]
-            T[j + 3][k + 3] = R[j][k]
-            T[j + 6][k + 6] = R[j][k]
-            T[j + 9][k + 9] = R[j][k]
-    return T
+    T = scipy.linalg.block_diag(R, R, R, R)
+
+    return np.array(T)
 
 
 def create_Kel(E, A, Jx, Iy, Iz, G, l) :
@@ -149,6 +142,74 @@ def create_Mel(m, r, l) :
 
     return m * np.array(Mel)
 
+
+def Kel(A, l, E, I, J, G):
+    K_el = np.zeros((12,12))
+
+    K_el[(0,0)] = E*A/l
+    K_el[(1,1)] = 12*E*I/l**3
+    K_el[(2,2)] = 12*E*I/l**3
+    K_el[(3,3)] = G*J/l
+    K_el[(4,4)] = 4*E*I/l
+    K_el[(5,5)] = 4*E*I/l
+    K_el[(6,6)] = E*A/l
+    K_el[(7,7)] = 12*E*I/l**3
+    K_el[(8,8)] = 12*E*I/l**3
+    K_el[(9,9)] = G*J/l
+    K_el[(10,10)] = 4*E*I/l
+    K_el[(11,11)] = 4*E*I/l
+    K_el[(0,6)] = K_el[(6,0)] = -E*A/l
+    K_el[(1,5)] = K_el[(5,1)] = 6*E*I/l**2
+    K_el[(1,7)] = K_el[(7,1)] = -12*E*I/l**3
+    K_el[(1,11)] = K_el[(11,1)] = 6*E*I/l**2
+    K_el[(2,4)] = K_el[(4,2)] = -6*E*I/l**2
+    K_el[(2,8)] = K_el[(8,2)] = -12*E*I/l**3
+    K_el[(2,10)] = K_el[(10,2)] = -6*E*I/l**2
+    K_el[(3,9)] = K_el[(9,3)] = -G*J/l
+    K_el[(4,8)] = K_el[(8,4)] = 6*E*I/l**2
+    K_el[(4,10)] = K_el[(10,4)] = 2*E*I/l
+    K_el[(5,7)] = K_el[(7,5)] = -6*E*I/l**2
+    K_el[(5,11)] = K_el[(11,5)] = 2*E*I/l
+    K_el[(7,11)] = K_el[(11,7)] = -6*E*I/l**2
+    K_el[(8,10)] = K_el[(10,8)] = 6*E*I/l**2
+
+    return K_el
+
+
+def Mel(A, l, r2, rho):
+    M_el = np.zeros((12,12))
+
+    M_el[(0,0)] = 1/3
+    M_el[(1,1)] = 13/35
+    M_el[(2,2)] = 13/35
+    M_el[(3,3)] = r2/3
+    M_el[(4,4)] = l**2/105
+    M_el[(5,5)] = l**2/105
+    M_el[(6,6)] = 1/3
+    M_el[(7,7)] = 13/35
+    M_el[(8,8)] = 13/35
+    M_el[(9,9)] = r2/3
+    M_el[(10,10)] = l**2/105
+    M_el[(11,11)] = l**2/105
+    M_el[(0,6)] = M_el[(6,0)] = 1/6
+    M_el[(1,5)] = M_el[(5,1)] = 11*l/210
+    M_el[(1,7)] = M_el[(7,1)] = 9/70
+    M_el[(1,11)] = M_el[(11,1)] = -13*l/420
+    M_el[(2,4)] = M_el[(4,2)] = -11*l/210
+    M_el[(2,8)] = M_el[(8,2)] = 9/70
+    M_el[(2,10)] = M_el[(10,2)] = 13*l/420
+    M_el[(3,9)] = M_el[(9,3)] = r2/6
+    M_el[(4,8)] = M_el[(8,4)] = -13*l/420
+    M_el[(4,10)] = M_el[(10,4)] = -l**2/140
+    M_el[(5,7)] = M_el[(7,5)] = 13*l/420
+    M_el[(5,11)] = M_el[(11,5)] = -l**2/140
+    M_el[(7,11)] = M_el[(11,7)] = -11*l/210
+    M_el[(8,10)] = M_el[(10,8)] = 11*l/210
+    M_el = rho*A*l*M_el
+
+    return M_el
+
+
 def Add_const_emboit(nodeConstraint, dofList, M, K):
     for node in nodeConstraint:
         for tmp in dofList[node-1]:
@@ -178,11 +239,76 @@ def Add_lumped_mass(nodeLumped, dofList, M):
 Fonction Calculate
 ########################################################################################################################
 """
+
+
 def calculate_length(coord1, coord2):
     return np.sqrt((coord1[0] - coord2[0]) ** 2 + (coord1[1] - coord2[1]) ** 2 + (coord1[2] - coord2[2]) ** 2)
 
 
 def properties(type_beam, l):
+    wall_thickness = 0.02
+    # Main legs
+    D_m = 1
+    A_m = np.pi * (D_m ** 2 - (D_m - 2 * wall_thickness) ** 2) / 4
+    I_m = np.pi * (D_m ** 4 - (D_m - 2 * wall_thickness) ** 4) / 64
+    J_xm = 2 * I_m
+    r2_m = np.sqrt(J_xm / A_m)
+    E_m = 210 * 10 ** 9
+    rho_m = 7800
+    nu_m = 0.3
+    G_m = E_m / (2 + 2 * nu_m)
+    # Structure
+    D_s = 0.6
+    A_s = np.pi * (D_s ** 2 - (D_s - 2 * wall_thickness) ** 2) / 4
+    I_s = np.pi * (D_s ** 4 - (D_s - 2 * wall_thickness) ** 4) / 64
+    J_xs = 2 * I_s
+    r2_s = np.sqrt(J_xs / A_s)
+    E_s = E_m
+    rho_s = rho_m
+    nu_s = nu_m
+    G_s = E_s / (2 + 2 * nu_s)
+    # Rigid beams
+    A_r = A_m * 10 ** (-2)  # TODO 10**(-2) in the statement ???
+    I_r = I_m * 10 ** 4
+    J_xr = 2 * I_r
+    r2_r = np.sqrt(J_xr / A_r)
+    E_r = E_m * 10 ** 4
+    rho_r = rho_m * 10 ** (-4)
+    nu_r = 0.3
+    G_r = E_r / (2 + 2 * nu_r)
+
+    if type_beam == 0: #main beams
+        A = A_m
+        r = r2_m
+        E = E_m
+        Iy = I_m
+        Iz = I_m
+        Jx = J_xm
+        G = G_m
+        rho = rho_m
+    elif type_beam == 2: #rigid beams
+        A = A_r
+        r = r2_r
+        E = E_r
+        Iy = I_r
+        Iz = I_r
+        Jx = J_xr
+        G = G_r
+        rho = rho_r
+    elif type_beam == 1: #structure (other beams)
+        A = A_s
+        r = r2_s
+        E = E_s
+        Iy = I_s
+        Iz = I_s
+        Jx = J_xs
+        G = G_s
+        rho = rho_s
+
+    m = rho * A * l
+    v = 0.3
+
+    """
     rho = data.density_beam                                     # [kg/m3]
     v = data.poisson_ratio                                      # [-]
     E = data.young_mod                                          # [Pa]
@@ -205,8 +331,8 @@ def properties(type_beam, l):
     m = rho * A * l                         # [kg]
     G = E / (2 * (1 + v))                   # [GPa]
     r = np.sqrt(Jx / A)                     # [m]
-
-    return rho, v, E, A, D, m, Jx, Iy, Iz, G, r
+    """
+    return rho, v, E, A, m, Jx, Iy, Iz, G, r
 
 
 def calculate_mtot_rigid(M):
