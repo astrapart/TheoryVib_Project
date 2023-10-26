@@ -25,6 +25,8 @@ def ElementFini(numberElem, verbose):
 
     M = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
     K = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
+    print(elemList)
+    print(nodeList)
 
     for i in range(len(elemList)):
         node1 = elemList[i][0]-1
