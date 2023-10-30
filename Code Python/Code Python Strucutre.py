@@ -89,10 +89,4 @@ def EtudeConvergence():
 
 #ElementFini(3, True)
 
-#EtudeConvergence()
-
-tmp1 = ElementFini(2, False)
-tmp2 = ElementFini(3, False)
-
-fct.print_freq(tmp1)
-fct.print_freq(tmp2)
+EtudeConvergence()

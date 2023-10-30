@@ -19,7 +19,7 @@ Fonction create
 
 def create_elemList(elemList0, nodeList0, numberElem):
     elemList = []
-    nodeList = np.copy(nodeList0)
+    nodeList = nodeList0.copy()
 
     for elem in elemList0:
         i = elem[0]-1
@@ -27,7 +27,6 @@ def create_elemList(elemList0, nodeList0, numberElem):
         propriety = elem[2]
 
         if propriety != 2:
-            print(i, j)
             current = i + 1
             len_x = abs(nodeList[i][0] - nodeList[j][0]) / numberElem
             if nodeList[i][0] > nodeList[j][0]:
@@ -43,7 +42,7 @@ def create_elemList(elemList0, nodeList0, numberElem):
                 new = len(nodeList) + 1
                 if m != (numberElem - 2):
                     elemList.append([current, new, propriety])
-                    nodeList = np.append(nodeList, [nodeList[current-1][0] + len_x, nodeList[current-1][1] + len_y,
+                    nodeList.append([nodeList[current-1][0] + len_x, nodeList[current-1][1] + len_y,
                                  nodeList[current-1][2] + len_z])
 
                     current = new
@@ -53,6 +52,40 @@ def create_elemList(elemList0, nodeList0, numberElem):
             elemList.append(elem)
 
     return np.array(elemList), nodeList
+
+
+def add_nodes(ElemList0, NodeList0, numberElem):
+    ElemList = []
+    NodeList = NodeList0.copy()
+
+    for elem in ElemList0:
+        node1 = elem[0]
+        node2 = elem[1]
+        propriety = elem[2]
+
+        current = node1
+        if propriety != 2:
+
+            coord1 = np.array(NodeList[node1])
+            coord2 = np.array(NodeList[node2])
+
+            delta = (coord2 - coord1) / numberElem
+
+            for i in range(numberElem - 1):
+                newNode = len(NodeList)
+                coord = NodeList[current]
+
+                ElemList.append([current, newNode, propriety])
+                NodeList.append([coord[0] + delta[0], coord[1] + delta[1], coord[2] + delta[2]])
+
+                current = newNode
+
+            ElemList.append([current, node2, propriety])
+
+        else:
+            ElemList.append(elem)
+
+    return ElemList
 
     
 def create_dofList(nodeList):
