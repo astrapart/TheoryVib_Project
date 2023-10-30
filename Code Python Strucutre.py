@@ -8,20 +8,23 @@ import scipy
 import fct
 import fct_verif
 import data
+from scipy.linalg import block_diag, eigh, eigvals, eig
 
 def ElementFini(numberElem, verbose):
+
 
     nodeList = data.nodeList_eol
     elemList0 = data.elemList0_eol
     elemList = fct.create_elemList(elemList0, nodeList, numberElem)
+    print(len(elemList))
     dofList = fct.create_dofList(nodeList)
     locel = fct.create_locel(elemList, dofList)
-
+    #fct.plot_structure(elemList,nodeList)
     #if verbose:
         #fct.plot_structure(elemList, nodeList)
 
     nodeConstraint = np.array([1, 2, 3, 4])
-    nodeLumped = 23
+    nodeLumped = 22
 
     M = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
     K = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
@@ -37,62 +40,40 @@ def ElementFini(numberElem, verbose):
         l = fct.calculate_length(coord1, coord2)
 
         rho, v, E, A, m, Jx, Iy, Iz, G, r = fct.properties(type_beam, l)
-
-
+        """
         print("--------Propriety {beam} for elem [{node1}, {node2}]--------".format(beam=type_beam, node1=node1+1, node2=node2+1))
         print("rho = {rho}, E = {E}  A = {A}  l = {l}".format(rho=rho, E=E, A=A, l=l))
         print("G = {G}  r = {r}  m = {m}".format(G=G, r=r, m=m))
         print("Jx = {Jx}  I = {Iy}".format(Jx=Jx, Iy=Iy))
         print()
-        #Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
-        #Mel = fct.create_Mel(m, r, l)
+        """
+        Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
+        Mel = fct.create_Mel(m, r, l)
 
-        Kel = fct.Kel(A, l, E, Iy, Jx, G)
-        Mel = fct.Mel(A, l, r*r, rho)
+        #Kel = fct.Kel(A, l, E, Iy, Jx, G)
+        #Mel = fct.Mel(A, l, r*r, rho)
 
         T = fct.create_T(coord1, coord2, l)
 
         Kes = np.transpose(T) @ Kel @ T
         Mes = np.transpose(T) @ Mel @ T
 
-        print("el1 = {el1}, el2 = {el2}".format(el1=node1+1, el2=node2+1))
-        print(Kes)
-
-        """
-        if i == 0:
-            fct.print_matrix(Kel)
-            print()
-            fct.print_matrix(Mel)
-            print()
-            fct.print_matrix(Kes)
-            print(fct_verif.est_def_pos(Kes))
-            print()
-            fct.print_matrix(Mes)
-            print(fct_verif.est_def_pos(Mes))
-        """
-
-
         # Assemblage Matrice globale
 
-        for j in range(Kes.shape[0]):
-            jj = locel[i, j] - 1
-            for k in range(Kes.shape[1]):
-                kk = locel[i, k] - 1
-                K[jj, kk] += Kes[j, k]
-                M[jj, kk] += Mes[j, k]
-        """
         for j in range(len(locel[i])):
             for k in range(len(locel[i])):
                 M[locel[i][j]-1][locel[i][k]-1] += Mes[j][k]
                 K[locel[i][j]-1][locel[i][k]-1] += Kes[j][k]
-        """
+
     fct.Add_lumped_mass(nodeLumped, dofList, M)
     print("m =", fct.calculate_mtot_rigid(M), "[kg] rigid")
 
     fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
+    #val = np.sort(np.real(eigvals(K,M)))
+    #print(np.sqrt(val) /2*np.pi)
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
-    val_prop = np.sort(eigenvals)
+    val_prop = np.sort(np.real(eigenvals))
 
     fct.print_freq(val_prop[:8])
 
@@ -103,12 +84,10 @@ def ElementFini(numberElem, verbose):
             vect_prop.append(eigenvects[i])
 
         fct.plot_result(nodeList, nodeConstraint, vect_prop[:8], elemList0)
-
     return val_prop[:8]
 
 
 def EtudeConvergence(precision):
-
     TestElem = np.arange(2, precision+1, 1)
     Result = []
 
@@ -118,3 +97,5 @@ def EtudeConvergence(precision):
 
 ElementFini(3, False)
 #EtudeConvergence(5)
+
+## m = (294789.135926518, 294789.135926518, 294789.135926518) [kg] rigid

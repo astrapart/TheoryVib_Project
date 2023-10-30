@@ -77,7 +77,7 @@ def create_locel(elemList, dofList):
 def create_T(coord1, coord2, l):
     P1 = np.array(coord1)
     P2 = np.array(coord2)
-    P3 = np.array([1, 1, 1])
+    P3 = np.array([1,1,1])
 
     d2 = P2 - P1
     d3 = P3 - P1
@@ -211,6 +211,14 @@ def Mel(A, l, r2, rho):
 
 
 def Add_const_emboit(nodeConstraint, dofList, M, K):
+    clamped_dof = np.concatenate((dofList[0], dofList[1], dofList[2], dofList[3]))
+    clamped_dof = np.sort(clamped_dof)[::-1]
+
+    K = np.delete(K, clamped_dof -1, axis=0)
+    K = np.delete(K, clamped_dof -1, axis=1)
+    M = np.delete(M, clamped_dof -1, axis=0)
+    M = np.delete(M, clamped_dof -1, axis=1)
+    """
     for node in nodeConstraint:
         for tmp in dofList[node-1]:
             M = np.delete(M, tmp-1, 0)
@@ -218,6 +226,7 @@ def Add_const_emboit(nodeConstraint, dofList, M, K):
 
             K = np.delete(K, tmp-1, 0)
             K = np.delete(K, tmp-1, 1)
+    """
 
 
 def Add_lumped_mass(nodeLumped, dofList, M):
@@ -233,7 +242,6 @@ def Add_lumped_mass(nodeLumped, dofList, M):
             M[i][i] += J
         count += 1
 
-
 """
 ########################################################################################################################
 Fonction Calculate
@@ -246,75 +254,11 @@ def calculate_length(coord1, coord2):
 
 
 def properties(type_beam, l):
-    wall_thickness = 0.02
-    # Main legs
-    D_m = 1
-    A_m = np.pi * (D_m ** 2 - (D_m - 2 * wall_thickness) ** 2) / 4
-    I_m = np.pi * (D_m ** 4 - (D_m - 2 * wall_thickness) ** 4) / 64
-    J_xm = 2 * I_m
-    r2_m = np.sqrt(J_xm / A_m)
-    E_m = 210 * 10 ** 9
-    rho_m = 7800
-    nu_m = 0.3
-    G_m = E_m / (2 + 2 * nu_m)
-    # Structure
-    D_s = 0.6
-    A_s = np.pi * (D_s ** 2 - (D_s - 2 * wall_thickness) ** 2) / 4
-    I_s = np.pi * (D_s ** 4 - (D_s - 2 * wall_thickness) ** 4) / 64
-    J_xs = 2 * I_s
-    r2_s = np.sqrt(J_xs / A_s)
-    E_s = E_m
-    rho_s = rho_m
-    nu_s = nu_m
-    G_s = E_s / (2 + 2 * nu_s)
-    # Rigid beams
-    A_r = A_m * 10 ** (-2)  # TODO 10**(-2) in the statement ???
-    I_r = I_m * 10 ** 4
-    J_xr = 2 * I_r
-    r2_r = np.sqrt(J_xr / A_r)
-    E_r = E_m * 10 ** 4
-    rho_r = rho_m * 10 ** (-4)
-    nu_r = 0.3
-    G_r = E_r / (2 + 2 * nu_r)
-
-    if type_beam == 0: #main beams
-        A = A_m
-        r = r2_m
-        E = E_m
-        Iy = I_m
-        Iz = I_m
-        Jx = J_xm
-        G = G_m
-        rho = rho_m
-    elif type_beam == 2: #rigid beams
-        A = A_r
-        r = r2_r
-        E = E_r
-        Iy = I_r
-        Iz = I_r
-        Jx = J_xr
-        G = G_r
-        rho = rho_r
-    elif type_beam == 1: #structure (other beams)
-        A = A_s
-        r = r2_s
-        E = E_s
-        Iy = I_s
-        Iz = I_s
-        Jx = J_xs
-        G = G_s
-        rho = rho_s
-
-    m = rho * A * l
-    v = 0.3
-
-    """
     rho = data.density_beam                                     # [kg/m3]
     v = data.poisson_ratio                                      # [-]
     E = data.young_mod                                          # [Pa]
     D = data.diam_beam[type_beam]                               # [m]
     A = np.pi * (D*D - (D - 2 * data.thickness_beam) ** 2)/4    # [m2]
-
     Ix = (np.pi / 64) * (D ** 4 - (D - 2 * data.thickness_beam) ** 4)  # [m4]
     Jx = Ix * 2  # [m4]
     Iy = Ix  # [m4]
@@ -331,19 +275,28 @@ def properties(type_beam, l):
     m = rho * A * l                         # [kg]
     G = E / (2 * (1 + v))                   # [GPa]
     r = np.sqrt(Jx / A)                     # [m]
-    """
     return rho, v, E, A, m, Jx, Iy, Iz, G, r
 
 
 def calculate_mtot_rigid(M):
-
+    """
     ue = np.zeros(len(M))
     for i in range(len(M)//6):
         ue[i*6] = 1
+    """
+    u1 = []
+    u2= []
+    u3= []
+    for i in range(len(M)//6):
+        u1 = np.append(u1, np.array([1, 0, 0, 0, 0, 0]))
+        u2 = np.append(u2, np.array([0, 1, 0, 0, 0, 0]))
+        u3 = np.append(u3, np.array([0, 0, 1, 0, 0, 0]))
 
-    mtot = np.transpose(ue) @ M @ ue
+    mtot1 = np.transpose(u1) @ M @ u1
+    mtot2 = np.transpose(u2) @ M @ u2
+    mtot3 = np.transpose(u3) @ M @ u3
 
-    return mtot
+    return mtot1, mtot2, mtot3
 
 """
 ########################################################################################################################
