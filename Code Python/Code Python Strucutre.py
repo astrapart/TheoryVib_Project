@@ -10,14 +10,14 @@ import data
 from scipy.linalg import block_diag, eigh, eigvals, eig
 
 def ElementFini(numberElem, verbose):
-    nodeList = data.nodeList_eol
+    nodeList0 = data.nodeList_eol
     elemList0 = data.elemList0_eol
-    elemList = fct.create_elemList(elemList0, nodeList, numberElem)
+    elemList, nodeList = fct.create_elemList(elemList0, nodeList0, numberElem)
     dofList = fct.create_dofList(nodeList)
     locel = fct.create_locel(elemList, dofList)
 
     if verbose:
-        fct.plot_structure(elemList,nodeList)
+        fct.plot_structure(elemList, nodeList)
 
     nodeConstraint = np.array([1, 2, 3, 4])
     nodeLumped = 22
@@ -83,9 +83,16 @@ def EtudeConvergence():
     for i in range(len(TestElem)):
         tmp = ElementFini(TestElem[i], False)
         Result.append(tmp)
-        print('Les valeurs propres pour', TestElem[i] , 'élements sont : ', tmp)
+        print('Les valeurs propres pour', TestElem[i] , 'élements sont : ', np.real(np.sqrt(tmp))/(2*np.pi))
     return 0
+
 
 #ElementFini(3, True)
 
-EtudeConvergence()
+#EtudeConvergence()
+
+tmp1 = ElementFini(2, False)
+tmp2 = ElementFini(3, False)
+
+fct.print_freq(tmp1)
+fct.print_freq(tmp2)

@@ -17,8 +17,9 @@ Fonction create
 """
 
 
-def create_elemList(elemList0, nodeList, numberElem):
+def create_elemList(elemList0, nodeList0, numberElem):
     elemList = []
+    nodeList = np.copy(nodeList0)
 
     for elem in elemList0:
         i = elem[0]-1
@@ -26,6 +27,7 @@ def create_elemList(elemList0, nodeList, numberElem):
         propriety = elem[2]
 
         if propriety != 2:
+            print(i, j)
             current = i + 1
             len_x = abs(nodeList[i][0] - nodeList[j][0]) / numberElem
             if nodeList[i][0] > nodeList[j][0]:
@@ -41,7 +43,7 @@ def create_elemList(elemList0, nodeList, numberElem):
                 new = len(nodeList) + 1
                 if m != (numberElem - 2):
                     elemList.append([current, new, propriety])
-                    nodeList.append([nodeList[current-1][0] + len_x, nodeList[current-1][1] + len_y,
+                    nodeList = np.append(nodeList, [nodeList[current-1][0] + len_x, nodeList[current-1][1] + len_y,
                                  nodeList[current-1][2] + len_z])
 
                     current = new
@@ -50,7 +52,7 @@ def create_elemList(elemList0, nodeList, numberElem):
         else:
             elemList.append(elem)
 
-    return np.array(elemList)
+    return np.array(elemList), nodeList
 
     
 def create_dofList(nodeList):
