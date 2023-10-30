@@ -15,7 +15,9 @@ def ElementFini(numberElem, verbose):
     elemList = fct.create_elemList(elemList0, nodeList, numberElem)
     dofList = fct.create_dofList(nodeList)
     locel = fct.create_locel(elemList, dofList)
-    #fct.plot_structure(elemList,nodeList)
+
+    if verbose:
+        fct.plot_structure(elemList,nodeList)
 
     nodeConstraint = np.array([1, 2, 3, 4])
     nodeLumped = 22
@@ -35,7 +37,8 @@ def ElementFini(numberElem, verbose):
 
         rho, v, E, A, m, Jx, Iy, Iz, G, r = fct.properties(type_beam, l)
 
-        #fct.print_data_beam(node1, node2, type_beam, rho, v, E, A, m, Jx, Iy, Iz, G, r, l)
+        if verbose:
+            fct.print_data_beam(node1, node2, type_beam, rho, v, E, A, m, Jx, Iy, Iz, G, r, l)
 
         Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
         Mel = fct.create_Mel(m, r, l)
@@ -51,14 +54,15 @@ def ElementFini(numberElem, verbose):
                 K[locel[i][j]-1][locel[i][k]-1] += Kes[j][k]
 
     M = fct.Add_lumped_mass(nodeLumped, dofList, M)
-    print("m =", fct.calculate_mtot_rigid(M), "[kg] rigid")
 
-    M,K = fct.Add_const_emboit(nodeConstraint, dofList, M, K)
+    mtot = fct.calculate_mtot_rigid(M)
+    if verbose:
+        print("m =", mtot, "[kg] rigid")
+
+    M, K = fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
     val_prop = np.sort(np.real(eigenvals))
-
-    fct.print_freq(val_prop[:8])
 
     if verbose:
         new_index = np.argsort(eigenvals)
@@ -66,15 +70,14 @@ def ElementFini(numberElem, verbose):
         for i in new_index:
             vect_prop.append(eigenvects[i])
 
+        fct.print_freq(val_prop[:8])
         fct.plot_result(nodeList, nodeConstraint, vect_prop[:8], elemList0)
-
 
     return val_prop[:8]
 
 
-
 def EtudeConvergence():
-    TestElem = [2,3,4]
+    TestElem = [2, 3, 4]
     Result = []
 
     for i in range(len(TestElem)):
@@ -83,5 +86,6 @@ def EtudeConvergence():
         print('Les valeurs propres pour', TestElem[i] , 'élements sont : ', tmp)
     return 0
 
-ElementFini(3, False)
-#EtudeConvergence()
+#ElementFini(3, True)
+
+EtudeConvergence()
