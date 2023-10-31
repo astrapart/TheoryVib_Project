@@ -66,16 +66,16 @@ def ElementFini(numberElem, verbose):
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
     val_prop = np.sort(np.real(eigenvals))
 
-    if verbose:
-        new_index = np.argsort(eigenvals)
-        vect_prop = []
-        for i in new_index:
-            vect_prop.append(eigenvects[i])
+    new_index = np.argsort(eigenvals)
+    vect_prop = []
+    for i in new_index:
+        vect_prop.append(eigenvects[i])
 
+    if verbose:
         fct.print_freq(val_prop[:8])
         fct.plot_result(nodeList, nodeConstraint, vect_prop[:8], elemList0)
 
-    return val_prop[:8]
+    return val_prop[:8], vect_prop[:8], K, M
 
 
 def EtudeConvergence(precision):
@@ -84,7 +84,7 @@ def EtudeConvergence(precision):
 
     for i in range(len(TestElem)):
         t1 = time.time()
-        tmp = ElementFini(TestElem[i], False)
+        tmp, trash, trash, trash = ElementFini(TestElem[i], False)
         t2 = time.time()
         Result.append(tmp)
         print(f'Les valeurs propres pour {TestElem[i]} élements sont : {np.real(np.sqrt(tmp))/(2*np.pi)} in {t2 - t1} sec' )
@@ -101,7 +101,7 @@ def EtudeConvergence(precision):
 #ElementFini(3, True)
 
 #EtudeConvergence(15)
-
+"""
 Result = [[0.4437535, 0.45433177, 0.97293389, 7.05536334, 7.40416045, 15.94143563, 20.54892234, 22.10797568],
           [0.44375284, 0.45433049, 0.97293385, 7.05444093, 7.40314732, 15.94072114, 20.52106343, 22.07593765],
           [0.44374422, 0.45432947, 0.97293014, 7.05437772, 7.40286752, 15.94055679, 20.51636776, 22.07033115],
@@ -138,14 +138,22 @@ for i in range(len(TestElem) - 1):
 plt.grid()
 plt.title("Evolution of time per number of beam")
 plt.show()
+"""
 
 
-def DampingMatrix(eigenVals, dampingratio, M, K):
+def DampingMatrix(eigenVals, dampingRatio, K, M):
 
     A = 0.5 * np.array([[1/eigenVals[0], eigenVals[0]],
                         [1/eigenVals[1], eigenVals[1]]])
-    b = dampingratio
+    b = dampingRatio
 
     alpha, beta = np.linalg.solve(A, b)
 
     return alpha * K + beta * M
+
+
+DampingRatio = [0.5, 0.5]
+EigenValues, Eigenvectors, K, M = ElementFini(3, False)
+
+C = DampingMatrix(EigenValues, DampingRatio, K, M)
+print(C)
