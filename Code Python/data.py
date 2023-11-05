@@ -53,6 +53,7 @@ elemList0_eol = [[1, 5, 0], [2, 6, 0], [3, 7, 0], [4, 8, 0],          # main bea
                  [5, 9, 0], [6, 10, 0], [7, 11, 0], [8, 12, 0],       # main beam
                  [9, 13, 0], [10, 14, 0], [11, 15, 0], [12, 16, 0],   # main beam
                  [13, 17, 0], [14, 18, 0], [15, 19, 0], [16, 20, 0],  # main beam
+
                  [5, 6, 1], [5, 7, 1], [6, 8, 1], [8, 7, 1],              # secondary beam
                  [9, 10, 1], [9, 11, 1], [10, 12, 1], [12, 11, 1],        # secondary beam
                  [13, 14, 1], [13, 15, 1], [14, 16, 1], [16, 15, 1],      # secondary beam
@@ -60,6 +61,7 @@ elemList0_eol = [[1, 5, 0], [2, 6, 0], [3, 7, 0], [4, 8, 0],          # main bea
                  [9, 6, 1], [6, 12, 1], [12, 7, 1], [7, 9, 1],            # secondary beam
                  [9, 14, 1], [14, 12, 1], [12, 15, 1], [15, 9, 1],        # secondary beam
                  [17, 15, 1], [15, 20, 1], [20, 14, 1], [14, 17, 1],      # secondary beam
+
                  [17, 21, 2], [18, 21, 2], [19, 21, 2], [20, 21, 2], [21, 22, 2]]  # rigid links
 
 """
@@ -67,11 +69,12 @@ elemList0_eol = [[1, 5, 0], [2, 6, 0], [3, 7, 0], [4, 8, 0],          # main bea
 Transient response
 ########################################################################################################################
 """
+
 f = 1                # [Hz] frequency of the sinus
 m = 1                # [t] weight of the tail
 v = 25               # [km/h] velocity of the impact
 timpact = 0.05       # [s] impacts lasts
-efficiency = 85/100  # [%] pourcentage of the tail momentum transfered
+efficiency = 85/100  # [%] percentage of the tail momentum transferred
 
 """
 ########################################################################################################################
@@ -80,18 +83,18 @@ DATA EXAMPLE 3D
 """
 a = 5.49
 b = 3.66
-nodeList_example = [[0, 0, 0],  # node 0
-                  [a, 0, 0],    # node 1
-                  [0, a, 0],    # node 2
-                  [a, a, 0],    # node 3
-                  [0, 0, b],    # node 4
-                  [a, 0, b],    # node 5
-                  [0, a, b],    # node 6
-                  [a, a, b],    # node 7
-                  [0, 0, 2*b],  # node 8
-                  [a, 0, 2*b],  # node 9
-                  [0, a, 2*b],  # node 10
-                  [a, a, 2*b]]  # node 11
+nodeList_example = [[0, 0, 0],    # node 0
+                    [a, 0, 0],    # node 1
+                    [0, a, 0],    # node 2
+                    [a, a, 0],    # node 3
+                    [0, 0, b],    # node 4
+                    [a, 0, b],    # node 5
+                    [0, a, b],    # node 6
+                    [a, a, b],    # node 7
+                    [0, 0, 2*b],  # node 8
+                    [a, 0, 2*b],  # node 9
+                    [0, a, 2*b],  # node 10
+                    [a, a, 2*b]]  # node 11
 
 elemList0_example = [[1, 5, 0], [2, 6, 0], [3, 7, 0], [4, 8, 0],
                      [5, 9, 0], [6, 10, 0], [7, 11, 0], [8, 12, 0],

@@ -141,19 +141,37 @@ plt.show()
 """
 
 
-def DampingMatrix(eigenVals, dampingRatio, K, M):
-
-    A = 0.5 * np.array([[1/eigenVals[0], eigenVals[0]],
-                        [1/eigenVals[1], eigenVals[1]]])
+def CoefficientAlphaBeta(eigenVals, dampingRatio):
+    A = 0.5 * np.array([[eigenVals[0], 1 / eigenVals[0]],
+                        [eigenVals[1], 1 / eigenVals[1]]])
     b = dampingRatio
 
-    alpha, beta = np.linalg.solve(A, b)
+    return np.linalg.solve(A, b)
 
-    return alpha * K + beta * M
+
+def DampingRatios(alpha, beta, eigenValues, dampingRatio):
+
+    dampingRatios = np.zeros(len(eigenValues))
+    dampingRatios[0] = dampingRatio[0]
+    dampingRatios[1] = dampingRatio[1]
+
+    for i in range(2, len(dampingRatios)):
+        dampingRatios[i] = 0.5 * (alpha * eigenValues[i] + beta / eigenValues[i])
+
+    return dampingRatios
+
+
+def ModeDisplacementMethod(eigneValues, eigenVectors, K, M):
+
+    return
 
 
 DampingRatio = [0.5, 0.5]
 EigenValues, Eigenvectors, K, M = ElementFini(3, False)
 
-C = DampingMatrix(EigenValues, DampingRatio, K, M)
-print(C)
+Alpha, Beta = CoefficientAlphaBeta(EigenValues, DampingRatio)
+C = Alpha * K + Beta * M
+
+print(Alpha, Beta)
+print(DampingRatios(Alpha, Beta, EigenValues, DampingRatio))
+#print(C)
