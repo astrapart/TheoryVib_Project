@@ -300,7 +300,7 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0):
             if j+1 not in nodeConstraint:
                 dx, dy, dz = eigenvects[i][6 * j - nbrConstraint], eigenvects[i][6 * j + 1 - nbrConstraint], eigenvects[i][6 * j + 2 - nbrConstraint]
 
-                factor = 5
+                factor = 10
                 new_coord = [coord[0] + dx*factor, coord[1] + dy*factor, coord[2] + dz*factor]
                 newNodeList.append(new_coord)
             else:
@@ -329,7 +329,7 @@ def print_freq(list_eign):
         # 0.44 valeur propre 1
         # 0.45 valeur propre 2
         # 0.9  valeur propre 3
-        print("La fréquence pour la valeur propre {index} vaut : {val:.5f} [Hz]".format(index=i, val=f))
+        print("La fréquence pour la valeur propre {index} vaut : {val:>8.5f} [Hz]".format(index=i+1, val=f))
 
     return
 

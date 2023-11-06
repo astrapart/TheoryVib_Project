@@ -101,7 +101,7 @@ def EtudeConvergence(precision):
 #ElementFini(3, True)
 
 #EtudeConvergence(15)
-"""
+
 Result = [[0.4437535, 0.45433177, 0.97293389, 7.05536334, 7.40416045, 15.94143563, 20.54892234, 22.10797568],
           [0.44375284, 0.45433049, 0.97293385, 7.05444093, 7.40314732, 15.94072114, 20.52106343, 22.07593765],
           [0.44374422, 0.45432947, 0.97293014, 7.05437772, 7.40286752, 15.94055679, 20.51636776, 22.07033115],
@@ -123,14 +123,18 @@ Time = [0.3505735397338867, 1.1360270977020264, 2.9674744606018066, 8.7836441993
 
 TestElem = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
-plt.figure()
-for i in range(len(TestElem) - 1):
-    plt.plot([TestElem[i], TestElem[i + 1]], [Result[i][0], Result[i + 1][0]], c='b')
+fig = plt.figure(figsize=(15.5, 7.5))
+for i in range(len(Result[0])):
+    ax = fig.add_subplot(2, 4, i+1)
+    for j in range(len(TestElem) - 1):
+        ax.plot([TestElem[j], TestElem[j + 1]], [Result[j][i], Result[j + 1][i]], c='b')
 
-plt.grid()
-plt.title("Convergence of the first natural frequencies")
+    ax.grid()
+    ax.set_title(f"{i+1} eigenvalues")
+
 plt.show()
 
+"""  Plot du temps d'exécution, pas très intéressant 
 plt.figure()
 for i in range(len(TestElem) - 1):
     plt.plot([TestElem[i], TestElem[i + 1]], [Time[i], Time[i + 1]], c='b')
@@ -169,9 +173,15 @@ def ModeDisplacementMethod(eigneValues, eigenVectors, K, M):
 DampingRatio = [0.5, 0.5]
 EigenValues, Eigenvectors, K, M = ElementFini(3, False)
 
+mu = []
+for i in range(len(Eigenvectors)):
+    mu.append(np.transpose(Eigenvectors[i]) @ M @ Eigenvectors[i])
+
+mu = np.array(mu)
 Alpha, Beta = CoefficientAlphaBeta(EigenValues, DampingRatio)
 C = Alpha * K + Beta * M
 
 print(Alpha, Beta)
 print(DampingRatios(Alpha, Beta, EigenValues, DampingRatio))
-#print(C)
+print(mu)
+
