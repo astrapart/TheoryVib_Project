@@ -8,6 +8,7 @@ import scipy
 import fct
 import data
 from scipy.linalg import block_diag, eigh, eigvals, eig
+from scipy.integrate import odeint
 import time
 
 
@@ -73,7 +74,7 @@ def ElementFini(numberElem, verbose):
 
     if verbose:
         fct.print_freq(val_prop[:8])
-        fct.plot_result(nodeList, nodeConstraint, vect_prop[:8], elemList0)
+        fct.plot_result(nodeList, nodeConstraint, vect_prop[:8], elemList0, dofList)
 
     return val_prop[:8], vect_prop[:8], K, M
 
@@ -98,7 +99,7 @@ def EtudeConvergence(precision):
     plt.show()
 
 
-#ElementFini(3, True)
+ElementFini(3, True)
 #EtudeConvergence(15)
 
 
@@ -150,7 +151,7 @@ ConvergencePlot()
 
 
 def P(t):
-    return data.m * data.a * data.efficiency * np.sin(data.w * t)
+    return data.m * data.a * data.efficiency * np.sin(2*np.pi*data.f * t)
 
 
 def CoefficientAlphaBeta(eigenVals, dampingRatio):

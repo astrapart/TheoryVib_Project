@@ -72,7 +72,7 @@ Transient response
 
 dampingRatioInit = [0.5, 0.5]
 
-w = 1                 # [Hz] frequency of the sinus
+f = 1                 # [Hz] frequency of the sinus
 m = 1000              # [kg] weight of the tail
 v = 25 * 1000 / 3600  # [m/s] velocity of the impact
 timpact = 0.05        # [s] impacts lasts

@@ -286,12 +286,35 @@ def plot_structure(elemList, nodeList):
     ax.set_ylabel('Axe Y')
     ax.set_zlabel('Axe Z')
 
+    ax.set_box_aspect(aspect=(5, 5, 10))
+    ax.grid(False)
+
     plt.show()
 
 
-def plot_result(nodeList, nodeConstraint, eigenvects, elemList0):
+def plot_result(nodeList, nodeConstraint, eigenvects, elemList, dofList):
     fig = plt.figure()
 
+    for i in range(len(eigenvects)):
+        ax = fig.add_subplot(2, 4, i + 1, projection='3d')
+
+        for elem in elemList:
+            elem1 = elem[0] - 1
+            elem2 = elem[1] - 1
+            node1 = nodeList[elem1]
+            node2 = nodeList[elem[1] - 1]
+            ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], '--', c='b')
+
+            facteur = 10
+            newNode1 = np.array(node1) + [facteur * eigenvects[i][dofList[elem1][0]], facteur * eigenvects[i][dofList[elem1][1]], facteur * eigenvects[i][dofList[elem1][2]]]
+            newNode2 = np.array(node2) + [facteur * eigenvects[i][dofList[elem2][0]], facteur * eigenvects[i][dofList[elem2][1]], facteur * eigenvects[i][dofList[elem2][2]]]
+            ax.plot([newNode1[0], newNode2[0]], [newNode1[1], newNode2[1]], [newNode1[2], newNode2[2]], c='r')
+
+            ax.set_box_aspect(aspect=(10, 10, 20))
+            ax.grid(False)
+
+    plt.show()
+    """
     nbrConstraint = len(nodeConstraint)
     for i in range(len(eigenvects)):
         newNodeList = []
@@ -300,7 +323,7 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0):
             if j+1 not in nodeConstraint:
                 dx, dy, dz = eigenvects[i][6 * j - nbrConstraint], eigenvects[i][6 * j + 1 - nbrConstraint], eigenvects[i][6 * j + 2 - nbrConstraint]
 
-                factor = 10
+                factor = 5
                 new_coord = [coord[0] + dx*factor, coord[1] + dy*factor, coord[2] + dz*factor]
                 newNodeList.append(new_coord)
             else:
@@ -308,7 +331,7 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0):
 
         ax = fig.add_subplot(2, 4, i + 1, projection='3d')
 
-        for elem in elemList0:
+        for elem in elemList:
             if elem[2] != 2:
                 newnode1 = newNodeList[elem[0]-1]
                 newnode2 = newNodeList[elem[1]-1]
@@ -317,8 +340,7 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList0):
 
                 ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], '--', c='b')
                 ax.plot([newnode1[0], newnode2[0]], [newnode1[1], newnode2[1]], [newnode1[2], newnode2[2]], c='r')
-
-    plt.show()
+    """
 
 
 def print_freq(list_eign):
