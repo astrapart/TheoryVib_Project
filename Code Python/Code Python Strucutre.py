@@ -97,7 +97,6 @@ def EtudeConvergence(precision):
     plt.title("Convergence of the first natural frequencies")
     plt.show()
 
-
 #ElementFini(3, False)
 #EtudeConvergence(15)
 
@@ -144,7 +143,6 @@ def ConvergencePlot():
     plt.show()
     """
 
-
 #ConvergencePlot()
 
 def F(t):
@@ -190,48 +188,39 @@ def DampingRatios(alpha, beta, eigenValues):
 
     return dampingRatios
 
-def ModeDisplacementMethod(eigneValues, eigenVectors, K, M):
+def compute_eta(Eigenvectors,EigenValues, DampingRatio, mu, t) :
+    eta = []
+    for i in range(len(Eigenvectors)):
+        er = DampingRatio[i]
+        wr = EigenValues[i]
+        xr = Eigenvectors[i]
+        mur = mu[i]
+        phi = Phi(xr, mur, t, len(Eigenvectors[0]), 18, DofList)
+        h = H(er, wr, t)
+        eta.append(np.convolve(phi, h)[:len(t)])
+    return eta
 
+def compute_q(Eigenvectors, eta,t) :
+    nbreDof = len(Eigenvectors[0])
+    Mode_nbr = len(Eigenvectors)
+
+    q = np.zeros((nbreDof, len(t)))
+    for i in range(Mode_nbr):
+        for j in range(nbreDof) :
+            for k in range(len(t)) :
+                q[j][k] += eta[i][k] * Eigenvectors[i][j]
+    return q
+
+def ModeDisplacementMethod(eigneValues, eigenVectors, K, M):
     return
 
-
 EigenValues, Eigenvectors, K, M, DofList = ElementFini(3, False)
-
 t_final = 5
 t = np.linspace(0, t_final, 200)
 mu = Mu(Eigenvectors, M)
 Alpha, Beta = CoefficientAlphaBeta(EigenValues)
 C = DampingMatrix(Alpha, Beta, K, M)
-
 DampingRatio = DampingRatios(Alpha, Beta, EigenValues)
-eta = []
-for i in range(len(Eigenvectors)):
-    er = DampingRatio[i]
-    wr = EigenValues[i]
-    xr = Eigenvectors[i]
-    mur = mu[i]
-    phi = Phi(xr, mur, t, len(Eigenvectors[0]),18, DofList)
-    h = H(er, wr, t)
-    eta.append(np.convolve(phi,h)[:len(t)])
+eta = compute_eta(Eigenvectors,EigenValues,DampingRatio,mu,t)
 
-q = np.array((len(t), len(Eigenvectors[0])))
-Mode_nbr = len(Eigenvectors)
-
-for i in range(Mode_nbr):
-    eta_mode = np.zeros((1,len(t)))
-    x_mode = np.zeros((len(Eigenvectors[0]), 1))
-    eta_mode[0] = eta[i]
-
-    for j in range(len(Eigenvectors[i])) :
-        x_mode[j] = Eigenvectors[i][j]
-
-
-    print(x_mode.shape, eta_mode.T.shape)
-    q += eta_mode.T @ x_mode.T
-print(q)
-
-#plt.plot(t, q)
-plt.show()
-#print(Alpha, Beta)
-#print(DampingRatios(Alpha, Beta, EigenValues))
-#print(mu)
+q = compute_q(Eigenvectors,eta,t)
