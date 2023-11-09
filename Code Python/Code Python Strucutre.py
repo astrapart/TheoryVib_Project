@@ -150,8 +150,20 @@ def ConvergencePlot():
 ConvergencePlot()
 
 
-def P(t):
+def F(t):
     return data.m * data.a * data.efficiency * np.sin(2*np.pi*data.f * t)
+
+
+def P(t):
+    return 0
+
+
+def Phi(t):
+    return xr.T * P(t) / mur
+
+
+def H(t):
+    return np.exp(-er * wr * t) * np.sin(wr * t) / wr
 
 
 def CoefficientAlphaBeta(eigenVals, dampingRatio):
@@ -194,10 +206,27 @@ def ModeDisplacementMethod(eigneValues, eigenVectors, K, M):
 DampingRatio = data.dampingRatioInit
 EigenValues, Eigenvectors, K, M = ElementFini(3, False)
 
+t_final = 5
+t = np.linspace(0, t_final, 200)
 mu = Mu(Eigenvectors, M)
 Alpha, Beta = CoefficientAlphaBeta(EigenValues, DampingRatio)
 C = DampingMatrix(Alpha, Beta, K, M)
 
+e, w = 0, 0
+eta = []
+for i in range(len(Eigenvectors)):
+    er = DampingRatio[i]
+    wr = EigenValues[i]
+    xr = Eigenvectors[i]
+    mur = mu[i]
+    eta.append(np.convolve(Phi(t), H(t))[:len(t)])
+
+q = []
+for i in range(len(Eigenvectors)):
+    q += eta[i] * Eigenvectors[i]
+
+plt.plot(t, q)
+plt.show()
 print(Alpha, Beta)
 print(DampingRatios(Alpha, Beta, EigenValues, DampingRatio))
 print(mu)
