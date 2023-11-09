@@ -76,8 +76,7 @@ def ElementFini(numberElem, verbose):
         fct.print_freq(val_prop[:8])
         fct.plot_result(nodeList, nodeConstraint, vect_prop[:8], elemList0, dofList)
 
-    return val_prop[:8], vect_prop[:8], K, M
-
+    return val_prop[:8], vect_prop[:8], K, M, dofList
 
 def EtudeConvergence(precision):
     TestElem = np.arange(2, precision + 1, 1)
@@ -85,7 +84,7 @@ def EtudeConvergence(precision):
 
     for i in range(len(TestElem)):
         t1 = time.time()
-        tmp, trash, trash, trash = ElementFini(TestElem[i], False)
+        tmp, _, _, _, _ = ElementFini(TestElem[i], False)
         t2 = time.time()
         Result.append(tmp)
         print(f'Les valeurs propres pour {TestElem[i]} élements sont : {np.real(np.sqrt(tmp))/(2*np.pi)} in {t2 - t1} sec' )
@@ -99,9 +98,8 @@ def EtudeConvergence(precision):
     plt.show()
 
 
-ElementFini(3, True)
+#ElementFini(3, False)
 #EtudeConvergence(15)
-
 
 def ConvergencePlot():
     Result = [[0.4437535, 0.45433177, 0.97293389, 7.05536334, 7.40416045, 15.94143563, 20.54892234, 22.10797568],
@@ -147,86 +145,93 @@ def ConvergencePlot():
     """
 
 
-ConvergencePlot()
-
+#ConvergencePlot()
 
 def F(t):
     return data.m * data.a * data.efficiency * np.sin(2*np.pi*data.f * t)
 
+def P(n, applNode, dofList, t):
+    p = np.zeros((n, len(t)))
+    x = dofList[applNode][0]
+    y = dofList[applNode][0]
+    p[x] = F(t) * np.sqrt(2) / 2
+    p[y] = F(t) * np.sqrt(2) / 2
+    return p
 
-def P(t):
-    return 0
+def Phi(xr, mur, t, n, applNode, dofList):
+    return xr.T @ P(n, applNode, dofList, t) / mur
 
-
-def Phi(t):
-    return xr.T * P(t) / mur
-
-
-def H(t):
+def H(er, wr,t):
     return np.exp(-er * wr * t) * np.sin(wr * t) / wr
 
-
-def CoefficientAlphaBeta(eigenVals, dampingRatio):
+def CoefficientAlphaBeta(eigenVals):
     A = 0.5 * np.array([[eigenVals[0], 1 / eigenVals[0]],
                         [eigenVals[1], 1 / eigenVals[1]]])
-    b = dampingRatio
+    b = data.dampingRatioInit
 
     return np.linalg.solve(A, b)
-
 
 def DampingMatrix(alpha, beta, K, M):
     return alpha * K + beta * M
 
-
 def Mu(eigenvectors, M):
     mu = []
-    for i in range(len(eigenvectors)):
-        mu.append(np.transpose(eigenvectors[i]) @ M @ eigenvectors[i])
-
+    for eigenvect in eigenvectors:
+        mu.append(np.transpose(eigenvect) @ M @ eigenvect)
     return np.array(mu)
 
-
-def DampingRatios(alpha, beta, eigenValues, dampingRatio):
-
+def DampingRatios(alpha, beta, eigenValues):
     dampingRatios = np.zeros(len(eigenValues))
-    dampingRatios[0] = dampingRatio[0]
-    dampingRatios[1] = dampingRatio[1]
+    dampingRatios[0] = data.dampingRatioInit[0]
+    dampingRatios[1] = data.dampingRatioInit[1]
 
     for i in range(2, len(dampingRatios)):
         dampingRatios[i] = 0.5 * (alpha * eigenValues[i] + beta / eigenValues[i])
 
     return dampingRatios
 
-
 def ModeDisplacementMethod(eigneValues, eigenVectors, K, M):
 
     return
 
 
-DampingRatio = data.dampingRatioInit
-EigenValues, Eigenvectors, K, M = ElementFini(3, False)
+EigenValues, Eigenvectors, K, M, DofList = ElementFini(3, False)
 
 t_final = 5
 t = np.linspace(0, t_final, 200)
 mu = Mu(Eigenvectors, M)
-Alpha, Beta = CoefficientAlphaBeta(EigenValues, DampingRatio)
+Alpha, Beta = CoefficientAlphaBeta(EigenValues)
 C = DampingMatrix(Alpha, Beta, K, M)
 
-e, w = 0, 0
+DampingRatio = DampingRatios(Alpha, Beta, EigenValues)
 eta = []
 for i in range(len(Eigenvectors)):
     er = DampingRatio[i]
     wr = EigenValues[i]
     xr = Eigenvectors[i]
     mur = mu[i]
-    eta.append(np.convolve(Phi(t), H(t))[:len(t)])
+    phi = Phi(xr, mur, t, len(Eigenvectors[0]),18, DofList)
+    h = H(er, wr, t)
+    eta.append(np.convolve(phi,h)[:len(t)])
 
-q = []
-for i in range(len(Eigenvectors)):
-    q += eta[i] * Eigenvectors[i]
+q = np.array((len(t), len(Eigenvectors[0])))
+Mode_nbr = len(Eigenvectors)
 
-plt.plot(t, q)
+for i in range(Mode_nbr):
+    eta_mode = np.zeros((1,len(t)))
+    x_mode = np.zeros((len(Eigenvectors[0]), 1))
+    eta_mode[0] = eta[i]
+
+    for j in range(len(Eigenvectors[i])) :
+        x_mode[j] = Eigenvectors[i][j]
+
+
+    print(x_mode.shape, eta_mode.T.shape)
+    q += eta_mode.T @ x_mode.T
+print(q)
+
+#plt.plot(t, q)
 plt.show()
-print(Alpha, Beta)
-print(DampingRatios(Alpha, Beta, EigenValues, DampingRatio))
-print(mu)
+#print(Alpha, Beta)
+#print(DampingRatios(Alpha, Beta, EigenValues))
+#print(mu)
