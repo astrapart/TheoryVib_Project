@@ -150,8 +150,8 @@ def F(t):
 
 def P(n, applNode, dofList, t):
     p = np.zeros((n, len(t)))
-    x = dofList[applNode][0]
-    y = dofList[applNode][0]
+    x = dofList[applNode - 1][0]
+    y = dofList[applNode - 1][0]
     p[x] = F(t) * np.sqrt(2) / 2
     p[y] = F(t) * np.sqrt(2) / 2
     return p
@@ -188,14 +188,14 @@ def DampingRatios(alpha, beta, eigenValues):
 
     return dampingRatios
 
-def compute_eta(Eigenvectors,EigenValues, DampingRatio, mu, t) :
+def compute_eta(Eigenvectors,EigenValues, DampingRatio, mu, applNode,t) :
     eta = []
     for i in range(len(Eigenvectors)):
         er = DampingRatio[i]
         wr = EigenValues[i]
         xr = Eigenvectors[i]
         mur = mu[i]
-        phi = Phi(xr, mur, t, len(Eigenvectors[0]), 18, DofList)
+        phi = Phi(xr, mur, t, len(Eigenvectors[0]), applNode, DofList)
         h = H(er, wr, t)
         eta.append(np.convolve(phi, h)[:len(t)])
     return eta
@@ -214,6 +214,7 @@ def compute_q(Eigenvectors, eta,t) :
 def ModeDisplacementMethod(eigneValues, eigenVectors, K, M):
     return
 
+
 EigenValues, Eigenvectors, K, M, DofList = ElementFini(3, False)
 t_final = 5
 t = np.linspace(0, t_final, 200)
@@ -221,6 +222,12 @@ mu = Mu(Eigenvectors, M)
 Alpha, Beta = CoefficientAlphaBeta(EigenValues)
 C = DampingMatrix(Alpha, Beta, K, M)
 DampingRatio = DampingRatios(Alpha, Beta, EigenValues)
-eta = compute_eta(Eigenvectors,EigenValues,DampingRatio,mu,t)
+eta = compute_eta(Eigenvectors, EigenValues, DampingRatio, mu, data.ApplNode, t)
 
-q = compute_q(Eigenvectors,eta,t)
+q = compute_q(Eigenvectors, eta, t)
+
+DofApplNode = DofList[data.ApplNode - 1]
+
+plt.plot(t, q[DofApplNode[0]])
+plt.plot(t, q[DofApplNode[1]])
+plt.show()

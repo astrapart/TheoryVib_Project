@@ -78,6 +78,7 @@ v = 25 * 1000 / 3600  # [m/s] velocity of the impact
 timpact = 0.05        # [s] impacts lasts
 a = v / timpact       # [m/s²] impacts acceleration
 efficiency = 85/100   # [%] percentage of the tail momentum transferred
+ApplNode = 18         # Node where F is applied
 
 """
 ########################################################################################################################
