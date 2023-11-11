@@ -156,7 +156,7 @@ def P(n, applNode, dofList, t):
     x = dofList[applNode - 1][0]
     y = dofList[applNode - 1][1]
     for i in range(labs) :
-        if t[i] <= 0.05 :
+        if t[i] <= 0.05 and t[i] >= 0 :
             p[x][i] = F(t[i]) * np.sqrt(2) / 2
             p[y][i] = F(t[i]) * np.sqrt(2) / 2
     return p
@@ -270,8 +270,8 @@ numberElem = 3
 numbermode = 8
 EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numbermode, False)
 
-t_final = 20
-t = np.linspace(0, t_final, 1000)
+t_final = 0.10
+t = np.linspace(0, t_final, 100)
 
 mu = Mu(EigenVectors, M)
 Alpha, Beta = CoefficientAlphaBeta(EigenValues)
