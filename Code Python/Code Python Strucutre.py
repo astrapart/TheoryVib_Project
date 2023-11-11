@@ -12,7 +12,7 @@ from scipy.integrate import odeint
 import time
 
 
-def ElementFini(numberElem, verbose):
+def ElementFini_OffShoreStruct(numberElem, numberMode, verbose):
     nodeList0 = data.nodeList_eol
     elemList0 = data.elemList0_eol
     elemList, nodeList = fct.create_elemList(elemList0, nodeList0, numberElem)
@@ -73,10 +73,10 @@ def ElementFini(numberElem, verbose):
         vect_prop.append(eigenvects[i])
 
     if verbose:
-        fct.print_freq(val_prop[:8])
-        fct.plot_result(nodeList, nodeConstraint, vect_prop[:8], elemList0, dofList)
+        fct.print_freq(val_prop[:numberMode])
+        fct.plot_result(nodeList, nodeConstraint, vect_prop[:numberMode], elemList0, dofList)
 
-    return val_prop[:8], vect_prop[:8], K, M, dofList
+    return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
 
 def EtudeConvergence(precision):
     TestElem = np.arange(2, precision + 1, 1)
@@ -84,7 +84,7 @@ def EtudeConvergence(precision):
 
     for i in range(len(TestElem)):
         t1 = time.time()
-        tmp, _, _, _, _ = ElementFini(TestElem[i], False)
+        tmp, _, _, _, _ = ElementFini_OffShoreStruct(TestElem[i], False)
         t2 = time.time()
         Result.append(tmp)
         print(f'Les valeurs propres pour {TestElem[i]} élements sont : {np.real(np.sqrt(tmp))/(2*np.pi)} in {t2 - t1} sec' )
@@ -159,8 +159,11 @@ def P(n, applNode, dofList, t):
 def Phi(xr, mur, t, n, applNode, dofList):
     return xr.T @ P(n, applNode, dofList, t) / mur
 
-def H(er, wr,t):
-    return np.exp(-er * wr * t) * np.sin(wr * t) / wr
+def Wrd(wr,er) :
+    return wr*np.sqrt(1-(er**2))
+
+def H(er, wr, wrd,t):
+    return np.exp(-er * wr * t) * np.sin(wrd * t) / wrd
 
 def CoefficientAlphaBeta(eigenVals):
     A = 0.5 * np.array([[eigenVals[0], 1 / eigenVals[0]],
@@ -193,10 +196,11 @@ def compute_eta(Eigenvectors,EigenValues, DampingRatio, mu, applNode,t) :
     for i in range(len(Eigenvectors)):
         er = DampingRatio[i]
         wr = EigenValues[i]
+        wrd = Wrd(wr,er)
         xr = Eigenvectors[i]
         mur = mu[i]
         phi = Phi(xr, mur, t, len(Eigenvectors[0]), applNode, DofList)
-        h = H(er, wr, t)
+        h = H(er, wr, wrd, t)
         eta.append(np.convolve(phi, h)[:len(t)])
     return eta
 
@@ -214,10 +218,13 @@ def compute_q(Eigenvectors, eta,t) :
 def ModeDisplacementMethod(eigneValues, eigenVectors, K, M):
     return
 
+numberElem = 3
+numbermode = 8
+EigenValues, Eigenvectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numbermode,False)
 
-EigenValues, Eigenvectors, K, M, DofList = ElementFini(3, False)
-t_final = 5
-t = np.linspace(0, t_final, 200)
+t_final = 500
+t = np.linspace(0, t_final, 100)
+
 mu = Mu(Eigenvectors, M)
 Alpha, Beta = CoefficientAlphaBeta(EigenValues)
 C = DampingMatrix(Alpha, Beta, K, M)
@@ -225,9 +232,8 @@ DampingRatio = DampingRatios(Alpha, Beta, EigenValues)
 eta = compute_eta(Eigenvectors, EigenValues, DampingRatio, mu, data.ApplNode, t)
 
 q = compute_q(Eigenvectors, eta, t)
-
+print(q)
 DofApplNode = DofList[data.ApplNode - 1]
-
 plt.plot(t, q[DofApplNode[0]])
 plt.plot(t, q[DofApplNode[1]])
 plt.show()
