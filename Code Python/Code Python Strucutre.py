@@ -211,7 +211,7 @@ def compute_eta(Eigenvectors,EigenValues, DampingRatio, phi, t):
     for i in range(len(Eigenvectors)):
         er = DampingRatio[i]
         wr = EigenValues[i]
-        wrd = Wrd(wr, er)
+        wrd = EigenValues[i]#Wrd(wr, er) TODO à changer pour avoir vrmt les damped eigenvalues
         h = H(er, wr, wrd, t)
         eta.append(np.convolve(phi[i], h)[:len(t)])
 
@@ -284,21 +284,43 @@ qDisp = ModeDisplacementMethod(EigenVectors, eta, t)
 qAcc = ModeAccelerationMethod(EigenVectors, EigenValues, eta, K, phi, p, t)
 
 
-fig = plt.figure()
+fig = plt.figure(figsize=(10, 6.5))
 
-ax1 = fig.add_subplot(121)
-DisplacementNodeX = q[DofList[18][0]]
-DisplacementNodeY = q[DofList[18][1]]
+ax1 = fig.add_subplot(211)
+DisplacementNodeX = qDisp[DofList[18][0]]
+DisplacementNodeY = qDisp[DofList[18][1]]
 
 ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2))
-ax1.set_title("displacement Node")
+ax1.set_title("Displacement of the Node")
 
-ax2 = fig.add_subplot(122)
-DisplacementRotorX = q[DofList[21][0]]
-DisplacementRotorY = q[DofList[21][1]]
+ax2 = fig.add_subplot(212)
+DisplacementRotorX = qDisp[DofList[21][0]]
+DisplacementRotorY = qDisp[DofList[21][1]]
 
-ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2))
-ax2.set_title("displacement Rotor")
+ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r')
+ax2.set_title("Displacement of the Rotor")
 
-plt.title("Mode Displacement Method")
+fig.suptitle("Mode Displacement Method")
+plt.show()
+
+
+fig = plt.figure(figsize=(10, 6.5))
+
+ax1 = fig.add_subplot(211)
+DisplacementNodeX = qAcc[DofList[18][0]]
+DisplacementNodeY = qAcc[DofList[18][1]]
+
+ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2), label="displacement Node")
+ax1.set_title("Displacement of the Node")
+ax1.legend()
+
+ax2 = fig.add_subplot(212)
+DisplacementRotorX = qAcc[DofList[21][0]]
+DisplacementRotorY = qAcc[DofList[21][1]]
+
+ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r', label="displacement Rotor")
+ax2.set_title("Displacement of the Rotor")
+ax2.legend()
+
+fig.suptitle("Mode Acceleration Method")
 plt.show()
