@@ -151,12 +151,14 @@ def F(t):
 
 
 def P(n, applNode, dofList, t):
-    p = np.zeros((n, len(t)))
+    labs = len(t)
+    p = np.zeros((n, labs))
     x = dofList[applNode - 1][0]
-    y = dofList[applNode - 1][0]
-    p[x] = F(t) * np.sqrt(2) / 2
-    p[y] = F(t) * np.sqrt(2) / 2
-
+    y = dofList[applNode - 1][1]
+    for i in range(labs) :
+        if t[i] <= 0.05 :
+            p[x][i] = F(t[i]) * np.sqrt(2) / 2
+            p[y][i] = F(t[i]) * np.sqrt(2) / 2
     return p
 
 
@@ -211,7 +213,7 @@ def compute_eta(Eigenvectors,EigenValues, DampingRatio, phi, t):
     for i in range(len(Eigenvectors)):
         er = DampingRatio[i]
         wr = EigenValues[i]
-        wrd = EigenValues[i]#Wrd(wr, er) TODO à changer pour avoir vrmt les damped eigenvalues
+        wrd = Wrd(wr, er)
         h = H(er, wr, wrd, t)
         eta.append(np.convolve(phi[i], h)[:len(t)])
 
@@ -268,8 +270,8 @@ numberElem = 3
 numbermode = 8
 EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numbermode, False)
 
-t_final = 500
-t = np.linspace(0, t_final, 100)
+t_final = 20
+t = np.linspace(0, t_final, 1000)
 
 mu = Mu(EigenVectors, M)
 Alpha, Beta = CoefficientAlphaBeta(EigenValues)

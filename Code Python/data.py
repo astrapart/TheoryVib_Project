@@ -70,7 +70,7 @@ Transient response
 ########################################################################################################################
 """
 
-dampingRatioInit = [5/100, 5/100]
+dampingRatioInit = [0.0005, 0.0005]
 
 f = 1                 # [Hz] frequency of the sinus
 m = 1000              # [kg] weight of the tail
