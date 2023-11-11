@@ -97,7 +97,7 @@ def EtudeConvergence(precision):
     plt.title("Convergence of the first natural frequencies")
     plt.show()
 
-#ElementFini(3, False)
+#ElementFini_OffShoreStruct(3, 8, False)
 #EtudeConvergence(15)
 
 def ConvergencePlot():
@@ -145,8 +145,10 @@ def ConvergencePlot():
 
 #ConvergencePlot()
 
+
 def F(t):
     return data.m * data.a * data.efficiency * np.sin(2*np.pi*data.f * t)
+
 
 def P(n, applNode, dofList, t):
     p = np.zeros((n, len(t)))
@@ -154,16 +156,25 @@ def P(n, applNode, dofList, t):
     y = dofList[applNode - 1][0]
     p[x] = F(t) * np.sqrt(2) / 2
     p[y] = F(t) * np.sqrt(2) / 2
+
     return p
 
-def Phi(xr, mur, t, n, applNode, dofList):
-    return xr.T @ P(n, applNode, dofList, t) / mur
+
+def Phi(x, mu, p):
+    phi = []
+    for i in range(len(x)):
+        phi.append(x[i].T @ p / mu[i])
+
+    return phi
+
 
 def Wrd(wr,er) :
     return wr*np.sqrt(1-(er**2))
 
+
 def H(er, wr, wrd,t):
     return np.exp(-er * wr * t) * np.sin(wrd * t) / wrd
+
 
 def CoefficientAlphaBeta(eigenVals):
     A = 0.5 * np.array([[eigenVals[0], 1 / eigenVals[0]],
@@ -172,14 +183,17 @@ def CoefficientAlphaBeta(eigenVals):
 
     return np.linalg.solve(A, b)
 
+
 def DampingMatrix(alpha, beta, K, M):
     return alpha * K + beta * M
+
 
 def Mu(eigenvectors, M):
     mu = []
     for eigenvect in eigenvectors:
         mu.append(np.transpose(eigenvect) @ M @ eigenvect)
     return np.array(mu)
+
 
 def DampingRatios(alpha, beta, eigenValues):
     dampingRatios = np.zeros(len(eigenValues))
@@ -191,49 +205,122 @@ def DampingRatios(alpha, beta, eigenValues):
 
     return dampingRatios
 
-def compute_eta(Eigenvectors,EigenValues, DampingRatio, mu, applNode,t) :
+
+def compute_eta(Eigenvectors,EigenValues, DampingRatio, phi, t):
     eta = []
     for i in range(len(Eigenvectors)):
         er = DampingRatio[i]
         wr = EigenValues[i]
-        wrd = Wrd(wr,er)
-        xr = Eigenvectors[i]
-        mur = mu[i]
-        phi = Phi(xr, mur, t, len(Eigenvectors[0]), applNode, DofList)
+        wrd = EigenValues[i]#Wrd(wr, er) TODO à changer pour avoir vrmt les damped eigenvalues
         h = H(er, wr, wrd, t)
-        eta.append(np.convolve(phi, h)[:len(t)])
+        eta.append(np.convolve(phi[i], h)[:len(t)])
+
     return eta
 
-def compute_q(Eigenvectors, eta,t) :
+
+def compute_q(Eigenvectors, eta,t):
     nbreDof = len(Eigenvectors[0])
     Mode_nbr = len(Eigenvectors)
 
     q = np.zeros((nbreDof, len(t)))
     for i in range(Mode_nbr):
-        for j in range(nbreDof) :
-            for k in range(len(t)) :
+        for j in range(nbreDof):
+            for k in range(len(t)):
                 q[j][k] += eta[i][k] * Eigenvectors[i][j]
+
     return q
 
-def ModeDisplacementMethod(eigneValues, eigenVectors, K, M):
-    return
+
+def ModeDisplacementMethod(eigenvectors, eta, t):
+    nbreDof = len(eigenvectors[0])
+    Mode_nbr = len(eigenvectors)
+
+    q = np.zeros((nbreDof, len(t)))
+    for i in range(Mode_nbr):
+        for j in range(nbreDof):
+            for k in range(len(t)):
+                q[j][k] += eta[i][k] * eigenvectors[i][j]
+
+    return q
+
+
+def ModeAccelerationMethod(eigenvectors, eigenvalues, eta, K, phi, p, t):
+    nbreDof = len(eigenvectors[0])
+    Mode_nbr = len(eigenvectors)
+
+    q = np.zeros((nbreDof, len(t)))
+    for i in range(Mode_nbr):
+        for j in range(nbreDof):
+            for k in range(len(t)):
+                q[j][k] += eta[i][k] * eigenvectors[i][j]
+
+    for i in range(Mode_nbr):
+        for j in range(nbreDof):
+            for k in range(len(t)):
+                q[j][k] -= phi[i][k] * eigenvectors[i][j] / eigenvalues[i] ** 2
+
+    q += np.linalg.inv(K) @ p
+
+    return q
+
 
 numberElem = 3
 numbermode = 8
-EigenValues, Eigenvectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numbermode,False)
+EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numbermode, False)
 
 t_final = 500
 t = np.linspace(0, t_final, 100)
 
-mu = Mu(Eigenvectors, M)
+mu = Mu(EigenVectors, M)
 Alpha, Beta = CoefficientAlphaBeta(EigenValues)
 C = DampingMatrix(Alpha, Beta, K, M)
 DampingRatio = DampingRatios(Alpha, Beta, EigenValues)
-eta = compute_eta(Eigenvectors, EigenValues, DampingRatio, mu, data.ApplNode, t)
+p = P(len(EigenVectors[0]), data.ApplNode, DofList, t)
+phi = Phi(EigenVectors, mu, p)
+eta = compute_eta(EigenVectors, EigenValues, DampingRatio, phi, t)
 
-q = compute_q(Eigenvectors, eta, t)
-print(q)
-DofApplNode = DofList[data.ApplNode - 1]
-plt.plot(t, q[DofApplNode[0]])
-plt.plot(t, q[DofApplNode[1]])
+q = compute_q(EigenVectors, eta, t)
+qDisp = ModeDisplacementMethod(EigenVectors, eta, t)
+qAcc = ModeAccelerationMethod(EigenVectors, EigenValues, eta, K, phi, p, t)
+
+
+fig = plt.figure(figsize=(10, 6.5))
+
+ax1 = fig.add_subplot(211)
+DisplacementNodeX = qDisp[DofList[18][0]]
+DisplacementNodeY = qDisp[DofList[18][1]]
+
+ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2))
+ax1.set_title("Displacement of the Node")
+
+ax2 = fig.add_subplot(212)
+DisplacementRotorX = qDisp[DofList[21][0]]
+DisplacementRotorY = qDisp[DofList[21][1]]
+
+ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r')
+ax2.set_title("Displacement of the Rotor")
+
+fig.suptitle("Mode Displacement Method")
+plt.show()
+
+
+fig = plt.figure(figsize=(10, 6.5))
+
+ax1 = fig.add_subplot(211)
+DisplacementNodeX = qAcc[DofList[18][0]]
+DisplacementNodeY = qAcc[DofList[18][1]]
+
+ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2), label="displacement Node")
+ax1.set_title("Displacement of the Node")
+ax1.legend()
+
+ax2 = fig.add_subplot(212)
+DisplacementRotorX = qAcc[DofList[21][0]]
+DisplacementRotorY = qAcc[DofList[21][1]]
+
+ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r', label="displacement Rotor")
+ax2.set_title("Displacement of the Rotor")
+ax2.legend()
+
+fig.suptitle("Mode Acceleration Method")
 plt.show()
