@@ -346,12 +346,11 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList, dofList):
 def print_freq(list_eign):
 
     for i in range(len(list_eign)):
-        f = np.real(np.sqrt(list_eign[i]))/(2*np.pi)
         #print("La fréquence pour la valeur propre", i, "vaut :", f, "Hz")
         # 0.44 valeur propre 1
         # 0.45 valeur propre 2
         # 0.9  valeur propre 3
-        print("La fréquence pour la valeur propre {index} vaut : {val:>8.5f} [Hz]".format(index=i+1, val=f))
+        print("La fréquence pour la valeur propre {index} vaut : {val:>8.5f} [Hz]".format(index=i+1, val=list_eign[i]))
 
     return
 

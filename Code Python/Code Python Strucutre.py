@@ -66,6 +66,7 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, verbose):
 
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
     val_prop = np.sort(np.real(eigenvals))
+    val_prop = np.sqrt(val_prop) / (2 * np.pi)
 
     new_index = np.argsort(eigenvals)
     vect_prop = []
@@ -97,7 +98,7 @@ def EtudeConvergence(precision):
     plt.title("Convergence of the first natural frequencies")
     plt.show()
 
-#ElementFini_OffShoreStruct(3, 8, False)
+#ElementFini_OffShoreStruct(3, 8, True)
 #EtudeConvergence(15)
 
 def ConvergencePlot():
@@ -155,8 +156,8 @@ def P(n, applNode, dofList, t):
     p = np.zeros((n, labs))
     x = dofList[applNode - 1][0]
     y = dofList[applNode - 1][1]
-    for i in range(labs) :
-        if t[i] <= 0.05 and t[i] >= 0 :
+    for i in range(labs):
+        if 0 <= t[i] <= data.timpact:
             p[x][i] = F(t[i]) * np.sqrt(2) / 2
             p[y][i] = F(t[i]) * np.sqrt(2) / 2
     return p
@@ -270,13 +271,14 @@ numberElem = 3
 numbermode = 8
 EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numbermode, False)
 
-t_final = 0.10
+t_final = 5
 t = np.linspace(0, t_final, 100)
 
 mu = Mu(EigenVectors, M)
 Alpha, Beta = CoefficientAlphaBeta(EigenValues)
 C = DampingMatrix(Alpha, Beta, K, M)
 DampingRatio = DampingRatios(Alpha, Beta, EigenValues)
+print(DampingRatio)
 p = P(len(EigenVectors[0]), data.ApplNode, DofList, t)
 phi = Phi(EigenVectors, mu, p)
 eta = compute_eta(EigenVectors, EigenValues, DampingRatio, phi, t)
