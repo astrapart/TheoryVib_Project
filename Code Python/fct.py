@@ -368,3 +368,43 @@ def print_matrix(matrix):
 
     for line in matrix:
         print("      ".join(map(str, line)))
+
+
+def print_TransientResponse(qAcc, qDisp, t, DofList):
+    fig = plt.figure(figsize=(10, 6.5))
+
+    ax1 = fig.add_subplot(211)
+    DisplacementNodeX = qDisp[DofList[18][0]]
+    DisplacementNodeY = qDisp[DofList[18][1]]
+
+    ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2))
+    ax1.set_title("Displacement of the Node")
+
+    ax2 = fig.add_subplot(212)
+    DisplacementRotorX = qDisp[DofList[21][0]]
+    DisplacementRotorY = qDisp[DofList[21][1]]
+
+    ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r')
+    ax2.set_title("Displacement of the Rotor")
+
+    fig.suptitle("Mode Displacement Method")
+    plt.show()
+
+    fig = plt.figure(figsize=(10, 6.5))
+
+    ax1 = fig.add_subplot(211)
+    DisplacementNodeX = qAcc[DofList[18][0]]
+    DisplacementNodeY = qAcc[DofList[18][1]]
+
+    ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2))
+    ax1.set_title("Displacement of the Node")
+
+    ax2 = fig.add_subplot(212)
+    DisplacementRotorX = qAcc[DofList[21][0]]
+    DisplacementRotorY = qAcc[DofList[21][1]]
+
+    ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r')
+    ax2.set_title("Displacement of the Rotor")
+
+    fig.suptitle("Mode Acceleration Method")
+    plt.show()

@@ -79,6 +79,7 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, verbose):
 
     return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
 
+
 def EtudeConvergence(precision):
     TestElem = np.arange(2, precision + 1, 1)
     Result = []
@@ -267,67 +268,93 @@ def ModeAccelerationMethod(eigenvectors, eigenvalues, eta, K, phi, p, t):
     return q
 
 
-numberElem = 3
-numbermode = 8
-EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numbermode, False)
+def TransientResponse(numberMode, t, verbose):
 
-t_final = 40
-t = np.linspace(0, t_final, 500)
-
-mu = Mu(EigenVectors, M)
-Alpha, Beta = CoefficientAlphaBeta(EigenValues)
-C = DampingMatrix(Alpha, Beta, K, M)
-DampingRatio = DampingRatios(Alpha, Beta, EigenValues)
-p = P(len(EigenVectors[0]), data.ApplNode, DofList, t)
-phi = Phi(EigenVectors, mu, p)
-eta = compute_eta(EigenVectors, EigenValues, DampingRatio, phi, t)
-
-q = compute_q(EigenVectors, eta, t)
-qDisp = ModeDisplacementMethod(EigenVectors, eta, t)
-qAcc = ModeAccelerationMethod(EigenVectors, EigenValues, eta, K, phi, p, t)
+    numberElem = 3
+    EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numberMode, False)
 
 
-fig = plt.figure(figsize=(10, 6.5))
+    mu = Mu(EigenVectors, M)
+    Alpha, Beta = CoefficientAlphaBeta(EigenValues)
+    C = DampingMatrix(Alpha, Beta, K, M)
+    DampingRatio = DampingRatios(Alpha, Beta, EigenValues)
+    p = P(len(EigenVectors[0]), data.ApplNode, DofList, t)
+    phi = Phi(EigenVectors, mu, p)
+    eta = compute_eta(EigenVectors, EigenValues, DampingRatio, phi, t)
 
-ax1 = fig.add_subplot(211)
-DisplacementNodeX = qDisp[DofList[18][0]]
-DisplacementNodeY = qDisp[DofList[18][1]]
+    qDisp = ModeDisplacementMethod(EigenVectors, eta, t)
+    qAcc = ModeAccelerationMethod(EigenVectors, EigenValues, eta, K, phi, p, t)
 
-ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2))
-ax1.set_title("Displacement of the Node")
-ax1.set_ylim(0, 10e-4)
+    if verbose:
+        fct.print_TransientResponse(qAcc, qDisp, t, DofList)
 
-ax2 = fig.add_subplot(212)
-DisplacementRotorX = qDisp[DofList[21][0]]
-DisplacementRotorY = qDisp[DofList[21][1]]
-
-ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r')
-ax2.set_title("Displacement of the Rotor")
-ax2.set_ylim(0, 10e-4)
-
-fig.suptitle("Mode Displacement Method")
-plt.show()
+    return qAcc, qDisp, C, DofList
 
 
-fig = plt.figure(figsize=(10, 6.5))
+NumberMode = 8
+t_final = 5
+t = np.linspace(0, t_final, 1001)
 
-ax1 = fig.add_subplot(211)
-DisplacementNodeX = qAcc[DofList[18][0]]
-DisplacementNodeY = qAcc[DofList[18][1]]
+#TransientResponse(NumberMode, t, True)
 
-ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2), label="displacement Node")
-ax1.set_title("Displacement of the Node")
-ax1.set_ylim(0, 10e-4)
-ax1.legend()
 
-ax2 = fig.add_subplot(212)
-DisplacementRotorX = qAcc[DofList[21][0]]
-DisplacementRotorY = qAcc[DofList[21][1]]
+def ConvergenceTransientResponse(numberMaxMode):
 
-ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r', label="displacement Rotor")
-ax2.set_title("Displacement of the Rotor")
-ax2.set_ylim(0, 10e-4)
-ax2.legend()
+    numberMode_list = np.arange(2, numberMaxMode + 1, 1)
+    responseAcc = []
+    responseDisp = []
+    t_final = 5
+    t = np.linspace(0, t_final, 1001)
+    dofList = []
 
-fig.suptitle("Mode Acceleration Method")
-plt.show()
+    for numberMode in numberMode_list:
+        qAcc, qDisp, _, DofList = TransientResponse(numberMode, t, False)
+
+        dofList = DofList
+        responseAcc.append(qAcc)
+        responseDisp.append(qDisp)
+
+    fig = plt.figure(figsize=(10, 6.5))
+    ax1 = fig.add_subplot(211)
+    ax2 = fig.add_subplot(212)
+    for i in range(numberMaxMode-1):
+        DisplacementNodeX = responseDisp[i][dofList[18][0]]
+        DisplacementNodeY = responseDisp[i][dofList[18][1]]
+
+        ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2), label=f'{numberMode_list[i]} Mode')
+
+        DisplacementRotorX = responseDisp[i][dofList[21][0]]
+        DisplacementRotorY = responseDisp[i][dofList[21][1]]
+
+        ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r', label=f'{numberMode_list[i]} Mode')
+
+    ax1.set_title("Displacement of the Node")
+    ax1.legend()
+    ax2.set_title("Displacement of the Rotor")
+    ax2.legend()
+    fig.suptitle("Mode Displacement Method")
+    plt.show()
+
+    fig = plt.figure(figsize=(10, 6.5))
+    ax1 = fig.add_subplot(211)
+    ax2 = fig.add_subplot(212)
+    for i in range(numberMaxMode-1):
+        DisplacementNodeX = responseAcc[i][dofList[18][0]]
+        DisplacementNodeY = responseAcc[i][dofList[18][1]]
+
+        ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2), label=f'{numberMode_list[i]} Mode')
+
+        DisplacementRotorX = responseAcc[i][dofList[21][0]]
+        DisplacementRotorY = responseAcc[i][dofList[21][1]]
+
+        ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r', label=f'{numberMode_list[i]} Mode')
+
+    ax1.set_title("Displacement of the Node")
+    ax1.legend()
+    ax2.set_title("Displacement of the Rotor")
+    ax2.legend()
+    fig.suptitle("Mode Acceleration Method")
+    plt.show()
+
+
+ConvergenceTransientResponse(5)
