@@ -257,6 +257,93 @@ def calculate_mtot_rigid(M):
 
     return np.transpose(ue) @ M @ ue
 
+
+def F(t):
+    return data.m * data.a * data.efficiency * np.sin(2*np.pi*data.f * t)
+
+
+def P(n, applNode, dofList, t):
+    labs = len(t)
+    p = np.zeros((n, labs))
+    x = dofList[applNode - 1][0]
+    y = dofList[applNode - 1][1]
+    for i in range(labs):
+        if 0 <= t[i] <= data.timpact:
+            p[x][i] = F(t[i]) * np.sqrt(2) / 2
+            p[y][i] = F(t[i]) * np.sqrt(2) / 2
+    return p
+
+
+def Phi(x, mu, p):
+    phi = []
+    for i in range(len(x)):
+        phi.append(x[i].T @ p / mu[i])
+
+    return phi
+
+
+def Wrd(wr,er) :
+    return wr*np.sqrt(1-(er**2))
+
+
+def H(er, wr, wrd,t):
+    return np.exp(-er * wr * t) * np.sin(wrd * t) / wrd
+
+
+def CoefficientAlphaBeta(eigenVals):
+    A = 0.5 * np.array([[eigenVals[0], 1 / eigenVals[0]],
+                        [eigenVals[1], 1 / eigenVals[1]]])
+    b = data.dampingRatioInit
+
+    return np.linalg.solve(A, b)
+
+
+def DampingMatrix(alpha, beta, K, M):
+    return alpha * K + beta * M
+
+
+def Mu(eigenvectors, M):
+    mu = []
+    for eigenvect in eigenvectors:
+        mu.append(np.transpose(eigenvect) @ M @ eigenvect)
+    return np.array(mu)
+
+
+def DampingRatios(alpha, beta, eigenValues):
+    dampingRatios = np.zeros(len(eigenValues))
+    dampingRatios[0] = data.dampingRatioInit[0]
+    dampingRatios[1] = data.dampingRatioInit[1]
+
+    for i in range(2, len(dampingRatios)):
+        dampingRatios[i] = 0.5 * (alpha * eigenValues[i] + beta / eigenValues[i])
+
+    return dampingRatios
+
+
+def compute_eta(Eigenvectors,EigenValues, DampingRatio, phi, t):
+    eta = []
+    for i in range(len(Eigenvectors)):
+        er = DampingRatio[i]
+        wr = EigenValues[i]
+        wrd = Wrd(wr, er)
+        h = H(er, wr, wrd, t)
+        eta.append(np.convolve(phi[i], h)[:len(t)])
+
+    return eta
+
+
+def compute_q(Eigenvectors, eta,t):
+    nbreDof = len(Eigenvectors[0])
+    Mode_nbr = len(Eigenvectors)
+
+    q = np.zeros((nbreDof, len(t)))
+    for i in range(Mode_nbr):
+        for j in range(nbreDof):
+            for k in range(len(t)):
+                q[j][k] += eta[i][k] * Eigenvectors[i][j]
+
+    return q
+
 """
 ########################################################################################################################
 Fonctions PLOT 
@@ -406,5 +493,49 @@ def print_TransientResponse(qAcc, qDisp, t, DofList):
     ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r')
     ax2.set_title("Displacement of the Rotor")
 
+    fig.suptitle("Mode Acceleration Method")
+    plt.show()
+
+
+def print_ConvergenceTransientResponse(numberMaxMode, numberMode_list, responseDisp, responseAcc, dofList, t):
+    fig = plt.figure(figsize=(10, 6.5))
+    ax1 = fig.add_subplot(211)
+    ax2 = fig.add_subplot(212)
+    for i in range(numberMaxMode - 1):
+        DisplacementNodeX = responseDisp[i][dofList[18][0]]
+        DisplacementNodeY = responseDisp[i][dofList[18][1]]
+
+        ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2), label=f'{numberMode_list[i]} Mode')
+
+        DisplacementRotorX = responseDisp[i][dofList[21][0]]
+        DisplacementRotorY = responseDisp[i][dofList[21][1]]
+
+        ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), label=f'{numberMode_list[i]} Mode')
+
+    ax1.set_title("Displacement of the Node")
+    ax1.legend()
+    ax2.set_title("Displacement of the Rotor")
+    ax2.legend()
+    fig.suptitle("Mode Displacement Method")
+    plt.show()
+
+    fig = plt.figure(figsize=(10, 6.5))
+    ax1 = fig.add_subplot(211)
+    ax2 = fig.add_subplot(212)
+    for i in range(numberMaxMode - 1):
+        DisplacementNodeX = responseAcc[i][dofList[18][0]]
+        DisplacementNodeY = responseAcc[i][dofList[18][1]]
+
+        ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2), label=f'{numberMode_list[i]} Mode')
+
+        DisplacementRotorX = responseAcc[i][dofList[21][0]]
+        DisplacementRotorY = responseAcc[i][dofList[21][1]]
+
+        ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), label=f'{numberMode_list[i]} Mode')
+
+    ax1.set_title("Displacement of the Node")
+    ax1.legend()
+    ax2.set_title("Displacement of the Rotor")
+    ax2.legend()
     fig.suptitle("Mode Acceleration Method")
     plt.show()
