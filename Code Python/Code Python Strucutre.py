@@ -271,14 +271,13 @@ numberElem = 3
 numbermode = 8
 EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numbermode, False)
 
-t_final = 5
-t = np.linspace(0, t_final, 100)
+t_final = 40
+t = np.linspace(0, t_final, 500)
 
 mu = Mu(EigenVectors, M)
 Alpha, Beta = CoefficientAlphaBeta(EigenValues)
 C = DampingMatrix(Alpha, Beta, K, M)
 DampingRatio = DampingRatios(Alpha, Beta, EigenValues)
-print(DampingRatio)
 p = P(len(EigenVectors[0]), data.ApplNode, DofList, t)
 phi = Phi(EigenVectors, mu, p)
 eta = compute_eta(EigenVectors, EigenValues, DampingRatio, phi, t)
@@ -296,6 +295,7 @@ DisplacementNodeY = qDisp[DofList[18][1]]
 
 ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2))
 ax1.set_title("Displacement of the Node")
+ax1.set_ylim(0, 10e-4)
 
 ax2 = fig.add_subplot(212)
 DisplacementRotorX = qDisp[DofList[21][0]]
@@ -303,6 +303,7 @@ DisplacementRotorY = qDisp[DofList[21][1]]
 
 ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r')
 ax2.set_title("Displacement of the Rotor")
+ax2.set_ylim(0, 10e-4)
 
 fig.suptitle("Mode Displacement Method")
 plt.show()
@@ -316,6 +317,7 @@ DisplacementNodeY = qAcc[DofList[18][1]]
 
 ax1.plot(t, np.sqrt(DisplacementNodeX ** 2 + DisplacementNodeY ** 2), label="displacement Node")
 ax1.set_title("Displacement of the Node")
+ax1.set_ylim(0, 10e-4)
 ax1.legend()
 
 ax2 = fig.add_subplot(212)
@@ -324,6 +326,7 @@ DisplacementRotorY = qAcc[DofList[21][1]]
 
 ax2.plot(t, np.sqrt(DisplacementRotorX ** 2 + DisplacementRotorY ** 2), c='r', label="displacement Rotor")
 ax2.set_title("Displacement of the Rotor")
+ax2.set_ylim(0, 10e-4)
 ax2.legend()
 
 fig.suptitle("Mode Acceleration Method")
