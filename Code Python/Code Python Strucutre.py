@@ -57,8 +57,11 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, verbose):
                 M[locel[i][j]-1][locel[i][k]-1] += Mes[j][k]
                 K[locel[i][j]-1][locel[i][k]-1] += Kes[j][k]
 
-        progress = i / len(elemList) * 100
+        progress = i / (len(elemList) - 1) * 100
         print('\rProgress Element fini: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
+    end = time.time()
+    execution = end - start
+    print(f"\nTotal execution time: {execution:.2f} seconds")
 
     M = fct.Add_lumped_mass(nodeLumped, dofList, M)
 
@@ -183,7 +186,7 @@ def ModeAccelerationMethod(eigenvectors, eigenvalues, eta, K, phi, p, t):
             for k in range(len(t)):
                 q[j][k] -= phi[i][k] * eigenvectors[i][j] / eigenvalues[i] ** 2
 
-    q += np.linalg.inv(K) @ p
+    q += np.linalg.inv(K) @ p.T
 
     return q
 
@@ -215,7 +218,7 @@ NumberMode = 8
 tfin = 5
 h = 0.01
 #t = np.linspace(0, t_final, 1001)
-t = np.arange(0,tfin, h)
+t = np.arange(0, tfin, h)
 
 qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, True)
 
@@ -228,7 +231,7 @@ def ConvergenceTransientResponse(numberMaxMode):
     dofList = []
 
     for numberMode in numberMode_list:
-        qAcc, qDisp, _, DofList = TransientResponse(numberMode, t, False)
+        qAcc, qDisp, _, _, _, _, DofList = TransientResponse(numberMode, t, False)
 
         dofList = DofList
         responseAcc.append(qAcc)
@@ -241,15 +244,15 @@ def ConvergenceTransientResponse(numberMaxMode):
 
 h = 0.01
 gamma = 0.75 # sup à 1/2
-def Beta (gamma) :
+def Beta (gamma):
     return 0.25*(gamma+1/2)**2
 
 beta = Beta(gamma)
 
-def compute_S(M,h, gamma, C, beta, K) :
+def compute_S(M,h, gamma, C, beta, K):
     return M + h*gamma*C + (h**2) * beta * K
 
-def Newmark(M, C, K, p, h, gamma, beta,t) :
+def Newmark(M, C, K, p, h, gamma, beta, t):
     qdisp   = np.zeros((len(t),len(M)))
     qvel    = np.zeros((len(t),len(M)))
     qacc    = np.zeros((len(t),len(M)))
@@ -259,7 +262,7 @@ def Newmark(M, C, K, p, h, gamma, beta,t) :
         qvel[i] = qvel[i-1] + (1 - gamma) * h * qacc[i-1]
 
         S_1 = np.linalg.inv(compute_S(M, h, gamma, C, beta, K))
-        tocompute = (p[:,i] - C @ qvel[i] - K @ qdisp[i])
+        tocompute = (p[i] - C @ qvel[i] - K @ qdisp[i])
 
         qacc[i] =  np.linalg.solve(S_1 , tocompute)
         qdisp[i] += h * gamma * qacc[i]
@@ -274,7 +277,7 @@ def Newmark(M, C, K, p, h, gamma, beta,t) :
     return qdisp, qvel, qacc
 
 
-qdisp, qvel, qacc = Newmark(M, C, K, p, h, gamma, beta,t)
+qdisp, qvel, qacc = Newmark(M, C, K, p, h, gamma, beta, t)
 
 fct.print_TransientResponse(qacc, qdisp, t, DofList)
 

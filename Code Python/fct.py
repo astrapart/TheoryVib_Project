@@ -264,29 +264,30 @@ def F(t):
 
 def P(n, applNode, dofList, t):
     labs = len(t)
-    p = np.zeros((n, labs))
+    p = np.zeros((labs, n))
     x = dofList[applNode - 1][0]
     y = dofList[applNode - 1][1]
     for i in range(labs):
         if 0 <= t[i] <= data.timpact:
-            p[x][i] = F(t[i]) * np.sqrt(2) / 2
-            p[y][i] = F(t[i]) * np.sqrt(2) / 2
+            p[i][x] = F(t[i]) * np.sqrt(2) / 2
+            p[i][y] = F(t[i]) * np.sqrt(2) / 2
+
     return p
 
 
 def Phi(x, mu, p):
     phi = []
     for i in range(len(x)):
-        phi.append(x[i].T @ p / mu[i])
+        phi.append(x[i].T @ p.T / mu[i])
 
     return phi
 
 
-def Wrd(wr,er) :
+def Wrd(wr, er):
     return wr*np.sqrt(1-(er**2))
 
 
-def H(er, wr, wrd,t):
+def H(er, wr, wrd, t):
     return np.exp(-er * wr * t) * np.sin(wrd * t) / wrd
 
 
