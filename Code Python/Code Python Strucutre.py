@@ -57,8 +57,8 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, verbose):
                 M[locel[i][j]-1][locel[i][k]-1] += Mes[j][k]
                 K[locel[i][j]-1][locel[i][k]-1] += Kes[j][k]
 
-        progress = i / (len(elemList) - 1) * 100
-        print('\rProgress Element fini: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
+        #progress = i / (len(elemList) - 1) * 100
+        #print('\rProgress Element fini: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
 
     end = time.time()
     execution = end - start
@@ -108,7 +108,7 @@ def EtudeConvergence(precision):
     plt.show()
 
 
-#ElementFini_OffShoreStruct(3, 8, True)
+ElementFini_OffShoreStruct(3, 8, True)
 #EtudeConvergence(15)
 
 
@@ -197,7 +197,7 @@ def ModeAccelerationMethod(eigenvectors, eigenvalues, eta, K, phi, p, t):
         progress = i / (Mode_nbr - 1) * 100
         print('\rProgress Acceleration Method: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
 
-    q += (np.linalg.inv(K).T @ p.T).T
+    q += (np.linalg.inv(K) @ p).T
 
     end = time.time()
     delta = end - start
@@ -232,9 +232,8 @@ NumberMode = 8
 tfin = 10
 h = 0.01
 t = np.arange(0, tfin, h)
-print(t.shape)
 
-qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, False)
+qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, True)
 
 
 def ConvergenceTransientResponse(numberMaxMode):
@@ -278,14 +277,14 @@ def Newmark(M, C, K, p, h, gamma, beta, t):
     qacc  = np.zeros((len(t), len(M)))
 
     S = compute_S(M, h, gamma, C, beta, K)
-    qacc[0] = np.linalg.solve(M, p[0] - C @ qvel[0].T - K @ qdisp[0].T)
-    start = time.time()
+    qacc[0] = np.linalg.solve(M, p[0].T - C @ qvel[0].T - K @ qdisp[0].T)
 
+    start = time.time()
     for i in range(1, len(t)):
         qdisp[i] = qdisp[i-1] + h * qvel[i-1] + (0.5 - beta) * h**2 * qacc[i-1]
         qvel[i] = qvel[i-1] + (1 - gamma) * h * qacc[i-1]
 
-        qacc[i] = np.linalg.solve(S, p[i] - C @ qvel[i].T - K @ qdisp[i].T)
+        qacc[i] = np.linalg.solve(S, p[i].T - C @ qvel[i].T - K @ qdisp[i].T)
 
         qdisp[i] += h * gamma * qacc[i]
         qvel[i] += h**2 * beta * qacc[i]
