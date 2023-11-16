@@ -272,16 +272,6 @@ def P(n, applNode, dofList, t):
         p[xAppl][i] = F(t[i]) * np.sqrt(2) / 2
         p[yAppl][i] = F(t[i]) * np.sqrt(2) / 2
 
-    """
-    labs = len(t)
-    p = np.zeros((labs, n))
-    x = dofList[applNode - 1][0]
-    y = dofList[applNode - 1][1]
-    for i in range(labs):
-        if 0 <= t[i] <= data.timpact:
-            p[i][x] = F(t[i]) * np.sqrt(2) / 2
-            p[i][y] = F(t[i]) * np.sqrt(2) / 2
-    """
     return p
 
 
@@ -289,11 +279,6 @@ def Phi(x, mu, p):
     phi = np.zeros((len(x), len(p[0])))
     for i in range(len(x)):
         phi[i] = x[i].T @ p / mu[i]
-
-    """   phi = []
-        for i in range(len(x)):
-            phi.append(x[i].T @ p.T / mu[i])
-    """
     return phi
 
 
@@ -357,6 +342,10 @@ def compute_q(Eigenvectors, eta,t):
 
     return q
 
+def compute_S(M, h, gamma, C, beta, K):
+    return M + h*gamma*C + (h**2) * beta * K
+
+
 """
 ########################################################################################################################
 Fonctions PLOT 
@@ -391,64 +380,40 @@ def plot_structure(elemList, nodeList):
 
     plt.show()
 
-
 def plot_result(nodeList, nodeConstraint, eigenvects, elemList, dofList):
-    fig = plt.figure()
+        fig = plt.figure()
 
-    newNodeList = nodeList.copy()
-    for i in range(len(eigenvects)):
+        for i in range(len(eigenvects)):
 
-        for elem in elemList:
-            elem1 = elem[0] - 1
-            elem2 = elem[1] - 1
-            node1 = newNodeList[elem1]
-            node2 = newNodeList[elem2]
-            #ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], '--', c='b')
+            nodeListDef = np.array(nodeList.copy())
 
-            facteur = 10
-            newNodeList[i] += [facteur * eigenvects[i][dofList[elem1][0]], facteur * eigenvects[i][dofList[elem1][1]], facteur * eigenvects[i][dofList[elem1][2]]]
-            newNodeList[i] += [facteur * eigenvects[i][dofList[elem2][0]], facteur * eigenvects[i][dofList[elem2][1]], facteur * eigenvects[i][dofList[elem2][2]]]
-            #ax.plot([newNode1[0], newNode2[0]], [newNode1[1], newNode2[1]], [newNode1[2], newNode2[2]], c='r')
+            for elem in elemList:
+                elem1 = elem[0] - 1
+                elem2 = elem[1] - 1
+                facteur = 10
+                for k in range(3):
+                    nodeListDef[elem1][k] += facteur * eigenvects[i][dofList[elem1][k]]
+                    nodeListDef[elem2][k] += facteur * eigenvects[i][dofList[elem2][k]]
 
-    for i in range(len(eigenvects)):
-        ax = plt.axes(projection='3d')
-        ax.set_box_aspect((10, 10, 20))
+            ax = plt.axes(projection='3d')
+            ax.set_box_aspect((10, 10, 20))
 
-        for elem in elemList:
-            elem1 = elem[0] - 1
-            elem2 = elem[1] - 1
+            for elem in elemList:
+                elem1 = elem[0] - 1
+                elem2 = elem[1] - 1
 
-            ax.plot([nodeList[elem1][0], nodeList[elem2][0]], [nodeList[elem1][1], nodeList[elem2][1]], [nodeList[elem1][2], nodeList[elem2][2]], '--', c='b')
-            ax.plot([newNodeList[elem1][0], newNodeList[elem2][0]], [newNodeList[elem1][1], newNodeList[elem2][1]], [newNodeList[elem1][2], newNodeList[elem2][2]], c='r')
+                node1 = nodeList[elem1]
+                node2 = nodeList[elem2]
 
-        plt.show()
-    """
-    nbrConstraint = len(nodeConstraint)
-    for i in range(len(eigenvects)):
-        newNodeList = []
-        for j in range(len(nodeList) - nbrConstraint):
-            coord = nodeList[j]
-            if j+1 not in nodeConstraint:
-                dx, dy, dz = eigenvects[i][6 * j - nbrConstraint], eigenvects[i][6 * j + 1 - nbrConstraint], eigenvects[i][6 * j + 2 - nbrConstraint]
+                node1Def = nodeListDef[elem1]
+                node2Def = nodeListDef[elem2]
 
-                factor = 5
-                new_coord = [coord[0] + dx*factor, coord[1] + dy*factor, coord[2] + dz*factor]
-                newNodeList.append(new_coord)
-            else:
-                newNodeList.append(coord)
+                ax.grid(False)
 
-        ax = fig.add_subplot(2, 4, i + 1, projection='3d')
+                ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], c='b')
+                ax.plot([node1Def[0], node2Def[0]], [node1Def[1], node2Def[1]], [node1Def[2], node2Def[2]], '--', c='r')
 
-        for elem in elemList:
-            if elem[2] != 2:
-                newnode1 = newNodeList[elem[0]-1]
-                newnode2 = newNodeList[elem[1]-1]
-                node1 = nodeList[elem[0]-1]
-                node2 = nodeList[elem[1]-1]
-
-                ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], '--', c='b')
-                ax.plot([newnode1[0], newnode2[0]], [newnode1[1], newnode2[1]], [newnode1[2], newnode2[2]], c='r')
-    """
+            plt.show()
 
 
 def print_freq(list_eign):
@@ -471,6 +436,49 @@ def print_data_beam(node1, node2, type_beam, rho, v, E, A, m, Jx, Iy, Iz, G, r,l
     print("Jx = {Jx}  I = {Iy}".format(Jx=Jx, Iy=Iy))
     print()
 
+
+def ConvergencePlot():
+    Result = [[0.4437535, 0.45433177, 0.97293389, 7.05536334, 7.40416045, 15.94143563, 20.54892234, 22.10797568],
+              [0.44375284, 0.45433049, 0.97293385, 7.05444093, 7.40314732, 15.94072114, 20.52106343, 22.07593765],
+              [0.44374422, 0.45432947, 0.97293014, 7.05437772, 7.40286752, 15.94055679, 20.51636776, 22.07033115],
+              [0.44375049, 0.45432843, 0.97293498, 7.05422351, 7.40294721, 15.94049676, 20.51505775, 22.06887598],
+              [0.44375399, 0.45432601, 0.97292409, 7.05419012, 7.4030251, 15.94046982, 20.51458456, 22.0682478],
+              [0.44375396, 0.45433893, 0.97292579, 7.05431972, 7.40298813, 15.94045202, 20.51436938, 22.06804018],
+              [0.44374995, 0.45432814, 0.97293293, 7.05439332, 7.40284139, 15.94043059, 20.51421719, 22.06789641],
+              [0.44375102, 0.45433117, 0.97293204, 7.05442877, 7.40292553, 15.94040496, 20.51421218, 22.06789859],
+              [0.44375631, 0.45432903, 0.97290094, 7.05423684, 7.40313393, 15.94042328, 20.51430098, 22.06779005],
+              [0.44375333, 0.45433295, 0.97293302, 7.0542291, 7.40297567, 15.9404245, 20.51415934, 22.06781938],
+              [0.44375504, 0.45433308, 0.9729252, 7.05420672, 7.40312114, 15.94043722, 20.51424485, 22.06775965],
+              [0.44375541, 0.45433097, 0.97293313, 7.05427859, 7.40300588, 15.94042955, 20.51412298, 22.06761888],
+              [0.44374803, 0.4543304, 0.97293359, 7.05414533, 7.40263314, 15.94042454, 20.5138263, 22.06777685],
+              [0.44375443, 0.45433027, 0.97293488, 7.05424238, 7.40299184, 15.94041767, 20.51413501, 22.06777646]]
+
+    Time = [0.3505735397338867, 1.1360270977020264, 2.9674744606018066, 8.783644199371338, 19.95775556564331,
+            37.788264751434326, 62.78030729293823, 92.64252924919128, 138.71605777740479, 191.74096274375916,
+            259.28460359573364, 329.9837477207184, 435.48192715644836, 613.6963446140289]
+
+    TestElem = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+
+    fig = plt.figure(figsize=(15.5, 7.5))
+    for i in range(len(Result[0])):
+        ax = fig.add_subplot(2, 4, i + 1)
+        for j in range(len(TestElem) - 1):
+            ax.plot([TestElem[j], TestElem[j + 1]], [Result[j][i], Result[j + 1][i]], c='b')
+
+        ax.grid()
+        ax.set_title(f"{i + 1} eigenvalues")
+
+    plt.show()
+
+    """  Plot du temps d'exécution, pas très intéressant 
+    plt.figure()
+    for i in range(len(TestElem) - 1):
+        plt.plot([TestElem[i], TestElem[i + 1]], [Time[i], Time[i + 1]], c='b')
+
+    plt.grid()
+    plt.title("Evolution of time per number of beam")
+    plt.show()
+    """
 
 def print_matrix(matrix):
 
