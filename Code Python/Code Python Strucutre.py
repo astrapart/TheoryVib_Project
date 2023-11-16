@@ -59,6 +59,7 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, verbose):
 
         progress = i / (len(elemList) - 1) * 100
         print('\rProgress Element fini: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
+
     end = time.time()
     execution = end - start
     print(f"\nTotal execution time: {execution:.2f} seconds")
@@ -159,34 +160,48 @@ def ConvergencePlot():
 
 
 def ModeDisplacementMethod(eigenvectors, eta, t):
+    start = time.time()
+
     nbreDof = len(eigenvectors[0])
     Mode_nbr = len(eigenvectors)
 
-    q = np.zeros((nbreDof, len(t)))
+    q = np.zeros((len(t), nbreDof))
     for i in range(Mode_nbr):
         for j in range(nbreDof):
             for k in range(len(t)):
-                q[j][k] += eta[i][k] * eigenvectors[i][j]
+                q[k][j] += eta[i][k] * eigenvectors[i][j]
+
+        progress = i / (Mode_nbr - 1) * 100
+        print('\rProgress Displacement Method: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
+
+    end = time.time()
+    delta = end - start
+    print(f"\nTotal execution time: {delta:.2f} seconds")
 
     return q
 
 
 def ModeAccelerationMethod(eigenvectors, eigenvalues, eta, K, phi, p, t):
+    start = time.time()
+
     nbreDof = len(eigenvectors[0])
     Mode_nbr = len(eigenvectors)
 
-    q = np.zeros((nbreDof, len(t)))
+    q = np.zeros((len(t), nbreDof))
     for i in range(Mode_nbr):
         for j in range(nbreDof):
             for k in range(len(t)):
-                q[j][k] += eta[i][k] * eigenvectors[i][j]
+                q[k][j] += eta[i][k] * eigenvectors[i][j]
+                q[k][j] -= phi[i][k] * eigenvectors[i][j] / eigenvalues[i] ** 2
 
-    for i in range(Mode_nbr):
-        for j in range(nbreDof):
-            for k in range(len(t)):
-                q[j][k] -= phi[i][k] * eigenvectors[i][j] / eigenvalues[i] ** 2
+        progress = i / (Mode_nbr - 1) * 100
+        print('\rProgress Acceleration Method: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
 
-    q += np.linalg.inv(K) @ p.T
+    q += (np.linalg.inv(K).T @ p.T).T
+
+    end = time.time()
+    delta = end - start
+    print(f"\nTotal execution time: {delta:.2f} seconds")
 
     return q
 
@@ -195,7 +210,6 @@ def TransientResponse(numberMode, t, verbose):
 
     numberElem = 3
     EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numberMode, False)
-
 
     mu = fct.Mu(EigenVectors, M)
     Alpha, Beta = fct.CoefficientAlphaBeta(EigenValues)
@@ -215,12 +229,13 @@ def TransientResponse(numberMode, t, verbose):
 
 
 NumberMode = 8
-tfin = 5
+tfin = 10
 h = 0.01
-#t = np.linspace(0, t_final, 1001)
 t = np.arange(0, tfin, h)
+print(t.shape)
 
-qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, True)
+qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, False)
+
 
 def ConvergenceTransientResponse(numberMaxMode):
     numberMode_list = np.arange(2, numberMaxMode + 1, 1)
@@ -240,36 +255,44 @@ def ConvergenceTransientResponse(numberMaxMode):
     fct.print_ConvergenceTransientResponse(numberMaxMode, numberMode_list, responseDisp, responseAcc, dofList, t)
 
 
-#ConvergenceTransientResponse(5)
+# ConvergenceTransientResponse(5)
 
-h = 0.01
-gamma = 0.75 # sup à 1/2
-def Beta (gamma):
+gamma = 0.5  # sup à 1/2
+beta = 0.25
+
+"""
+def compute_Beta(gamma):
     return 0.25*(gamma+1/2)**2
 
-beta = Beta(gamma)
 
-def compute_S(M,h, gamma, C, beta, K):
+beta = compute_Beta(gamma)
+"""
+
+def compute_S(M, h, gamma, C, beta, K):
     return M + h*gamma*C + (h**2) * beta * K
 
+
 def Newmark(M, C, K, p, h, gamma, beta, t):
-    qdisp   = np.zeros((len(t),len(M)))
-    qvel    = np.zeros((len(t),len(M)))
-    qacc    = np.zeros((len(t),len(M)))
+    qdisp = np.zeros((len(t), len(M)))
+    qvel  = np.zeros((len(t), len(M)))
+    qacc  = np.zeros((len(t), len(M)))
+
+    S = compute_S(M, h, gamma, C, beta, K)
+    qacc[0] = np.linalg.solve(M, p[0] - C @ qvel[0].T - K @ qdisp[0].T)
     start = time.time()
-    for i in range(1, len(t)) :
+
+    for i in range(1, len(t)):
         qdisp[i] = qdisp[i-1] + h * qvel[i-1] + (0.5 - beta) * h**2 * qacc[i-1]
         qvel[i] = qvel[i-1] + (1 - gamma) * h * qacc[i-1]
 
-        S_1 = np.linalg.inv(compute_S(M, h, gamma, C, beta, K))
-        tocompute = (p[i] - C @ qvel[i] - K @ qdisp[i])
+        qacc[i] = np.linalg.solve(S, p[i] - C @ qvel[i].T - K @ qdisp[i].T)
 
-        qacc[i] =  np.linalg.solve(S_1 , tocompute)
         qdisp[i] += h * gamma * qacc[i]
         qvel[i] += h**2 * beta * qacc[i]
 
         progress = i / (len(t)-1) * 100
         print('\rProgress Newmark: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
+
     end = time.time()
     execution_time = end - start
     print(f"\nTotal execution time: {execution_time:.2f} seconds")
@@ -277,8 +300,8 @@ def Newmark(M, C, K, p, h, gamma, beta, t):
     return qdisp, qvel, qacc
 
 
-qdisp, qvel, qacc = Newmark(M, C, K, p, h, gamma, beta, t)
+qDispN, qVelN, qAccN = Newmark(M, C, K, p, h, gamma, beta, t)
 
-fct.print_TransientResponse(qacc, qdisp, t, DofList)
+fct.print_TransientResponse(qAccN, qDispN, t, DofList)
 
 
