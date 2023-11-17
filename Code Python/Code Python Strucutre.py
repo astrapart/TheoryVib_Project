@@ -25,7 +25,7 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, print_data_beam, print_mt
 
     M = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
     K = np.zeros((len(nodeList) * 6, len(nodeList) * 6))
-    #start = time.time()
+    start = time.time()
 
     for i in range(len(elemList)):
         node1 = elemList[i][0]-1
@@ -55,12 +55,12 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, print_data_beam, print_mt
                 M[locel[i][j]-1][locel[i][k]-1] += Mes[j][k]
                 K[locel[i][j]-1][locel[i][k]-1] += Kes[j][k]
 
-        #progress = i / (len(elemList) - 1) * 100
-        #print('\rProgress Element fini: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
+        progress = i / (len(elemList) - 1) * 100
+        print('\rProgress Element fini: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
 
-    #end = time.time()
-    #execution = end - start
-    #print(f"\nTotal execution time: {execution:.2f} seconds")
+    end = time.time()
+    execution = end - start
+    print(f"\nTotal execution time: {execution:.2f} seconds")
 
     M = fct.Add_lumped_mass(nodeLumped, dofList, M)
 
@@ -83,7 +83,11 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, print_data_beam, print_mt
         fct.print_freq(val_prop[:numberMode])
         fct.plot_result(nodeList, nodeConstraint, vect_prop[:numberMode], elemList0, dofList)
 
-    return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
+    #return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
+
+
+
+#tmp, _, _, _, _ = ElementFini_OffShoreStruct(2, 8,False, False, False, True)
 
 def EtudeConvergence(precision):
     TestElem = np.arange(2, precision + 1, 1)
@@ -149,7 +153,7 @@ def ModeAccelerationMethod(eigenvectors, eigenvalues, eta, K, phi, p, t):
 
     return q
 
-def TransientResponse(numberMode, t, verbose):
+def TransientResponse(numberMode, t, pas, verbose):
     numberElem = 3
     EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numberMode, False, False, False, False)
 
@@ -159,7 +163,7 @@ def TransientResponse(numberMode, t, verbose):
     DampingRatio = fct.DampingRatios(Alpha, Beta, EigenValues)
     p = fct.P(len(EigenVectors[0]), data.ApplNode, DofList, t)
     phi = fct.Phi(EigenVectors, mu, p)
-    eta = fct.compute_eta(EigenVectors, EigenValues, DampingRatio, phi, t)
+    eta = fct.compute_eta(EigenVectors, EigenValues, DampingRatio, phi, t, pas)
 
     qDisp = ModeDisplacementMethod(EigenVectors, eta, t)
     qAcc = ModeAccelerationMethod(EigenVectors, EigenValues, eta, K, phi, p, t)
@@ -217,14 +221,16 @@ def Newmark(M, C, K, p, h,t):
 #ElementFini_OffShoreStruct(3, 8, False)
 #EtudeConvergence(15)
 
-
+print(1000 * (25/3.6) * 0.85 * 1/0.05)
 NumberMode = 8
-tfin = 0.5
-h = 0.05
-t = np.arange(0, tfin, h)
-qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, False)
+tfin = 5
+pas = 0.05
+t = np.arange(0, tfin, pas)
+qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, pas,False)
 # ConvergenceTransientResponse(5)
-qDispN, qVelN, qAccN = Newmark(M, C, K, p, h, t)
-fct.print_TransientResponse(qAccN, qDispN, t, DofList)
+#qDispN, qVelN, qAccN = Newmark(M, C, K, p, h, t)
+#fct.print_TransientResponse(qAccN, qDispN, t, DofList)
+
+fct.print_TransientResponse(qAcc, qDisp, t, DofList)
 
 

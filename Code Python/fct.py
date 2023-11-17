@@ -112,7 +112,7 @@ def create_locel(elemList, dofList):
 def create_T(coord1, coord2, l):
     P1 = np.array(coord1)
     P2 = np.array(coord2)
-    P3 = np.array([1, 2, 15])
+    P3 = np.array([1, 2, 20])
 
     d2 = P2 - P1
     d3 = P3 - P1
@@ -259,7 +259,7 @@ def calculate_mtot_rigid(M):
 
 
 def F(t):
-    return data.m * data.a * data.efficiency * np.sin(2*np.pi*data.f * t)
+    return data.A * np.sin(2*np.pi*data.f * t)
 
 
 def P(n, applNode, dofList, t):
@@ -318,14 +318,15 @@ def DampingRatios(alpha, beta, eigenValues):
     return dampingRatios
 
 
-def compute_eta(Eigenvectors,EigenValues, DampingRatio, phi, t):
+def compute_eta(Eigenvectors,EigenValues, DampingRatio, phi, t,pas):
     eta = []
     for r in range(len(Eigenvectors)):
         er = DampingRatio[r]
         wr = EigenValues[r]
         wrd = Wrd(wr, er)
         h = H(er, wr, wrd, t)
-        eta.append(np.convolve(phi[r], h)[:len(t)])
+        convolution = np.convolve(phi[r], h)[:len(t)]
+        eta.append(pas * convolution)
 
     return eta
 
@@ -490,17 +491,19 @@ def print_TransientResponse(qAcc, qDisp, t, DofList):
     fig = plt.figure(figsize=(10, 7))
 
     ax1 = fig.add_subplot(211)
+    DisplacementNodeX = qDisp[:, DofList[17][0]]
     DisplacementNodeY = qDisp[:, DofList[17][1]]
-    DispNode = np.sqrt(2) * DisplacementNodeY
+    DispNode = (1/np.sqrt(2)) * DisplacementNodeX + 1/(np.sqrt(2)) * DisplacementNodeY
 
-    ax1.plot(t, DispNode * 1000)
+    ax1.plot(t, DispNode)
     ax1.set_title("Displacement of the Node")
 
     ax2 = fig.add_subplot(212)
+    DisplacementRotorX = qDisp[:, DofList[21][0]]
     DisplacementRotorY = qDisp[:, DofList[21][1]]
-    DispRotor = np.sqrt(2) * DisplacementRotorY
+    DispRotor = (1/np.sqrt(2)) * DisplacementRotorX +  (1/np.sqrt(2)) * DisplacementRotorY
 
-    ax2.plot(t, DispRotor * 1000, c='r')
+    ax2.plot(t, DispRotor, c='r')
     ax2.set_title("Displacement of the Rotor")
 
     fig.suptitle("Mode Displacement Method")
@@ -509,17 +512,19 @@ def print_TransientResponse(qAcc, qDisp, t, DofList):
     fig = plt.figure(figsize=(10, 7))
 
     ax1 = fig.add_subplot(211)
+    AccelerationNodeX = qAcc[:, DofList[17][0]]
     AccelerationNodeY = qAcc[:, DofList[17][1]]
-    AccNode = np.sqrt(2) * AccelerationNodeY
+    AccNode =  (1/np.sqrt(2)) * AccelerationNodeX +  (1/np.sqrt(2)) * AccelerationNodeY
 
-    ax1.plot(t, AccNode * 1000)
+    ax1.plot(t, AccNode)
     ax1.set_title("Acceleration of the Node")
 
     ax2 = fig.add_subplot(212)
+    AccelerationRotorX = qAcc[:, DofList[21][0]]
     AccelerationRotorY = qAcc[:, DofList[21][1]]
-    AccRotor = np.sqrt(2) * AccelerationRotorY
+    AccRotor =  (1/np.sqrt(2)) * AccelerationRotorX + np.sqrt(2) * AccelerationRotorY
 
-    ax2.plot(t, AccRotor * 1000, c='r')
+    ax2.plot(t, AccRotor, c='r')
     ax2.set_title("Acceleration of the Rotor")
 
     fig.suptitle("Mode Acceleration Method")

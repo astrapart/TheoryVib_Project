@@ -76,10 +76,12 @@ beta = 0.25
 
 f = 1                 # [Hz] frequency of the sinus
 m = 1000              # [kg] weight of the tail
-v = 25 * 1000 / 3600  # [m/s] velocity of the impact
+v = 25 / 3.6          # [m/s] velocity of the impact
 timpact = 0.05        # [s] impacts lasts
-a = v / timpact       # [m/s²] impacts acceleration
-efficiency = 85/100   # [%] percentage of the tail momentum transferred
+acc = v / timpact       # [m/s²] impacts acceleration
+efficiency = 0.85   # [%] percentage of the tail momentum transferred
+
+A = acc * efficiency * m
 ApplNode = 18         # Node where F is applied
 
 """
