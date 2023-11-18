@@ -391,7 +391,7 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList, dofList):
             for elem in elemList:
                 elem1 = elem[0] - 1
                 elem2 = elem[1] - 1
-                facteur = 10
+                facteur = 50
                 for k in range(3):
                     nodeListDef[elem1][k] += facteur * eigenvects[i][dofList[elem1][k]]
                     nodeListDef[elem2][k] += facteur * eigenvects[i][dofList[elem2][k]]
@@ -493,9 +493,16 @@ def print_TransientResponse(qAcc, qDisp, t, DofList):
     ax1 = fig.add_subplot(211)
     DisplacementNodeX = qDisp[:, DofList[17][0]]
     DisplacementNodeY = qDisp[:, DofList[17][1]]
-    DispNode = (1/np.sqrt(2)) * DisplacementNodeX + 1/(np.sqrt(2)) * DisplacementNodeY
 
-    ax1.plot(t, DispNode)
+    AccelerationNodeX = qAcc[:, DofList[17][0]]
+    AccelerationNodeY = qAcc[:, DofList[17][1]]
+    AccNode =  (1/np.sqrt(2)) * AccelerationNodeX +  (1/np.sqrt(2)) * AccelerationNodeY
+
+
+    DispNode = (1/np.sqrt(2)) * DisplacementNodeX + (1/np.sqrt(2)) * DisplacementNodeY
+    ax1.plot(t, AccNode, label = 'Mode Acc', c = 'r')
+    ax1.plot(t, DispNode, label = 'Mode Depl', c = 'blue')
+    ax1.legend()
     ax1.set_title("Displacement of the Node")
 
     ax2 = fig.add_subplot(212)
@@ -503,31 +510,37 @@ def print_TransientResponse(qAcc, qDisp, t, DofList):
     DisplacementRotorY = qDisp[:, DofList[21][1]]
     DispRotor = (1/np.sqrt(2)) * DisplacementRotorX +  (1/np.sqrt(2)) * DisplacementRotorY
 
-    ax2.plot(t, DispRotor, c='r')
+    AccelerationRotorX = qAcc[:, DofList[21][0]]
+    AccelerationRotorY = qAcc[:, DofList[21][1]]
+    AccRotor = (1 / np.sqrt(2)) * AccelerationRotorX + (1/np.sqrt(2)) * AccelerationRotorY
+
+    ax2.plot(t, AccRotor, label = 'Mode Acc', c='r')
+    ax2.plot(t, DispRotor, label = 'Mode Dipl', c='blue')
+    ax2.legend()
     ax2.set_title("Displacement of the Rotor")
 
-    fig.suptitle("Mode Displacement Method")
     plt.show()
 
+def print_NewmarkResponse(q, t, DofList):
     fig = plt.figure(figsize=(10, 7))
 
     ax1 = fig.add_subplot(211)
-    AccelerationNodeX = qAcc[:, DofList[17][0]]
-    AccelerationNodeY = qAcc[:, DofList[17][1]]
-    AccNode =  (1/np.sqrt(2)) * AccelerationNodeX +  (1/np.sqrt(2)) * AccelerationNodeY
+    DisplacementNodeX = q[:, DofList[17][0]]
+    DisplacementNodeY = q[:, DofList[17][1]]
 
-    ax1.plot(t, AccNode)
-    ax1.set_title("Acceleration of the Node")
+    DispNode = (1/np.sqrt(2)) * DisplacementNodeX + (1/np.sqrt(2)) * DisplacementNodeY
+    ax1.plot(t, DispNode, label = 'Newmark', c = 'blue')
+    ax1.legend()
+    ax1.set_title("Displacement of the Node")
 
     ax2 = fig.add_subplot(212)
-    AccelerationRotorX = qAcc[:, DofList[21][0]]
-    AccelerationRotorY = qAcc[:, DofList[21][1]]
-    AccRotor =  (1/np.sqrt(2)) * AccelerationRotorX + np.sqrt(2) * AccelerationRotorY
+    DisplacementRotorX = q[:, DofList[21][0]]
+    DisplacementRotorY = q[:, DofList[21][1]]
+    DispRotor = (1/np.sqrt(2)) * DisplacementRotorX +  (1/np.sqrt(2)) * DisplacementRotorY
+    ax2.plot(t, DispRotor, label = 'Newmark', c='blue')
+    ax2.legend()
+    ax2.set_title("Displacement of the Rotor")
 
-    ax2.plot(t, AccRotor, c='r')
-    ax2.set_title("Acceleration of the Rotor")
-
-    fig.suptitle("Mode Acceleration Method")
     plt.show()
 
 

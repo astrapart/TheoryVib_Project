@@ -71,21 +71,22 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, print_data_beam, print_mt
     M, K = fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
-    val_prop = np.sort(np.real(eigenvals))
-    val_prop = np.sqrt(val_prop) / (2 * np.pi)
+    new_index = np.argsort(np.real(eigenvals))
 
-    new_index = np.argsort(eigenvals)
+    #val_prop = np.sort(np.real(eigenvals))
+    #val_prop = np.sqrt(val_prop) / (2 * np.pi)
+    val_prop = []
     vect_prop = []
     for i in new_index:
         vect_prop.append(eigenvects[i])
+        val_prop.append(np.sqrt(np.real(eigenvals[i]))/(2*np.pi))
+
 
     if plot_result:
         fct.print_freq(val_prop[:numberMode])
         fct.plot_result(nodeList, nodeConstraint, vect_prop[:numberMode], elemList0, dofList)
 
-    #return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
-
-
+    return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
 
 #tmp, _, _, _, _ = ElementFini_OffShoreStruct(2, 8,False, False, False, True)
 
@@ -198,17 +199,20 @@ def Newmark(M, C, K, p, h,t):
     qacc  = np.zeros((len(t), len(M)))
 
     S = fct.compute_S(M, h, gamma, C, beta, K)
+    #S_inv = scipy.linalg.inv(S)
 
     #qacc[0] = np.linalg.solve(M, p.T[0] - C @ qvel[0].T - K @ qdisp[0].T)
+
     start = time.time()
     for i in range(1, len(t)):
+        qvel[i] = qvel[i - 1] + (1 - gamma) * h * qacc[i - 1]
         qdisp[i] = qdisp[i-1] + h * qvel[i-1] + (0.5 - beta) * (h**2) * qacc[i-1]
-        qvel[i] = qvel[i-1] + (1 - gamma) * h * qacc[i-1]
 
         qacc[i] = np.linalg.solve(S, p.T[i] - C @ qvel[i].T - K @ qdisp[i].T)
+        #qacc[i] = S_inv @ (p.T[i] - C @ qvel[i].T - K @ qdisp[i].T)
 
-        qdisp[i] += h * gamma * qacc[i]
-        qvel[i] += h**2 * beta * qacc[i]
+        qdisp[i] =  qdisp[i] + h * gamma * qacc[i]
+        qvel[i] = qvel[i]  + (h**2) * beta * qacc[i]
 
         progress = i / (len(t)-1) * 100
         print('\rProgress Newmark: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
@@ -221,16 +225,15 @@ def Newmark(M, C, K, p, h,t):
 #ElementFini_OffShoreStruct(3, 8, False)
 #EtudeConvergence(15)
 
-print(1000 * (25/3.6) * 0.85 * 1/0.05)
 NumberMode = 8
 tfin = 5
 pas = 0.05
 t = np.arange(0, tfin, pas)
 qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, pas,False)
 # ConvergenceTransientResponse(5)
-#qDispN, qVelN, qAccN = Newmark(M, C, K, p, h, t)
-#fct.print_TransientResponse(qAccN, qDispN, t, DofList)
-
+qDispN, qVelN, qAccN = Newmark(M, C, K, p, pas, t)
 fct.print_TransientResponse(qAcc, qDisp, t, DofList)
+fct.print_NewmarkResponse(qDispN, t, DofList)
+
 
 
