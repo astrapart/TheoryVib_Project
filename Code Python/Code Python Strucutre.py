@@ -10,6 +10,8 @@ import data
 from scipy.linalg import block_diag, eigh, eigvals, eig
 from scipy.integrate import odeint
 import time
+
+
 def ElementFini_OffShoreStruct(numberElem, numberMode, print_data_beam, print_mtot, plot_structure, plot_result):
     nodeList0 = data.nodeList_eol
     elemList0 = data.elemList0_eol
@@ -73,6 +75,7 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, print_data_beam, print_mt
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
     new_index = np.argsort(np.real(eigenvals))
 
+    eigenvects = eigenvects.T
     #val_prop = np.sort(np.real(eigenvals))
     #val_prop = np.sqrt(val_prop) / (2 * np.pi)
     val_prop = []
@@ -88,7 +91,11 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, print_data_beam, print_mt
 
     return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
 
-#tmp, _, _, _, _ = ElementFini_OffShoreStruct(2, 8,False, False, False, True)
+printDataBeam = False
+printMtot = False
+printStructure = False
+printResult = True
+tmp, _, _, _, _ = ElementFini_OffShoreStruct(2, 8, printDataBeam, printMtot, printStructure, printResult)
 
 def EtudeConvergence(precision):
     TestElem = np.arange(2, precision + 1, 1)

@@ -382,6 +382,47 @@ def plot_structure(elemList, nodeList):
     plt.show()
 
 def plot_result(nodeList, nodeConstraint, eigenvects, elemList, dofList):
+    factor = 5
+    nbrConstraintNode = len(nodeConstraint)
+
+    for i in range(len(eigenvects)):
+        newNodeList = []
+        for j in range(len(nodeList)):
+            x, y, z = nodeList[j][0], nodeList[j][1], nodeList[j][2]
+
+            if j + 1 in nodeConstraint:
+                newNodeList.append([x, y, z])
+
+            else:
+                dx, dy, dz = eigenvects[i][6 * (j - nbrConstraintNode)], eigenvects[i][6 * (j - nbrConstraintNode) + 1], \
+                             eigenvects[i][6 * (j - nbrConstraintNode) + 2]
+
+                coord = [x + dx * factor, y + dy * factor, z + dz * factor]
+
+                newNodeList.append(coord)
+
+        ax = plt.axes(projection='3d')
+        ax.set_box_aspect((10, 10, 30))
+        ax.set_title(f"Shape mode {i + 1}")
+        ax.grid(False)
+        ax.xaxis.pane.fill = False
+        ax.yaxis.pane.fill = False
+        ax.zaxis.pane.fill = False
+        ax.xaxis.pane.set_edgecolor('w')
+        ax.yaxis.pane.set_edgecolor('w')
+        ax.zaxis.pane.set_edgecolor('w')
+
+        for elem in elemList:
+            node1 = nodeList[elem[0] - 1]
+            node2 = nodeList[elem[1] - 1]
+            newNode1 = newNodeList[elem[0] - 1]
+            newNode2 = newNodeList[elem[1] - 1]
+
+            # ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], '--',  c='b')
+            ax.plot([newNode1[0], newNode2[0]], [newNode1[1], newNode2[1]], [newNode1[2], newNode2[2]], c='r')
+
+        plt.show()
+    """
         fig = plt.figure()
 
         for i in range(len(eigenvects)):
@@ -415,7 +456,7 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList, dofList):
                 ax.plot([node1Def[0], node2Def[0]], [node1Def[1], node2Def[1]], [node1Def[2], node2Def[2]], '--', c='r')
 
             plt.show()
-
+    """
 
 def print_freq(list_eign):
 
