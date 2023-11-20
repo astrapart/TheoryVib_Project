@@ -243,4 +243,58 @@ fct.print_TransientResponse(qAcc, qDisp, t, DofList)
 fct.print_NewmarkResponse(qDispN, t, DofList)
 
 
+def F(t):
+    return data.A * np.sin(2*np.pi*data.f * t)
+
+
+def TestTransientResponse(numberMode, t, verbose):
+
+    numberElem = 3
+    eigenValues, eigenVectors, K, M, dofList = ElementFini_OffShoreStruct(numberElem, numberMode, False, False, False, False)
+
+    A = 0.5 * np.array([[eigenValues[0], 1 / eigenValues[0]],
+                        [eigenValues[1], 1 / eigenValues[1]]])
+    b = data.dampingRatioInit
+    alpha, beta = np.linalg.solve(A, b)
+
+    xAppl = dofList[17][0]
+    yAppl = dofList[17][1]
+    p = np.zeros((len(K), len(t)))
+    for i in range(len(t)):
+        p[xAppl][i] = F(t[i]) * np.sqrt(2) / 2
+        p[yAppl][i] = F(t[i]) * np.sqrt(2) / 2
+
+    phi = np.zeros((numberMode, len(t)))
+    eta = np.zeros((numberMode, len(t)))
+
+    qDisp = np.zeros((len(t), len(K)))
+    qAcc = np.zeros((len(t), len(K)))
+    for r in range(numberMode):
+        mur = eigenVectors[r].T @ M @ eigenVectors[r]
+        er = 0.5 * (alpha * eigenValues[r] + beta / eigenValues[r])
+        wr = eigenValues[r]
+        wrd = wr * np.sqrt(1 - er)
+
+        phir = eigenVectors[r].T @ p / mur
+        phi[r] = phir
+        h = np.exp(-er * wr * t) * np.sin(wrd * t) / wrd
+
+        etar = np.convolve(phir, h)[:len(t)]
+        eta[r] = etar
+
+        qDisp += np.dot(etar.reshape((len(etar), 1)), eigenVectors[r].reshape((1, len(eigenVectors[r]))))
+        qAcc += qDisp - (phir.reshape((len(phir), 1)) / eigenValues[r] ** 2) @ eigenVectors[r].reshape((1, len(eigenVectors[r])))
+
+    qAcc -= (np.linalg.inv(K) @ p).T
+
+    C = alpha * K + beta * M
+
+    if verbose:
+        fct.print_TransientResponse(qAcc, qDisp, t, dofList)
+
+    return qDisp, qAcc, K, M, C, dofList
+
+qDips, qAcc, K, M, C, DofList = TestTransientResponse(8, t, True)
+
+
 
