@@ -91,11 +91,11 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, print_data_beam, print_mt
 
     return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
 
-printDataBeam = False
-printMtot = False
-printStructure = False
-printResult = True
-tmp, _, _, _, _ = ElementFini_OffShoreStruct(2, 8, printDataBeam, printMtot, printStructure, printResult)
+#printDataBeam = False
+#printMtot = False
+#printStructure = False
+#printResult = True
+#tmp, _, _, _, _ = ElementFini_OffShoreStruct(2, 8, printDataBeam, printMtot, printStructure, printResult)
 
 def EtudeConvergence(precision):
     TestElem = np.arange(2, precision + 1, 1)
@@ -163,7 +163,7 @@ def ModeAccelerationMethod(eigenvectors, eigenvalues, eta, K, phi, p, t):
 
 def TransientResponse(numberMode, t, pas, verbose):
     numberElem = 3
-    EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numberMode, False, False, False, False)
+    EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numberMode, False, False, False, True)
 
     mu = fct.Mu(EigenVectors, M)
     Alpha, Beta = fct.CoefficientAlphaBeta(EigenValues)

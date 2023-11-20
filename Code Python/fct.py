@@ -403,7 +403,7 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList, dofList):
 
         ax = plt.axes(projection='3d')
         ax.set_box_aspect((10, 10, 30))
-        ax.set_title(f"Shape mode {i + 1}")
+        #ax.set_title(f"Shape mode {i + 1}")
         ax.grid(False)
         ax.xaxis.pane.fill = False
         ax.yaxis.pane.fill = False
@@ -418,45 +418,15 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList, dofList):
             newNode1 = newNodeList[elem[0] - 1]
             newNode2 = newNodeList[elem[1] - 1]
 
-            # ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], '--',  c='b')
+            ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], '--',  c='black')
             ax.plot([newNode1[0], newNode2[0]], [newNode1[1], newNode2[1]], [newNode1[2], newNode2[2]], c='r')
 
+
+        #plt.legend("Structure", loc='upper left')
+        name = f"Mode Shape {i + 1}"
+        ax.legend(loc='upper left', labels=["Jacket", name ])
+        #plt.savefig(f"ModeShape{i+1}.pdf")
         plt.show()
-    """
-        fig = plt.figure()
-
-        for i in range(len(eigenvects)):
-
-            nodeListDef = np.array(nodeList.copy())
-
-            for elem in elemList:
-                elem1 = elem[0] - 1
-                elem2 = elem[1] - 1
-                facteur = 50
-                for k in range(3):
-                    nodeListDef[elem1][k] += facteur * eigenvects[i][dofList[elem1][k]]
-                    nodeListDef[elem2][k] += facteur * eigenvects[i][dofList[elem2][k]]
-
-            ax = plt.axes(projection='3d')
-            ax.set_box_aspect((10, 10, 20))
-
-            for elem in elemList:
-                elem1 = elem[0] - 1
-                elem2 = elem[1] - 1
-
-                node1 = nodeList[elem1]
-                node2 = nodeList[elem2]
-
-                node1Def = nodeListDef[elem1]
-                node2Def = nodeListDef[elem2]
-
-                ax.grid(False)
-
-                ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], c='b')
-                ax.plot([node1Def[0], node2Def[0]], [node1Def[1], node2Def[1]], [node1Def[2], node2Def[2]], '--', c='r')
-
-            plt.show()
-    """
 
 def print_freq(list_eign):
 
