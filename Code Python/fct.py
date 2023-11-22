@@ -490,68 +490,11 @@ def ConvergencePlot():
     plt.show()
     """
 
+
 def print_matrix(matrix):
 
     for line in matrix:
         print("      ".join(map(str, line)))
-
-
-def print_TransientResponse(qAcc, qDisp, t, DofList):
-    fig = plt.figure(figsize=(10, 7))
-
-    ax1 = fig.add_subplot(211)
-    DisplacementNodeX = qDisp[:, DofList[17][0]-25]
-    DisplacementNodeY = qDisp[:, DofList[17][1]-25]
-
-    AccelerationNodeX = qAcc[:, DofList[17][0]-25]
-    AccelerationNodeY = qAcc[:, DofList[17][1]-25]
-    AccNode =  (1/np.sqrt(2)) * AccelerationNodeX +  (1/np.sqrt(2)) * AccelerationNodeY
-
-
-    DispNode = (-np.sqrt(2)) * DisplacementNodeX
-    ax1.plot(t, AccNode, label = 'Mode Acc', c = 'r')
-    ax1.plot(t, DispNode*1000, label = 'Mode Depl', c = 'blue')
-    ax1.legend()
-    ax1.set_title("Displacement of the Node")
-
-    ax2 = fig.add_subplot(212)
-    DisplacementRotorX = qDisp[:, DofList[21][0]-25]
-    DisplacementRotorY = qDisp[:, DofList[21][1]-25]
-    DispRotor = (-np.sqrt(2)) * DisplacementRotorX
-
-    AccelerationRotorX = qAcc[:, DofList[21][0]-25]
-    AccelerationRotorY = qAcc[:, DofList[21][1]-25]
-    AccRotor = (1 / np.sqrt(2)) * AccelerationRotorX + (1/np.sqrt(2)) * AccelerationRotorY
-
-    ax2.plot(t, AccRotor, label = 'Mode Acc', c='r')
-    ax2.plot(t, DispRotor*1000, label = 'Mode Dipl', c='blue')
-    ax2.legend()
-    ax2.set_title("Displacement of the Rotor")
-
-    plt.show()
-
-def print_NewmarkResponse(q, t, DofList):
-    fig = plt.figure(figsize=(10, 7))
-
-    ax1 = fig.add_subplot(211)
-    DisplacementNodeX = q[:, DofList[17][0]-25]
-    DisplacementNodeY = q[:, DofList[17][1]-25]
-
-    DispNode = (-np.sqrt(2)) * DisplacementNodeX
-    ax1.plot(t, DispNode*1000, label = 'Newmark', c = 'blue')
-    ax1.legend()
-    ax1.set_title("Displacement of the Node")
-
-    ax2 = fig.add_subplot(212)
-    DisplacementRotorX = q[:, DofList[21][0]-25]
-    DisplacementRotorY = q[:, DofList[21][1]-25]
-    DispRotor = (-np.sqrt(2)) * DisplacementRotorX
-    ax2.plot(t, DispRotor*1000, label = 'Newmark', c='blue')
-    ax2.legend()
-    ax2.set_title("Displacement of the Rotor")
-
-    plt.show()
-
 
 def print_ConvergenceTransientResponse(numberMaxMode, numberMode_list, responseDisp, responseAcc, dofList, t):
     fig = plt.figure(figsize=(10, 7))
@@ -613,7 +556,7 @@ def printResult(qAcc, qDisp, qDispN, t, DofList) :
 
     ax1.plot(t, AccNode*1000, label = 'Mode Acc', c = 'r')
     ax1.plot(t, DispNode*1000, label = 'Mode Depl', c = 'blue')
-    ax1.plot(t, DispNodeNM * 1000, label='Mode Depl', c='black')
+    ax1.plot(t, DispNodeNM*1000, label='NM', c='black')
 
     ax1.legend()
     ax1.set_title("Displacement of the Node")
@@ -625,13 +568,13 @@ def printResult(qAcc, qDisp, qDispN, t, DofList) :
     AccelerationRotorX = qAcc[:, DofList[21][0]-25]
     AccRotor = (-np.sqrt(2)) * AccelerationRotorX
 
-    DisplacementRotorXNM = qDispN[:, DofList[21][0] - 25]
+    DisplacementRotorXNM = qDispN[:, DofList[21][0]-25]
     DispRotorNM = (-np.sqrt(2)) * DisplacementRotorXNM
 
 
     ax2.plot(t, AccRotor*1000, label = 'Mode Acc', c='r')
     ax2.plot(t, DispRotor*1000, label = 'Mode Dipl', c='blue')
-    ax2.plot(t, DispRotorNM * 1000, label='Mode Dipl', c='blue')
+    ax2.plot(t, DispRotorNM*1000, label='NM', c='blue')
     ax2.legend()
     ax2.set_title("Displacement of the Rotor")
 
