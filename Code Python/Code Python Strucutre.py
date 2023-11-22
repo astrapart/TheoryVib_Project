@@ -92,7 +92,7 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, print_data_beam, print_mt
         fct.print_freq(val_prop[:numberMode])
         fct.plot_result(nodeList, nodeConstraint, vect_prop[:numberMode], elemList0, dofList)
 
-    return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
+    return np.array(val_prop[:numberMode]), np.array(vect_prop[:numberMode]), K, M, dofList
 
 #printDataBeam = False
 #printMtot = False
@@ -140,29 +140,35 @@ def ModeDisplacementMethod(eigenvectors, eta, t):
 
     return q.T
 
+
 def ModeAccelerationMethod(eigenvectors, eigenvalues, eta, K, phi, p, t):
     start = time.time()
 
     nbreDof = len(eigenvectors[0])
     Mode_nbr = len(eigenvectors)
 
-    q = np.zeros((len(t), nbreDof))
+    q = np.zeros((nbreDof, len(t)))
     for i in range(Mode_nbr):
+        q += np.dot(eigenvectors[i, :].reshape(nbreDof, 1), eta[i, :].reshape(1, len(t)))
+        q -= np.dot(eigenvectors[i, :].reshape(nbreDof, 1), phi[i, :].reshape(1, len(t))) / eigenvalues[i] ** 2
+        """
         for j in range(nbreDof):
             for k in range(len(t)):
                 q[k][j] += eta[i][k] * eigenvectors[i][j]
                 q[k][j] -= phi[i][k] * eigenvectors[i][j] / eigenvalues[i] ** 2
+        """
 
         progress = i / (Mode_nbr - 1) * 100
         print('\rProgress Acceleration Method: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
 
-    q += (np.linalg.inv(K) @ p).T
+    q += (np.linalg.inv(K) @ p)
 
     end = time.time()
     delta = end - start
     print(f"\nTotal execution time: {delta:.2f} seconds")
 
-    return q
+    return q.T
+
 
 def TransientResponse(numberMode, t, pas, verbose):
     numberElem = 3
@@ -172,7 +178,6 @@ def TransientResponse(numberMode, t, pas, verbose):
     Alpha, Beta = fct.CoefficientAlphaBeta(EigenValues)
     C = fct.DampingMatrix(Alpha, Beta, K, M)
     DampingRatio = fct.DampingRatios(Alpha, Beta, EigenValues)
-
     p = fct.P(len(EigenVectors[0]), data.ApplNode, DofList, t)
     phi = fct.Phi(EigenVectors, mu, p)
 
@@ -186,22 +191,22 @@ def TransientResponse(numberMode, t, pas, verbose):
 
     return qAcc, qDisp, C, p, K, M, DofList
 
-def ConvergenceTransientResponse(numberMaxMode):
-    numberMode_list = np.arange(2, numberMaxMode + 1, 1)
+
+def ConvergenceTransientResponse(numberMode, t, h):
+    numberModeList = np.arange(2, numberMode + 1, 1)
     responseAcc = []
     responseDisp = []
-    t_final = 5
-    t = np.linspace(0, t_final, 1001)
     dofList = []
 
-    for numberMode in numberMode_list:
-        qAcc, qDisp, _, _, _, _, DofList = TransientResponse(numberMode, t, False)
+    for numberMode in numberModeList:
+        qAcc, qDisp, _, _, _, _, DofList = TransientResponse(numberMode, t, h, False)
 
         dofList = DofList
         responseAcc.append(qAcc)
         responseDisp.append(qDisp)
 
-    fct.print_ConvergenceTransientResponse(numberMaxMode, numberMode_list, responseDisp, responseAcc, dofList, t)
+    fct.print_ConvergenceTransientResponse(numberModeList, responseDisp, responseAcc, dofList, t)
+
 
 def Newmark(M, C, K, p, h,t):
     gamma = data.gamma
@@ -211,7 +216,7 @@ def Newmark(M, C, K, p, h,t):
     qacc  = np.zeros((len(t), len(M)))
 
     S = fct.compute_S(M, h, gamma, C, beta, K)
-    S_inv = scipy.linalg.inv(S)
+    S_inv = np.linalg.inv(S)
 
     #qacc[0] = np.linalg.solve(M, p.T[0] - C @ qvel[0].T - K @ qdisp[0].T)
 
@@ -223,8 +228,8 @@ def Newmark(M, C, K, p, h,t):
         #qacc[i] = np.linalg.solve(S, p.T[i] - C @ qvel[i].T - K @ qdisp[i].T)
         qacc[i] = S_inv @ (p.T[i] - C @ qvel[i].T - K @ qdisp[i].T)
 
-        qvel[i] =  qvel[i] + h * gamma * qacc[i]
-        qdisp[i] = qdisp[i]  + (h**2) * beta * qacc[i]
+        qvel[i] = qvel[i] + h * gamma * qacc[i]
+        qdisp[i] = qdisp[i] + (h**2) * beta * qacc[i]
 
         progress = i / (len(t)-1) * 100
         print('\rProgress Newmark: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
@@ -234,18 +239,21 @@ def Newmark(M, C, K, p, h,t):
 
     return qdisp, qvel, qacc
 
-#ElementFini_OffShoreStruct(3, 8, False)
-#EtudeConvergence(15)
+
+# ElementFini_OffShoreStruct(3, 8, False)
 
 NumberMode = 8
 tfin = 10
 pas = 0.001
 t = np.arange(0, tfin, pas)
-qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, pas,False)
+"""
+qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, pas, False)
 qDispN, qVelN, qAccN = Newmark(M, C, K, p, pas, t)
 
-
 fct.printResult(qAcc, qDisp, qDispN, t, DofList)
+"""
+# ConvergenceTransientResponse(NumberMode, t, pas)
+
 
 def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, print_mtot, plot_structure, plot_result):
     nodeList0 = data.nodeList_eol
@@ -282,6 +290,7 @@ def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, p
         Kel = fct.create_Kel(E, A, Jx, Iy, Iz, G, l)
         Mel = fct.create_Mel(m, r, l)
 
+        """ 
         def reduced(Matrix):
             for red in range(2):
                 Matrix = np.delete(Matrix, 11, red)
@@ -290,19 +299,19 @@ def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, p
                 Matrix = np.delete(Matrix, 3, red)
 
             return Matrix
-
-        KelRed = reduced(Kel.copy())
-        MelRed = reduced(Mel.copy())
+        """
+        # KelRed = reduced(Kel.copy()) TODO à retirer
+        # MelRed = reduced(Mel.copy())
 
         T = fct.create_T(coord1, coord2, l)
 
-        TRed = reduced(T.copy())
+        # TRed = reduced(T.copy())
 
         Kes = np.transpose(T) @ Kel @ T
         Mes = np.transpose(T) @ Mel @ T
 
-        KesRed = np.transpose(TRed) @ KelRed @ TRed
-        MesRed = np.transpose(TRed) @ MelRed @ TRed
+        # KesRed = np.transpose(TRed) @ KelRed @ TRed
+        # MesRed = np.transpose(TRed) @ MelRed @ TRed
 
         for j in range(len(locel[i])):
             for k in range(len(locel[i])):
@@ -324,10 +333,59 @@ def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, p
 
     M, K = fct.Add_const_emboit(nodeConstraint, dofList, M, K)
 
+    MRR, MRC, MCR, MCC = M.copy(), M.copy(), M.copy(), M.copy()
+    KRR, KRC, KCR, KCC = K.copy(), K.copy(), K.copy(), K.copy()
+    for i in range(len(M) // 6, 0, -1):
+        for j in range(1, 7):
+            if j in [2, 3]:
+                MRR = np.delete(MRR, 6 * i - j, 0)
+                MRR = np.delete(MRR, 6 * i - j, 1)
+
+                KRR = np.delete(KRR, 6 * i - j, 0)
+                KRR = np.delete(KRR, 6 * i - j, 1)
+
+                MRC = np.delete(MRC, 6 * i - j, 0)
+
+                MCR = np.delete(MCR, 6 * i - j, 1)
+
+                KRC = np.delete(KRC, 6 * i - j, 0)
+
+                KCR = np.delete(KCR, 6 * i - j, 1)
+
+            if j in [1, 4, 5, 6]:
+                MCC = np.delete(MCC, 6 * i - j, 0)
+                MCC = np.delete(MCC, 6 * i - j, 1)
+
+                KCC = np.delete(KCC, 6 * i - j, 0)
+                KCC = np.delete(KCC, 6 * i - j, 1)
+
+                MRC = np.delete(MRC, 6 * i - j, 1)
+
+                MCR = np.delete(MCR, 6 * i - j, 0)
+
+                KRC = np.delete(KRC, 6 * i - j, 1)
+
+                KCR = np.delete(KCR, 6 * i - j, 0)
+
+        progress = (len(M) // 6 - i) / (len(M)//6 - 1) * 100
+        print('\rProgress Guyan-Irons: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
+    print("\n")
+    newK = np.concatenate((np.concatenate((KRR, KCR), axis=0), np.concatenate((KRC, KCC), axis=0)), axis=1)
+    newM = np.concatenate((np.concatenate((MRR, MCR), axis=0), np.concatenate((MRC, MCC), axis=0)), axis=1)
+
+    I = np.identity(len(KRR))
+    tmp = - np.linalg.inv(KCC) @ KCR
+    RGI = np.concatenate((I, tmp), axis=0)
+
+    KtildGI = RGI.T @ newK @ RGI
+    MtildGI = RGI.T @ newM @ RGI
+
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
     new_index = np.argsort(np.real(eigenvals))
+    eigenvalsGI, eigenvectsGI = scipy.linalg.eig(KtildGI, MtildGI)
+    new_indexGI = np.argsort(np.real(eigenvalsGI))
 
-    eigenvects = eigenvects.T
+    eigenvectsGI = eigenvectsGI.T
     #val_prop = np.sort(np.real(eigenvals))
     #val_prop = np.sqrt(val_prop) / (2 * np.pi)
     val_prop = []
@@ -336,10 +394,12 @@ def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, p
         vect_prop.append(eigenvects[i])
         val_prop.append(np.sqrt(np.real(eigenvals[i]))/(2*np.pi))
 
+    val_propGI = []
+    for i in new_indexGI:
+        val_propGI.append(np.sqrt(np.real(eigenvalsGI[i]))/(2*np.pi))
 
     if plot_result:
-        fct.print_freq(val_prop[:numberMode])
-        fct.plot_result(nodeList, nodeConstraint, vect_prop[:numberMode], elemList0, dofList)
+        fct.print_freqComparaison(val_prop[:numberMode], val_propGI[:numberMode])
 
     return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
 
@@ -347,125 +407,27 @@ def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, p
 printDataBeam = False
 printMtot = False
 printStructure = False
-printResult = False
-#tmp, _, _, _, _ = ElementFini_OffShoreStructReduced(12, 8, printDataBeam, printMtot, printStructure, printResult)
-
-M = np.array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-              [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 110, 111],
-              [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 210, 211],
-              [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 310, 311],
-              [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 410, 411],
-              [50, 51, 52, 53 ,54, 55, 56, 57, 58, 59, 510, 511],
-              [60, 61, 62, 63, 64, 65, 66, 67 ,68 ,69, 610, 611],
-              [70, 71, 72, 73, 74, 75, 76, 77, 78, 79 ,710, 711],
-              [80, 81, 82 ,83, 84, 85, 86, 87, 88, 89, 810, 811],
-              [90, 91, 92, 93, 94, 95 ,96 ,97 ,98, 99, 910, 911],
-              [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 1010, 1011],
-              [110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 1110, 1111]])
-K = np.array([
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-
-
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-    [1,2,3,4,5,6,7,8,9,10,11,12],
-
-    [1,2,3,4,5,6,7,8,9,10,11,12]
-    ])
-
-MRR, MRC, MCR, MCC = M.copy(), M.copy(), M.copy(), M.copy()
-KRR, KRC, KCR, KCC = M.copy(), M.copy(), M.copy(), M.copy()
-
-for i in range(len(M)//6, 0, -1):
-    MRR = np.delete(MRR, 6*i - 2, 0)
-    MRR = np.delete(MRR, 6*i - 2, 1)
-    MRR = np.delete(MRR, 6*i - 3, 0)
-    MRR = np.delete(MRR, 6*i - 3, 1)
-
-    MCC = np.delete(MCC, 6*i - 1, 0)
-    MCC = np.delete(MCC, 6*i - 1, 1)
-    MCC = np.delete(MCC, 6*i - 4, 0)
-    MCC = np.delete(MCC, 6*i - 4, 1)
-    MCC = np.delete(MCC, 6*i - 5, 0)
-    MCC = np.delete(MCC, 6*i - 5, 1)
-    MCC = np.delete(MCC, 6*i - 6, 0)
-    MCC = np.delete(MCC, 6*i - 6, 1)
-
-    MRC = np.delete(MRC, 6*i - 2, 0)
-    MRC = np.delete(MRC, 6*i - 3, 0)
-    MRC = np.delete(MRC, 6*i - 1, 1)
-    MRC = np.delete(MRC, 6*i - 4, 1)
-    MRC = np.delete(MRC, 6*i - 5, 1)
-    MRC = np.delete(MRC, 6*i - 6, 1)
-
-    MCR = np.delete(MCR, 6*i - 2, 1)
-    MCR = np.delete(MCR, 6*i - 3, 1)
-    MCR = np.delete(MCR, 6*i - 1, 0)
-    MCR = np.delete(MCR, 6*i - 4, 0)
-    MCR = np.delete(MCR, 6*i - 5, 0)
-    MCR = np.delete(MCR, 6*i - 6, 0)
-
+printResult = True
+tmp, _, _, _, _ = ElementFini_OffShoreStructReduced(3, 8, printDataBeam, printMtot, printStructure, printResult)
 """
-nbrelem = 2
-MRR, KRR = np.zeros((nbrelem * 4, nbrelem * 4)), np.zeros((nbrelem * 4, nbrelem * 4))
-MCC, KCC = np.zeros((nbrelem * 2, nbrelem * 2)), np.zeros((nbrelem * 2, nbrelem * 2))
-MRC, KRC = np.zeros((nbrelem * 4, nbrelem * 2)), np.zeros((nbrelem * 4, nbrelem * 2))
-MCR, KCR = np.zeros((nbrelem * 2, nbrelem * 4)), np.zeros((nbrelem * 2, nbrelem * 4))
+A = np.array([[1, 2, 3],
+             [6, 7, 8],
+             [11, 12, 13]])
 
-listReduce = np.array([0, 1, 2, 6])
-listAREt = np.array([3, 4])
-for i in range(nbrelem):
-    for j in range(nbrelem):
-        MRR[4 * i, 4 * j] = M[6 * i, 6 * j]
-        MRR[4 * i, 4 * j + 1] = M[6 * i, 6 * j + 1]
-        MRR[4 * i, 4 * j + 2] = M[6 * i, 6 * j + 2]
-        MRR[4 * i, 4 * j + 3] = M[6 * i, 6 * j + 5]
-        MRR[4 * i + 1, 4 * j] = M[6 * i + 1, 6 * j]
-        MRR[4 * i + 1, 4 * j + 1] = M[6 * i + 1, 6 * j + 1]
-        MRR[4 * i + 1, 4 * j + 2] = M[6 * i + 1, 6 * j + 2]
-        MRR[4 * i + 1, 4 * j + 3] = M[6 * i + 1, 6 * j + 5]
-        MRR[4 * i + 2, 4 * j] = M[6 * i + 2, 6 * j]
-        MRR[4 * i + 2, 4 * j + 1] = M[6 * i + 2, 6 * j + 1]
-        MRR[4 * i + 2, 4 * j + 2] = M[6 * i + 2, 6 * j + 2]
-        MRR[4 * i + 2, 4 * j + 3] = M[6 * i + 2, 6 * j + 5]
-        MRR[4 * i + 3, 4 * j] = M[6 * i + 5, 6 * j]
-        MRR[4 * i + 3, 4 * j + 1] = M[6 * i + 5, 6 * j + 1]
-        MRR[4 * i + 3, 4 * j + 2] = M[6 * i + 5, 6 * j + 2]
-        MRR[4 * i + 3, 4 * j + 3] = M[6 * i + 5, 6 * j + 5]
+B = np.array([[4, 5],
+             [9, 10],
+             [14, 15]])
 
-        MCC[2 * i, 2 * j] = M[6 * i + 3, 6 * j + 3]
-        MCC[2 * i, 2 * j + 1] = M[6 * i + 3, 6 * j + 4]
-        MCC[2 * i + 1, 2 * j] = M[6 * i + 4, 6 * j + 3]
-        MCC[2 * i + 1, 2 * j + 1] = M[6 * i + 4, 6 * j + 4]
+C = np.array([[16, 17, 18],
+             [21, 22, 23]])
 
-        MRC[4 * i, 2 * j] = M[6 * i, 6 * j + 3]
-        MRC[4 * i, 2 * j + 1] = M[6 * i, 6 * j + 4]
-        MRC[4 * i + 1, 2 * j] = M[6 * i + 1, 6 * j + 3]
-        MRC[4 * i + 1, 2 * j + 1] = M[6 * i + 1, 6 * j + 4]
-        MRC[4 * i + 2, 2 * j] = M[6 * i + 2, 6 * j + 3]
-        MRC[4 * i + 2, 2 * j + 1] = M[6 * i + 2, 6 * j + 4]
-        MRC[4 * i + 3, 2 * j] = M[6 * i + 5, 6 * j + 3]
-        MRC[4 * i + 3, 2 * j + 1] = M[6 * i + 5, 6 * j + 4]
+D = np.array([[19, 20],
+             [24, 25]])
 
-        MRC[2 * i, 4 * j] = M[6 * i + 3, 6 * j]
-        MRC[2 * i, 4 * j + 1] = M[6 * i + 3, 6 * j + 1]
-        MRC[2 * i, 4 * j + 2] = M[6 * i + 3, 6 * j + 2]
-        MRC[2 * i, 4 * j + 3] = M[6 * i + 3, 6 * j + 5]
-        MRC[2 * i + 1, 4 * j] = M[6 * i + 4, 6 * j]
-        MRC[2 * i + 1, 4 * j + 1] = M[6 * i + 4, 6 * j + 1]
-        MRC[2 * i + 1, 4 * j + 2] = M[6 * i + 4, 6 * j + 2]
-        MRC[2 * i + 1, 4 * j + 3] = M[6 * i + 4, 6 * j + 5]
-
-print(MRR)
-print(KRR)
+test = np.concatenate((A, C), axis=0)
+test2 = np.concatenate((B, D), axis=0)
+test3 = np.concatenate((test, test2), axis=1)
+print(test)
+print(test2)
+print(test3)
 """
