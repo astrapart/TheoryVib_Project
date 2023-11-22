@@ -265,11 +265,11 @@ def F(t):
 def P(n, applNode, dofList, t):
     p = np.zeros((n, len(t)))
 
-    xAppl = dofList[applNode - 1][0]
-    yAppl = dofList[applNode - 1][1]
+    xAppl = dofList[17][0] -25
+    yAppl = dofList[17][1] -25
 
     for i in range(len(t)):
-        p[xAppl][i] = F(t[i]) * np.sqrt(2) / 2
+        p[xAppl][i] = -F(t[i]) * np.sqrt(2) / 2
         p[yAppl][i] = F(t[i]) * np.sqrt(2) / 2
 
     return p
@@ -421,8 +421,6 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList, dofList):
             ax.plot([node1[0], node2[0]], [node1[1], node2[1]], [node1[2], node2[2]], '--',  c='black')
             ax.plot([newNode1[0], newNode2[0]], [newNode1[1], newNode2[1]], [newNode1[2], newNode2[2]], c='r')
 
-
-        #plt.legend("Structure", loc='upper left')
         name = f"Mode Shape {i + 1}"
         ax.legend(loc='upper left', labels=["Jacket", name ])
         #plt.savefig(f"ModeShape{i+1}.pdf")
@@ -502,31 +500,31 @@ def print_TransientResponse(qAcc, qDisp, t, DofList):
     fig = plt.figure(figsize=(10, 7))
 
     ax1 = fig.add_subplot(211)
-    DisplacementNodeX = qDisp[:, DofList[17][0]]
-    DisplacementNodeY = qDisp[:, DofList[17][1]]
+    DisplacementNodeX = qDisp[:, DofList[17][0]-25]
+    DisplacementNodeY = qDisp[:, DofList[17][1]-25]
 
-    AccelerationNodeX = qAcc[:, DofList[17][0]]
-    AccelerationNodeY = qAcc[:, DofList[17][1]]
+    AccelerationNodeX = qAcc[:, DofList[17][0]-25]
+    AccelerationNodeY = qAcc[:, DofList[17][1]-25]
     AccNode =  (1/np.sqrt(2)) * AccelerationNodeX +  (1/np.sqrt(2)) * AccelerationNodeY
 
 
-    DispNode = (1/np.sqrt(2)) * DisplacementNodeX + (1/np.sqrt(2)) * DisplacementNodeY
+    DispNode = (-np.sqrt(2)) * DisplacementNodeX
     ax1.plot(t, AccNode, label = 'Mode Acc', c = 'r')
-    ax1.plot(t, DispNode, label = 'Mode Depl', c = 'blue')
+    ax1.plot(t, DispNode*1000, label = 'Mode Depl', c = 'blue')
     ax1.legend()
     ax1.set_title("Displacement of the Node")
 
     ax2 = fig.add_subplot(212)
-    DisplacementRotorX = qDisp[:, DofList[21][0]]
-    DisplacementRotorY = qDisp[:, DofList[21][1]]
-    DispRotor = (1/np.sqrt(2)) * DisplacementRotorX +  (1/np.sqrt(2)) * DisplacementRotorY
+    DisplacementRotorX = qDisp[:, DofList[21][0]-25]
+    DisplacementRotorY = qDisp[:, DofList[21][1]-25]
+    DispRotor = (-np.sqrt(2)) * DisplacementRotorX
 
-    AccelerationRotorX = qAcc[:, DofList[21][0]]
-    AccelerationRotorY = qAcc[:, DofList[21][1]]
+    AccelerationRotorX = qAcc[:, DofList[21][0]-25]
+    AccelerationRotorY = qAcc[:, DofList[21][1]-25]
     AccRotor = (1 / np.sqrt(2)) * AccelerationRotorX + (1/np.sqrt(2)) * AccelerationRotorY
 
     ax2.plot(t, AccRotor, label = 'Mode Acc', c='r')
-    ax2.plot(t, DispRotor, label = 'Mode Dipl', c='blue')
+    ax2.plot(t, DispRotor*1000, label = 'Mode Dipl', c='blue')
     ax2.legend()
     ax2.set_title("Displacement of the Rotor")
 
@@ -536,19 +534,19 @@ def print_NewmarkResponse(q, t, DofList):
     fig = plt.figure(figsize=(10, 7))
 
     ax1 = fig.add_subplot(211)
-    DisplacementNodeX = q[:, DofList[17][0]]
-    DisplacementNodeY = q[:, DofList[17][1]]
+    DisplacementNodeX = q[:, DofList[17][0]-25]
+    DisplacementNodeY = q[:, DofList[17][1]-25]
 
-    DispNode = (1/np.sqrt(2)) * DisplacementNodeX + (1/np.sqrt(2)) * DisplacementNodeY
-    ax1.plot(t, DispNode, label = 'Newmark', c = 'blue')
+    DispNode = (-np.sqrt(2)) * DisplacementNodeX
+    ax1.plot(t, DispNode*1000, label = 'Newmark', c = 'blue')
     ax1.legend()
     ax1.set_title("Displacement of the Node")
 
     ax2 = fig.add_subplot(212)
-    DisplacementRotorX = q[:, DofList[21][0]]
-    DisplacementRotorY = q[:, DofList[21][1]]
-    DispRotor = (1/np.sqrt(2)) * DisplacementRotorX +  (1/np.sqrt(2)) * DisplacementRotorY
-    ax2.plot(t, DispRotor, label = 'Newmark', c='blue')
+    DisplacementRotorX = q[:, DofList[21][0]-25]
+    DisplacementRotorY = q[:, DofList[21][1]-25]
+    DispRotor = (-np.sqrt(2)) * DisplacementRotorX
+    ax2.plot(t, DispRotor*1000, label = 'Newmark', c='blue')
     ax2.legend()
     ax2.set_title("Displacement of the Rotor")
 
@@ -596,4 +594,45 @@ def print_ConvergenceTransientResponse(numberMaxMode, numberMode_list, responseD
     ax2.set_title("Acceleration of the Rotor")
     ax2.legend()
     fig.suptitle("Mode Acceleration Method")
+    plt.show()
+
+
+def printResult(qAcc, qDisp, qDispN, t, DofList) :
+    fig = plt.figure(figsize=(10, 7))
+
+    ax1 = fig.add_subplot(211)
+    DisplacementNodeX = qDisp[:, DofList[17][0]-25]
+    DispNode = (-np.sqrt(2)) * DisplacementNodeX
+
+    AccelerationNodeX = qAcc[:, DofList[17][0]-25]
+    AccNode = (-np.sqrt(2)) * AccelerationNodeX
+
+    DisplacementNodeXNM = qDispN[:, DofList[17][0] - 25]
+    DispNodeNM = (-np.sqrt(2)) * DisplacementNodeXNM
+
+
+    ax1.plot(t, AccNode*1000, label = 'Mode Acc', c = 'r')
+    ax1.plot(t, DispNode*1000, label = 'Mode Depl', c = 'blue')
+    ax1.plot(t, DispNodeNM * 1000, label='Mode Depl', c='black')
+
+    ax1.legend()
+    ax1.set_title("Displacement of the Node")
+
+    ax2 = fig.add_subplot(212)
+    DisplacementRotorX = qDisp[:, DofList[21][0]-25]
+    DispRotor = (-np.sqrt(2)) * DisplacementRotorX
+
+    AccelerationRotorX = qAcc[:, DofList[21][0]-25]
+    AccRotor = (-np.sqrt(2)) * AccelerationRotorX
+
+    DisplacementRotorXNM = qDispN[:, DofList[21][0] - 25]
+    DispRotorNM = (-np.sqrt(2)) * DisplacementRotorXNM
+
+
+    ax2.plot(t, AccRotor*1000, label = 'Mode Acc', c='r')
+    ax2.plot(t, DispRotor*1000, label = 'Mode Dipl', c='blue')
+    ax2.plot(t, DispRotorNM * 1000, label='Mode Dipl', c='blue')
+    ax2.legend()
+    ax2.set_title("Displacement of the Rotor")
+
     plt.show()

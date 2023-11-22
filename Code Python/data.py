@@ -82,7 +82,8 @@ acc = v / timpact       # [m/s²] impacts acceleration
 efficiency = 0.85   # [%] percentage of the tail momentum transferred
 
 A = acc * efficiency * m
-ApplNode = 18         # Node where F is applied
+
+ApplNode = 17         # Node where F is applied
 
 """
 ########################################################################################################################

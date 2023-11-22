@@ -122,11 +122,11 @@ def ModeDisplacementMethod(eigenvectors, eta, t):
     nbreDof = len(eigenvectors[0])
     Mode_nbr = len(eigenvectors)
 
-    q = np.zeros((len(t), nbreDof))
+    q = np.zeros((nbreDof, len(t)))
+    eta = np.array(eta)
+    eigenvectors = np.array(eigenvectors)
     for i in range(Mode_nbr):
-        for j in range(nbreDof):
-            for k in range(len(t)):
-                q[k][j] += eta[i][k] * eigenvectors[i][j]
+        q += np.dot(eigenvectors[i, :].reshape(nbreDof, 1), eta[i, :].reshape(1, len(t)))
 
         progress = i / (Mode_nbr - 1) * 100
         print('\rProgress Displacement Method: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
@@ -135,7 +135,7 @@ def ModeDisplacementMethod(eigenvectors, eta, t):
     delta = end - start
     print(f"\nTotal execution time: {delta:.2f} seconds")
 
-    return q
+    return q.T
 
 def ModeAccelerationMethod(eigenvectors, eigenvalues, eta, K, phi, p, t):
     start = time.time()
@@ -163,15 +163,22 @@ def ModeAccelerationMethod(eigenvectors, eigenvalues, eta, K, phi, p, t):
 
 def TransientResponse(numberMode, t, pas, verbose):
     numberElem = 3
-    EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numberMode, False, False, False, True)
+    EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numberMode, False, False, False, False)
 
+    print("DOF 17 " ,DofList[17]-25)
+    print(DofList[0])
+    print("DOF 21 ", DofList[21] - 25)
+    EigenValues = np.array(EigenValues) * np.pi * 2
     mu = fct.Mu(EigenVectors, M)
     Alpha, Beta = fct.CoefficientAlphaBeta(EigenValues)
     C = fct.DampingMatrix(Alpha, Beta, K, M)
     DampingRatio = fct.DampingRatios(Alpha, Beta, EigenValues)
+
     p = fct.P(len(EigenVectors[0]), data.ApplNode, DofList, t)
     phi = fct.Phi(EigenVectors, mu, p)
+
     eta = fct.compute_eta(EigenVectors, EigenValues, DampingRatio, phi, t, pas)
+    print("eta", np.array(eta).shape)
 
     qDisp = ModeDisplacementMethod(EigenVectors, eta, t)
     qAcc = ModeAccelerationMethod(EigenVectors, EigenValues, eta, K, phi, p, t)
@@ -206,7 +213,7 @@ def Newmark(M, C, K, p, h,t):
     qacc  = np.zeros((len(t), len(M)))
 
     S = fct.compute_S(M, h, gamma, C, beta, K)
-    #S_inv = scipy.linalg.inv(S)
+    S_inv = scipy.linalg.inv(S)
 
     #qacc[0] = np.linalg.solve(M, p.T[0] - C @ qvel[0].T - K @ qdisp[0].T)
 
@@ -215,11 +222,11 @@ def Newmark(M, C, K, p, h,t):
         qvel[i] = qvel[i - 1] + (1 - gamma) * h * qacc[i - 1]
         qdisp[i] = qdisp[i-1] + h * qvel[i-1] + (0.5 - beta) * (h**2) * qacc[i-1]
 
-        qacc[i] = np.linalg.solve(S, p.T[i] - C @ qvel[i].T - K @ qdisp[i].T)
-        #qacc[i] = S_inv @ (p.T[i] - C @ qvel[i].T - K @ qdisp[i].T)
+        #qacc[i] = np.linalg.solve(S, p.T[i] - C @ qvel[i].T - K @ qdisp[i].T)
+        qacc[i] = S_inv @ (p.T[i] - C @ qvel[i].T - K @ qdisp[i].T)
 
-        qdisp[i] =  qdisp[i] + h * gamma * qacc[i]
-        qvel[i] = qvel[i]  + (h**2) * beta * qacc[i]
+        qvel[i] =  qvel[i] + h * gamma * qacc[i]
+        qdisp[i] = qdisp[i]  + (h**2) * beta * qacc[i]
 
         progress = i / (len(t)-1) * 100
         print('\rProgress Newmark: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
@@ -233,14 +240,16 @@ def Newmark(M, C, K, p, h,t):
 #EtudeConvergence(15)
 
 NumberMode = 8
-tfin = 5
-pas = 0.05
+tfin = 10
+pas = 0.001
 t = np.arange(0, tfin, pas)
 qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, pas,False)
 # ConvergenceTransientResponse(5)
 qDispN, qVelN, qAccN = Newmark(M, C, K, p, pas, t)
-fct.print_TransientResponse(qAcc, qDisp, t, DofList)
-fct.print_NewmarkResponse(qDispN, t, DofList)
+#fct.print_TransientResponse(qAcc, qDisp, t, DofList)
+#fct.print_NewmarkResponse(qDispN, t, DofList)
 
+
+fct.printResult(qAcc, qDisp, qDispN, t, DofList)
 
 
