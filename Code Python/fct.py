@@ -474,10 +474,6 @@ def plot_result(nodeList, nodeConstraint, eigenvects, elemList, dofList):
 def print_freq(list_eign):
 
     for i in range(len(list_eign)):
-        #print("La fréquence pour la valeur propre", i, "vaut :", f, "Hz")
-        # 0.44 valeur propre 1
-        # 0.45 valeur propre 2
-        # 0.9  valeur propre 3
         print("La fréquence pour la valeur propre {index} vaut : {val:>8.5f} [Hz]".format(index=i+1, val=list_eign[i]))
 
     return
@@ -595,7 +591,7 @@ def print_TransientResponse(qAcc, qDisp, t, DofList):
     ax1.plot(t, AccNode * 1000, label='Mode Acc', c='r')
     ax1.plot(t, DispNode * 1000, label='Mode Depl', c='blue')
     ax1.legend()
-    ax1.set_title("Displacement of the Node")
+    #ax1.set_title("Displacement of the Node")
 
     ax2 = fig.add_subplot(212)
     DisplacementRotorX = qDisp[:, DofList[21][0] - 25]
@@ -607,15 +603,13 @@ def print_TransientResponse(qAcc, qDisp, t, DofList):
     ax2.plot(t, AccRotor * 1000, label='Mode Acc', c='r')
     ax2.plot(t, DispRotor * 1000, label='Mode Dipl', c='blue')
     ax2.legend()
-    ax2.set_title("Displacement of the Rotor")
+    #ax2.set_title("Displacement of the Rotor")
 
     plt.show()
 
 
-def printResult(qAcc, qDisp, qDispN, t, DofList):
-    fig = plt.figure(figsize=(10, 7))
+def printResult(qAcc, qDisp, qDispN, t, DofList, plot_NodeDispl, plot_RotorDispl):
 
-    ax1 = fig.add_subplot(211)
     DisplacementNodeX = qDisp[:, DofList[17][0]-25]
     DispNode = (-np.sqrt(2)) * DisplacementNodeX
 
@@ -625,14 +619,7 @@ def printResult(qAcc, qDisp, qDispN, t, DofList):
     DisplacementNodeXNM = qDispN[:, DofList[17][0] - 25]
     DispNodeNM = (-np.sqrt(2)) * DisplacementNodeXNM
 
-    ax1.plot(t, AccNode*1000, label = 'Mode Acc', c = 'r')
-    ax1.plot(t, DispNode*1000, label = 'Mode Depl', c = 'blue')
-    ax1.plot(t, DispNodeNM*1000, label='NM', c='black')
 
-    ax1.legend()
-    ax1.set_title("Displacement of the Node")
-
-    ax2 = fig.add_subplot(212)
     DisplacementRotorX = qDisp[:, DofList[21][0]-25]
     DispRotor = (-np.sqrt(2)) * DisplacementRotorX
 
@@ -642,10 +629,23 @@ def printResult(qAcc, qDisp, qDispN, t, DofList):
     DisplacementRotorXNM = qDispN[:, DofList[21][0]-25]
     DispRotorNM = (-np.sqrt(2)) * DisplacementRotorXNM
 
-    ax2.plot(t, AccRotor*1000, label = 'Mode Acc', c='r')
-    ax2.plot(t, DispRotor*1000, label = 'Mode Dipl', c='blue')
-    ax2.plot(t, DispRotorNM*1000, label='NM', c='black')
-    ax2.legend()
-    ax2.set_title("Displacement of the Rotor")
+    fig = plt.figure(figsize=(10, 7))
+
+    ax1 = fig.add_subplot(111)
+
+    if plot_NodeDispl == True :
+        ax1.plot(t, AccNode * 1000, label='Mode Acc', c='r')
+        ax1.plot(t, DispNode * 1000, label='Mode Displ', c='royalblue')
+        ax1.plot(t, DispNodeNM * 1000,  label='Newmark', c='orange')
+
+    if plot_RotorDispl == True:
+        ax1.plot(t, AccRotor * 1000,  label='Mode Acc', c='r')
+        ax1.plot(t, DispRotor * 1000, label='Mode Displ', c='royalblue')
+        ax1.plot(t, DispRotorNM * 1000, label='Newmark', c='orange')
+
+    ax1.legend()
+    ax1.set_xlabel('Time [s]')
+    ax1.set_ylabel('Displacement [mm]')
+    #plt.savefig("ModDispl-ModAcc-NM-Rotor_ZOOM.pdf")
 
     plt.show()

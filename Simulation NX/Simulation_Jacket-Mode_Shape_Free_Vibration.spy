@@ -1,0 +1,26 @@
+!***********************************************************************
+! Bacon Spy File
+! Problem name: Simulation_Jacket-Mode_Shape_Free_Vibration
+! Creation Date: NOV 23 2023 12:22:08
+!
+INPUT INIT
+EXIT
+;INPUT  "C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\Simulation_Jacket-Mode_Shape_Free_Vibration.dat"
+! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+!
+!              NX 1859 TRANSLATOR
+!   This file is compatible with Samcef 2019.1 (19.1-01) and next versions
+!
+!              FEM FILE: C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\ProjetV1.fem
+!              SIM FILE: C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\Simulation Jacket.sim
+!         ANALYSIS TYPE: Simcenter Samcef - Structural
+!         SOLUTION NAME: Mode Shape Free Vibration
+!         SOLUTION TYPE: Modal Analysis
+!     SOLVER INPUT FILE: Simulation_Jacket-Mode_Shape_Free_Vibration.dat
+!         CREATION DATE: 23-novembre-2023
+!         CREATION TIME: 12:22:04
+!              HOSTNAME: Microsoft-Strapart
+!              USERNAME: arnau
+!
+! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+MODE M -1 LECTURE 256

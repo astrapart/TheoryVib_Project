@@ -176,6 +176,7 @@ def TransientResponse(numberMode, t, pas, verbose):
     EigenValues = np.array(EigenValues) * np.pi * 2
     mu = fct.Mu(EigenVectors, M)
     Alpha, Beta = fct.CoefficientAlphaBeta(EigenValues)
+    print(Alpha, Beta)
     C = fct.DampingMatrix(Alpha, Beta, K, M)
     DampingRatio = fct.DampingRatios(Alpha, Beta, EigenValues)
     p = fct.P(len(EigenVectors[0]), DofList, t, K)
@@ -250,7 +251,11 @@ t = np.arange(0, tfin, pas)
 qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, pas, False)
 qDispN, qVelN, qAccN = Newmark(M, C, K, p, pas, t)
 
+<<<<<<< HEAD
 #fct.printResult(qAcc, qDisp, qDispN, t, DofList)
+=======
+fct.printResult(qAcc, qDisp, qDispN, t, DofList, False, True)
+>>>>>>> d5b469a4aa9a000c4722d3227b4c227730292b62
 
 # ConvergenceTransientResponse(NumberMode, t, pas)
 
@@ -548,7 +553,7 @@ plt.show()
 
 #ReducedMethod(8, 20, True)
 
-
+"""
 def CompareFE_GI():
     numberElemList = np.arange(1, 13, 1)
     Time = np.zeros(len(numberElemList))
@@ -566,4 +571,28 @@ def CompareFE_GI():
     plt.show()
 
 
+<<<<<<< HEAD
 #CompareFE_GI()
+=======
+A = np.array([[1, 2, 3],
+             [6, 7, 8],
+             [11, 12, 13]])
+
+B = np.array([[4, 5],
+             [9, 10],
+             [14, 15]])
+
+C = np.array([[16, 17, 18],
+             [21, 22, 23]])
+
+D = np.array([[19, 20],
+             [24, 25]])
+
+test = np.concatenate((A, C), axis=0)
+test2 = np.concatenate((B, D), axis=0)
+test3 = np.concatenate((test, test2), axis=1)
+print(test)
+print(test2)
+print(test3)
+"""
+>>>>>>> d5b469a4aa9a000c4722d3227b4c227730292b62
