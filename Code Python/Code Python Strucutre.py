@@ -178,7 +178,7 @@ def TransientResponse(numberMode, t, pas, verbose):
     Alpha, Beta = fct.CoefficientAlphaBeta(EigenValues)
     C = fct.DampingMatrix(Alpha, Beta, K, M)
     DampingRatio = fct.DampingRatios(Alpha, Beta, EigenValues)
-    p = fct.P(len(EigenVectors[0]), data.ApplNode, DofList, t)
+    p = fct.P(len(EigenVectors[0]), DofList, t, K)
     phi = fct.Phi(EigenVectors, mu, p)
 
     eta = fct.compute_eta(EigenVectors, EigenValues, DampingRatio, phi, t, pas)
@@ -250,7 +250,7 @@ t = np.arange(0, tfin, pas)
 qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, pas, False)
 qDispN, qVelN, qAccN = Newmark(M, C, K, p, pas, t)
 
-fct.printResult(qAcc, qDisp, qDispN, t, DofList)
+#fct.printResult(qAcc, qDisp, qDispN, t, DofList)
 
 # ConvergenceTransientResponse(NumberMode, t, pas)
 
@@ -370,6 +370,7 @@ def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, p
         progress = (len(M) // 6 - i) / (len(M)//6 - 1) * 100
         print('\rProgress Guyan-Irons: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
     print("\n")
+
     newK = np.concatenate((np.concatenate((KRR, KCR), axis=0), np.concatenate((KRC, KCC), axis=0)), axis=1)
     newM = np.concatenate((np.concatenate((MRR, MCR), axis=0), np.concatenate((MRC, MCC), axis=0)), axis=1)
 
@@ -384,6 +385,7 @@ def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, p
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
     t2 = time.time()
     new_index = np.argsort(np.real(eigenvals))
+
     t1GI = time.time()
     eigenvalsGI, eigenvectsGI = scipy.linalg.eig(KGI, MGI)
     t2GI = time.time()
@@ -410,47 +412,158 @@ def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, p
     return val_prop[:numberMode], vect_prop[:numberMode], val_propGI[:numberMode], vect_prop[:numberMode], KGI, MGI, dofList, t2 - t1, t2GI - t1GI
 
 
+def ReducedMethod(numberElem, numberMode, numberModeIncluded, plot_result):
+
+    eigenValues, eigenVectors, K, M, dofList = ElementFini_OffShoreStruct(numberElem, 8, False, False, False, False)
+
+    MRR, MRC, MCR, MCC, KRR, KRC, KCR, KCC = fct.decompositionMatrix(K, M)
+
+    newK = np.concatenate((np.concatenate((KRR, KCR), axis=0), np.concatenate((KRC, KCC), axis=0)), axis=1)
+    newM = np.concatenate((np.concatenate((MRR, MCR), axis=0), np.concatenate((MRC, MCC), axis=0)), axis=1)
+
+    _, X = scipy.linalg.eig(KCC, MCC)
+    XI = X[:, :numberModeIncluded]
+    I = np.identity(len(KRR))
+    RGI = np.concatenate((I, - np.linalg.inv(KCC) @ KCR), axis=0)
+    Zeros = np.zeros((len(KRR), len(XI[0])))
+    RCB = np.concatenate((RGI, np.concatenate((Zeros, XI), axis=0)), axis=1)
+
+    KGI = RGI.T @ newK @ RGI
+    MGI = RGI.T @ newM @ RGI
+
+    KCB = RCB.T @ newK @ RCB
+    MCB = RCB.T @ newM @ RCB
+
+    t1 = time.time()
+    eigenvals, eigenvects = scipy.linalg.eig(K, M)
+    t2 = time.time()
+    new_index = np.argsort(np.real(eigenvals))
+
+    t1GI = time.time()
+    eigenvalsGI, eigenvectsGI = scipy.linalg.eig(KGI, MGI)
+    t2GI = time.time()
+    new_indexGI = np.argsort(np.real(eigenvalsGI))
+
+    t1CB = time.time()
+    eigenvalsCB, eigenvectsCB = scipy.linalg.eig(KCB, MCB)
+    t2CB = time.time()
+    new_indexCB = np.argsort(np.real(eigenvalsCB))
+
+    val_prop = []
+    vect_prop = []
+    for i in new_index:
+        vect_prop.append(eigenvects[i])
+        val_prop.append(np.sqrt(np.real(eigenvals[i])) / (2 * np.pi))
+
+    val_propGI = []
+    vect_propGI = []
+    for i in new_indexGI:
+        val_propGI.append(np.sqrt(np.real(eigenvalsGI[i])) / (2 * np.pi))
+        vect_propGI.append(eigenvectsGI[i])
+
+    val_propCB = []
+    vect_propCB = []
+    for i in new_indexCB:
+        val_propCB.append(np.sqrt(np.real(eigenvalsCB[i])) / (2 * np.pi))
+        vect_propCB.append(eigenvectsCB[i])
+
+    if plot_result:
+        fct.print_freqComparaison(val_prop[:numberMode], val_propGI[:numberMode], val_propCB[:numberMode])
+
+    return val_prop[:numberMode], vect_prop[:numberMode], K, M, val_propGI[:numberMode], vect_propGI[:numberMode], KGI, MGI, val_propCB[:numberMode], vect_propCB[:numberMode], KCB, MCB, t2 - t1, t2GI - t1GI, t2CB - t1CB
+
+
+def NewmarkGI(KGI, MGI, eigenvalues, eigenvectors, h, t):
+
+    p = np.zeros((len(MGI), len(t)))
+
+    xAppl = (17 - 4) * 4
+    yAppl = (17 - 4) * 4 + 1
+
+    for i in range(len(t)):
+        p[xAppl][i] = -fct.F(t[i]) * np.sqrt(2) / 2
+        p[yAppl][i] = fct.F(t[i]) * np.sqrt(2) / 2
+
+    alphaGI, betaGI = fct.CoefficientAlphaBeta(eigenvalues)
+    CGI = fct.DampingMatrix(alphaGI, betaGI, KGI, MGI)
+    gamma = data.gamma
+    beta = data.beta
+    qdisp = np.zeros((len(t), len(MGI)))
+    qvel = np.zeros((len(t), len(MGI)))
+    qacc = np.zeros((len(t), len(MGI)))
+
+    S = fct.compute_S(MGI, h, gamma, CGI, beta, KGI)
+    S_inv = np.linalg.inv(S)
+
+    start = time.time()
+    for i in range(1, len(t)):
+        qvel[i] = qvel[i - 1] + (1 - gamma) * h * qacc[i - 1]
+        qdisp[i] = qdisp[i - 1] + h * qvel[i - 1] + (0.5 - beta) * (h ** 2) * qacc[i - 1]
+
+        qacc[i] = S_inv @ (p.T[i] - CGI @ qvel[i].T - KGI @ qdisp[i].T)
+
+        qvel[i] = qvel[i] + h * gamma * qacc[i]
+        qdisp[i] = qdisp[i] + (h ** 2) * beta * qacc[i]
+
+        progress = i / (len(t) - 1) * 100
+        print('\rProgress Newmark: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
+    end = time.time()
+    execution_time = end - start
+    print(f"\nTotal execution time: {execution_time:.2f} seconds")
+
+    return qdisp, qvel, qacc
+
+
 printDataBeam = False
 printMtot = False
 printStructure = False
-printResult = True
-# _, _, _, _, _, _, _, _, _ = ElementFini_OffShoreStructReduced(3, 8, printDataBeam, printMtot, printStructure, printResult)
+printResult = False
+_, _, _, _, EigenValuesGI, EigenVectorsGI, KGI, MGI, _, _, _, _, _, _, _ = ReducedMethod(3, 8, 8, False)
+
+qDispNGI, qVelNGI, qAccNGI = NewmarkGI(KGI, MGI, EigenValuesGI, EigenVectorsGI, pas, t)
+
+fig = plt.figure(figsize=(10, 7))
+
+ax1 = fig.add_subplot(211)
+DisplacementNodeX = qDispNGI[:, (17 - 4) * 4]
+DispNode = -np.sqrt(2) * DisplacementNodeX
+DisplacementNodeXN = qDispN[:, (17 - 4) * 6]
+DispNodeN = -np.sqrt(2) * DisplacementNodeXN
+ax1.plot(t, DispNode*1000, label='Gyuan-Iron', c='blue')
+ax1.plot(t, DispNodeN*1000, label='Full Matrix', c='red')
+ax1.legend()
+ax1.set_title("Displacement of the Node")
+
+ax2 = fig.add_subplot(212)
+DisplacementRotorX = qDispNGI[:, (21 - 4) * 4]
+DispRotor = -np.sqrt(2) * DisplacementRotorX
+DisplacementRotorXN = qDispN[:, (21 - 4) * 6]
+DispRotorN = -np.sqrt(2) * DisplacementRotorXN
+ax2.plot(t, DispRotor*1000, label='Gyuan-Iron', c='blue')
+ax2.plot(t, DispRotorN*1000, label='Full Matrix', c='red')
+ax2.legend()
+ax2.set_title("Displacement of the Rotor")
+
+plt.show()
+
+#ReducedMethod(8, 20, True)
 
 
 def CompareFE_GI():
     numberElemList = np.arange(1, 13, 1)
     Time = np.zeros(len(numberElemList))
     TimeGI = np.zeros(len(numberElemList))
+    TimeCB = np.zeros(len(numberElemList))
 
     for i in range(len(numberElemList)):
         print(f"############# Number of Elem : {numberElemList[i]} #############")
-        _, _, _, _, _, _, _, Time[i], TimeGI[i] = ElementFini_OffShoreStructReduced(numberElemList[i], 8, False, False, False, False)
+        _, _, _, _, _, _, _, _, _, _, _, _, Time[i], TimeGI[i], TimeCB[i] = ReducedMethod(numberElemList[i], 8, 15, False)
 
     plt.plot(numberElemList, Time, label="FE")
     plt.plot(numberElemList, TimeGI, label="Guyan-Iron")
+    plt.plot(numberElemList, TimeCB, label="Craig-Bampton")
     plt.legend()
     plt.show()
 
 
-"""
-A = np.array([[1, 2, 3],
-             [6, 7, 8],
-             [11, 12, 13]])
-
-B = np.array([[4, 5],
-             [9, 10],
-             [14, 15]])
-
-C = np.array([[16, 17, 18],
-             [21, 22, 23]])
-
-D = np.array([[19, 20],
-             [24, 25]])
-
-test = np.concatenate((A, C), axis=0)
-test2 = np.concatenate((B, D), axis=0)
-test3 = np.concatenate((test, test2), axis=1)
-print(test)
-print(test2)
-print(test3)
-"""
+#CompareFE_GI()

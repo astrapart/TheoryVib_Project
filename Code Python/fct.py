@@ -262,13 +262,9 @@ def F(t):
     return data.A * np.sin(2*np.pi*data.f * t)
 
 
-def P(n, applNode, dofList, t):
+def P(n, dofList, t, K):
     p = np.zeros((n, len(t)))
 
-    print(17 * 6 - 24)
-    print(17 * 4 - 24)
-    print(dofList[17])
-    print(dofList[17] - 24)
     xAppl = dofList[17][0] - 25
     yAppl = dofList[17][1] - 25
 
@@ -351,6 +347,48 @@ def compute_q(Eigenvectors, eta,t):
 
 def compute_S(M, h, gamma, C, beta, K):
     return M + h*gamma*C + (h**2) * beta * K
+
+
+def decompositionMatrix(K, M):
+    MRR, MRC, MCR, MCC = M.copy(), M.copy(), M.copy(), M.copy()
+    KRR, KRC, KCR, KCC = K.copy(), K.copy(), K.copy(), K.copy()
+    for i in range(len(M) // 6, 0, -1):
+        for j in range(1, 7):
+            if j in [2, 3]:
+                MRR = np.delete(MRR, 6 * i - j, 0)
+                MRR = np.delete(MRR, 6 * i - j, 1)
+
+                KRR = np.delete(KRR, 6 * i - j, 0)
+                KRR = np.delete(KRR, 6 * i - j, 1)
+
+                MRC = np.delete(MRC, 6 * i - j, 0)
+
+                MCR = np.delete(MCR, 6 * i - j, 1)
+
+                KRC = np.delete(KRC, 6 * i - j, 0)
+
+                KCR = np.delete(KCR, 6 * i - j, 1)
+
+            if j in [1, 4, 5, 6]:
+                MCC = np.delete(MCC, 6 * i - j, 0)
+                MCC = np.delete(MCC, 6 * i - j, 1)
+
+                KCC = np.delete(KCC, 6 * i - j, 0)
+                KCC = np.delete(KCC, 6 * i - j, 1)
+
+                MRC = np.delete(MRC, 6 * i - j, 1)
+
+                MCR = np.delete(MCR, 6 * i - j, 0)
+
+                KRC = np.delete(KRC, 6 * i - j, 1)
+
+                KCR = np.delete(KCR, 6 * i - j, 0)
+
+        progress = (len(M) // 6 - i) / (len(M) // 6 - 1) * 100
+        print('\rProgress Decomposition: [{:<50}] {:.2f}%'.format('=' * int(progress / 2), progress), end='', flush=True)
+    print("\n")
+
+    return MRR, MRC, MCR, MCC, KRR, KRC, KCR, KCC
 
 
 """
@@ -445,14 +483,16 @@ def print_freq(list_eign):
     return
 
 
-def print_freqComparaison(eigenvals, eigenvalsGI):
-    print("                                                FE [HZ]    GI [Hz]    error")
+def print_freqComparaison(eigenvals, eigenvalsGI, eigenvalsCB):
+    print("                                               FE [HZ]    GI [Hz]    [%]      CB [HZ]    [%]")
     for i in range(len(eigenvals)):
         #print("La fréquence pour la valeur propre", i, "vaut :", f, "Hz")
         # 0.44 valeur propre 1
         # 0.45 valeur propre 2
         # 0.9  valeur propre 3
-        print("La fréquence pour la valeur propre {index} vaut : {val:>10f} {val1:>10f}   {error:>6f}".format(index=i+1, val=eigenvals[i], val1=eigenvalsGI[i], error=abs(eigenvals[i]-eigenvalsGI[i])))
+        error = (eigenvals[i] - eigenvalsGI[i]) / eigenvals[i] * 100
+        error1 = (eigenvals[i] - eigenvalsCB[i]) / eigenvals[i] * 100
+        print("La fréquence pour la valeur propre {index} vaut : {val:>10f} {val1:>10f}  {error:>3f}  {val2:>10f}  {error1:>3f}".format(index=i+1, val=eigenvals[i], val1=eigenvalsGI[i], error=error, val2=eigenvalsCB[i], error1=error1))
 
     return
 
