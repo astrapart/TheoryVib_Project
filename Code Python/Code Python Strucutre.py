@@ -519,7 +519,7 @@ printMtot = False
 printStructure = False
 printResult = False
 _, _, _, _, EigenValuesGI, EigenVectorsGI, KGI, MGI, _, _, _, _, _, _, _ = ReducedMethod(3, 8, 8, False)
-
+print("Valeur propre GI", EigenValuesGI)
 qDispNGI, qVelNGI, qAccNGI = NewmarkGI(KGI, MGI, EigenValuesGI, EigenVectorsGI, pas, t)
 
 fig = plt.figure(figsize=(10, 7))
