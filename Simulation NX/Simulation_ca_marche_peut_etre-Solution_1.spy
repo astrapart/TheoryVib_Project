@@ -1,0 +1,26 @@
+!***********************************************************************
+! Bacon Spy File
+! Problem name: Simulation_ca_marche_peut_etre-Solution_1
+! Creation Date: NOV 23 2023 12:27:42
+!
+INPUT INIT
+EXIT
+;INPUT  "C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\Simulation_ca_marche_peut_etre-Solution_1.dat"
+! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+!
+!              NX 1859 TRANSLATOR
+!   This file is compatible with Samcef 2019.1 (19.1-01) and next versions
+!
+!              FEM FILE: C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\ProjetV1.fem
+!              SIM FILE: C:\Users\arnau\Documents\GitHub\TheoryVib_Project\Simulation NX\Simulation ca marche peut etre.sim
+!         ANALYSIS TYPE: Simcenter Samcef - Structural
+!         SOLUTION NAME: Solution 1
+!         SOLUTION TYPE: Modal Analysis
+!     SOLVER INPUT FILE: Simulation_ca_marche_peut_etre-Solution_1.dat
+!         CREATION DATE: 23-novembre-2023
+!         CREATION TIME: 12:27:39
+!              HOSTNAME: Microsoft-Strapart
+!              USERNAME: arnau
+!
+! $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+MODE M -1 LECTURE 256
