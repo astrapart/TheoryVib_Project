@@ -265,6 +265,10 @@ def F(t):
 def P(n, applNode, dofList, t):
     p = np.zeros((n, len(t)))
 
+    print(17 * 6 - 24)
+    print(17 * 4 - 24)
+    print(dofList[17])
+    print(dofList[17] - 24)
     xAppl = dofList[17][0] - 25
     yAppl = dofList[17][1] - 25
 

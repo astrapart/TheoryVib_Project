@@ -208,7 +208,7 @@ def ConvergenceTransientResponse(numberMode, t, h):
     fct.print_ConvergenceTransientResponse(numberModeList, responseDisp, responseAcc, dofList, t)
 
 
-def Newmark(M, C, K, p, h,t):
+def Newmark(M, C, K, p, h, t):
     gamma = data.gamma
     beta = data.beta
     qdisp = np.zeros((len(t), len(M)))
@@ -246,12 +246,12 @@ NumberMode = 8
 tfin = 10
 pas = 0.001
 t = np.arange(0, tfin, pas)
-"""
+
 qAcc, qDisp, C, p, K, M, DofList = TransientResponse(NumberMode, t, pas, False)
 qDispN, qVelN, qAccN = Newmark(M, C, K, p, pas, t)
 
 fct.printResult(qAcc, qDisp, qDispN, t, DofList)
-"""
+
 # ConvergenceTransientResponse(NumberMode, t, pas)
 
 
@@ -377,12 +377,16 @@ def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, p
     tmp = - np.linalg.inv(KCC) @ KCR
     RGI = np.concatenate((I, tmp), axis=0)
 
-    KtildGI = RGI.T @ newK @ RGI
-    MtildGI = RGI.T @ newM @ RGI
+    KGI = RGI.T @ newK @ RGI
+    MGI = RGI.T @ newM @ RGI
 
+    t1 = time.time()
     eigenvals, eigenvects = scipy.linalg.eig(K, M)
+    t2 = time.time()
     new_index = np.argsort(np.real(eigenvals))
-    eigenvalsGI, eigenvectsGI = scipy.linalg.eig(KtildGI, MtildGI)
+    t1GI = time.time()
+    eigenvalsGI, eigenvectsGI = scipy.linalg.eig(KGI, MGI)
+    t2GI = time.time()
     new_indexGI = np.argsort(np.real(eigenvalsGI))
 
     eigenvectsGI = eigenvectsGI.T
@@ -395,20 +399,39 @@ def ElementFini_OffShoreStructReduced(numberElem, numberMode, print_data_beam, p
         val_prop.append(np.sqrt(np.real(eigenvals[i]))/(2*np.pi))
 
     val_propGI = []
+    vect_propGI = []
     for i in new_indexGI:
         val_propGI.append(np.sqrt(np.real(eigenvalsGI[i]))/(2*np.pi))
+        vect_propGI.append(eigenvects[i])
 
     if plot_result:
         fct.print_freqComparaison(val_prop[:numberMode], val_propGI[:numberMode])
 
-    return val_prop[:numberMode], vect_prop[:numberMode], K, M, dofList
+    return val_prop[:numberMode], vect_prop[:numberMode], val_propGI[:numberMode], vect_prop[:numberMode], KGI, MGI, dofList, t2 - t1, t2GI - t1GI
 
 
 printDataBeam = False
 printMtot = False
 printStructure = False
 printResult = True
-tmp, _, _, _, _ = ElementFini_OffShoreStructReduced(3, 8, printDataBeam, printMtot, printStructure, printResult)
+# _, _, _, _, _, _, _, _, _ = ElementFini_OffShoreStructReduced(3, 8, printDataBeam, printMtot, printStructure, printResult)
+
+
+def CompareFE_GI():
+    numberElemList = np.arange(1, 13, 1)
+    Time = np.zeros(len(numberElemList))
+    TimeGI = np.zeros(len(numberElemList))
+
+    for i in range(len(numberElemList)):
+        print(f"############# Number of Elem : {numberElemList[i]} #############")
+        _, _, _, _, _, _, _, Time[i], TimeGI[i] = ElementFini_OffShoreStructReduced(numberElemList[i], 8, False, False, False, False)
+
+    plt.plot(numberElemList, Time, label="FE")
+    plt.plot(numberElemList, TimeGI, label="Guyan-Iron")
+    plt.legend()
+    plt.show()
+
+
 """
 A = np.array([[1, 2, 3],
              [6, 7, 8],
