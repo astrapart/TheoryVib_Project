@@ -649,3 +649,29 @@ def printResult(qAcc, qDisp, qDispN, t, DofList, plot_NodeDispl, plot_RotorDispl
     #plt.savefig("ModDispl-ModAcc-NM-Rotor_ZOOM.pdf")
 
     plt.show()
+
+
+def comparaisonNewmark(qDispN, qDispNGI, t):
+    fig = plt.figure(figsize=(10, 7))
+
+    ax1 = fig.add_subplot(211)
+    DisplacementNodeX = qDispNGI[:, (17 - 4) * 4]
+    DispNode = -np.sqrt(2) * DisplacementNodeX
+    DisplacementNodeXN = qDispN[:, (17 - 4) * 6]
+    DispNodeN = -np.sqrt(2) * DisplacementNodeXN
+    ax1.plot(t, DispNodeN * 1000, label='Full Matrix', c='blue')
+    ax1.plot(t, DispNode * 1000, label='Gyuan-Iron', c='red')
+    ax1.legend()
+    ax1.set_title("Displacement of the Node")
+
+    ax2 = fig.add_subplot(212)
+    DisplacementRotorX = qDispNGI[:, (21 - 4) * 4]
+    DispRotor = -np.sqrt(2) * DisplacementRotorX
+    DisplacementRotorXN = qDispN[:, (21 - 4) * 6]
+    DispRotorN = -np.sqrt(2) * DisplacementRotorXN
+    ax2.plot(t, DispRotorN * 1000, label='Full Matrix', c='blue')
+    ax2.plot(t, DispRotor * 1000, label='Gyuan-Iron', c='red')
+    ax2.legend()
+    ax2.set_title("Displacement of the Rotor")
+
+    plt.show()
