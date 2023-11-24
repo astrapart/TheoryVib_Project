@@ -48,10 +48,6 @@ nodeList_eol = [[0, 0, 0],  # node 0
                 [2.5, 2.5, 25],  # node 20
                 [2.5, 2.5, 80]]  # node 21
 
-eolNode = np.array(nodeList_eol) *1000
-for elem in eolNode :
-    print(elem)
-
 elemList0_eol = [[1, 5, 0], [2, 6, 0], [3, 7, 0], [4, 8, 0],          # main beam
                  [5, 9, 0], [6, 10, 0], [7, 11, 0], [8, 12, 0],       # main beam
                  [9, 13, 0], [10, 14, 0], [11, 15, 0], [12, 16, 0],   # main beam

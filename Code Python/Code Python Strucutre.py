@@ -79,8 +79,6 @@ def ElementFini_OffShoreStruct(numberElem, numberMode, print_data_beam, print_mt
     new_index = np.argsort(np.real(eigenvals))
 
     eigenvects = eigenvects.T
-    #val_prop = np.sort(np.real(eigenvals))
-    #val_prop = np.sqrt(val_prop) / (2 * np.pi)
     val_prop = []
     vect_prop = []
     for i in new_index:
@@ -174,10 +172,12 @@ def TransientResponse(numberMode, t, pas, verbose):
     numberElem = 3
     EigenValues, EigenVectors, K, M, DofList = ElementFini_OffShoreStruct(numberElem, numberMode, False, False, False, False)
     EigenValues = np.array(EigenValues) * np.pi * 2
+
     mu = fct.Mu(EigenVectors, M)
     Alpha, Beta = fct.CoefficientAlphaBeta(EigenValues)
     C = fct.DampingMatrix(Alpha, Beta, K, M)
     DampingRatio = fct.DampingRatios(Alpha, Beta, EigenValues)
+    print(DampingRatio)
     p = fct.P(len(EigenVectors[0]), DofList, t, K)
     phi = fct.Phi(EigenVectors, mu, p)
 
@@ -519,7 +519,6 @@ printMtot = False
 printStructure = False
 printResult = False
 _, _, _, _, EigenValuesGI, EigenVectorsGI, KGI, MGI, _, _, _, _, _, _, _ = ReducedMethod(3, 8, 8, False)
-print("Valeur propre GI", EigenValuesGI)
 qDispNGI, qVelNGI, qAccNGI = NewmarkGI(KGI, MGI, EigenValuesGI, EigenVectorsGI, pas, t)
 
 fig = plt.figure(figsize=(10, 7))
